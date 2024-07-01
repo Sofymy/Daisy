@@ -9,4 +9,7 @@ sealed class Screen{
 
     @Serializable
     object Register
+
+    @Serializable
+    object Home
 }
