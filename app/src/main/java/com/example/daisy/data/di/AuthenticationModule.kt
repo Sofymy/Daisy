@@ -24,6 +24,4 @@ object AuthenticationModule {
         firebaseAuth: FirebaseAuth
     ): AuthenticationRepository = AuthenticationRepositoryImpl(firebaseAuth)
 
-
-
 }

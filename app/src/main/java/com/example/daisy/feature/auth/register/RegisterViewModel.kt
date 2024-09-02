@@ -2,10 +2,10 @@ package com.example.daisy.feature.auth.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.daisy.data.utils.UiEvent
-import com.example.daisy.domain.usecases.auth.RegisterUseCase
-import com.google.firebase.auth.AuthResult
+import com.example.daisy.domain.usecases.auth.AuthUseCases
+import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -15,48 +15,49 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val registerUseCase: RegisterUseCase
+    private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-
-    private var _uiEvent = Channel<UiEvent<AuthResult>>()
+    private val _uiEvent = Channel<UiEvent<Nothing>>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    private var _registerState = MutableStateFlow(RegisterState())
-    var registerState = _registerState
+    private var _state = MutableStateFlow(RegisterUiState())
+    var state = _state
 
-    fun onEvent(event: RegisterEvent) {
+    fun onEvent(event: RegisterUserEvent) {
         when(event) {
-            is RegisterEvent.EmailChanged -> {
+            is RegisterUserEvent.EmailChanged -> {
                 val newEmail = event.email.trim()
-                _registerState.update { it.copy(email = newEmail) }
+                _state.update { it.copy(email = newEmail) }
             }
-            is RegisterEvent.PasswordChanged -> {
+            is RegisterUserEvent.PasswordChanged -> {
                 val newPassword = event.password.trim()
-                _registerState.update { it.copy(password = newPassword) }
+                _state.update { it.copy(password = newPassword) }
             }
-            is RegisterEvent.ConfirmPasswordChanged -> {
+            is RegisterUserEvent.ConfirmPasswordChanged -> {
                 val newConfirmPassword = event.password.trim()
-                _registerState.update { it.copy(confirmPassword = newConfirmPassword) }
+                _state.update { it.copy(confirmPassword = newConfirmPassword) }
             }
-            RegisterEvent.PasswordVisibilityChanged -> {
-                _registerState.update { it.copy(passwordVisibility = !_registerState.value.passwordVisibility) }
+            RegisterUserEvent.PasswordVisibilityChanged -> {
+                _state.update { it.copy(passwordVisibility = !state.value.passwordVisibility) }
             }
-            RegisterEvent.ConfirmPasswordVisibilityChanged -> {
-                _registerState.update { it.copy(confirmPasswordVisibility = !_registerState.value.confirmPasswordVisibility) }
+            RegisterUserEvent.ConfirmPasswordVisibilityChanged -> {
+                _state.update { it.copy(confirmPasswordVisibility = !state.value.confirmPasswordVisibility) }
             }
-            RegisterEvent.Register -> {
-                register(
-                    registerState.value.email,
-                    registerState.value.password
-                )
+            RegisterUserEvent.RegisterUser -> {
+                register()
             }
         }
     }
 
-    private fun register(email: String, password: String) = viewModelScope.launch {
-        registerUseCase.invoke(email, password).collect {
-            _uiEvent.send(it)
+    private fun register() = viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                authUseCases.registerUseCase(state.value.email, state.value.password)
+                _uiEvent.send(UiEvent.Success(null))
+            } catch (e: Exception) {
+                _uiEvent.send(UiEvent.Error(e.message.toString()))
+            }
         }
     }
 

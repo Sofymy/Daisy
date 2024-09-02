@@ -1,19 +1,19 @@
 package com.example.daisy.data.datasource.auth
 
-import com.example.daisy.data.utils.UiEvent
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
 
 interface AuthenticationRepository {
-    suspend fun login(email: String, password: String): Flow<UiEvent<AuthResult>>
 
-    suspend fun register(email: String, password: String): Flow<UiEvent<AuthResult>>
-
-    suspend fun resetPassword(email: String): Flow<UiEvent<Void?>>
+    suspend fun register(email: String, password: String)
 
     suspend fun logout()
 
     suspend fun userUid(): String
 
-    suspend fun isLoggedIn(): Boolean
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<String>
+
+    suspend fun signInWithGoogle(token: String): Result<String>
+
+    val isSignedIn: Boolean
 }

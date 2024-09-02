@@ -1,6 +1,6 @@
 package com.example.daisy.feature.auth.register
 
-data class RegisterState(
+data class RegisterUiState(
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",

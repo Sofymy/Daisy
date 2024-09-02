@@ -5,11 +5,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class Screen{
     @Serializable
-    object Login
+    object SignIn
 
     @Serializable
     object Register
 
     @Serializable
     object Home
+
+    @Serializable
+    object CreateCalendar
 }

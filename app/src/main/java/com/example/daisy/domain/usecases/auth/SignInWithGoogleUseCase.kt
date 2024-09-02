@@ -1,11 +1,11 @@
 package com.example.daisy.domain.usecases.auth
 
 import com.example.daisy.data.datasource.auth.AuthenticationRepository
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class IsLoggedInUseCase @Inject constructor(
+class SignInWithGoogleUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository
 ) {
-    operator fun invoke() = flow { emit(authenticationRepository.isLoggedIn()) }
+    suspend operator fun invoke(token: String) =
+        authenticationRepository.signInWithGoogle(token)
 }

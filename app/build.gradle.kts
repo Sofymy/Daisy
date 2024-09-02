@@ -101,6 +101,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    //Google sign in
+    implementation(libs.play.services.auth)
+
 }
 
 kapt {

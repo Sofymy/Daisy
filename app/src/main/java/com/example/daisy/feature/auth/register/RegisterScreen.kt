@@ -2,62 +2,86 @@ package com.example.daisy.feature.auth.register
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.daisy.data.utils.UiEvent
+import com.example.daisy.ui.util.UiEvent
 
 @Composable
 fun RegisterScreen(
-    onNavigateToLogin: () -> Unit,
+    onNavigateToSignIn: () -> Unit,
 ) {
-    RegisterScreenContent(
-        onNavigateToLogin = onNavigateToLogin
+    RegisterContent(
+        onNavigateToSignIn = onNavigateToSignIn
     )
 
 }
 
 @Composable
-fun RegisterScreenContent(
-    onNavigateToLogin: () -> Unit,
-    registerViewModel: RegisterViewModel = hiltViewModel()
+fun RegisterContent(
+    onNavigateToSignIn: () -> Unit,
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
-    val registerState by registerViewModel.registerState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = true) {
-        registerViewModel.uiEvent.collect { event ->
+        viewModel.uiEvent.collect { event ->
             when(event) {
-                is UiEvent.Error -> {}
-                is UiEvent.Loading -> {}
+                is UiEvent.Loading -> {
+
+                }
                 is UiEvent.Success -> {
-                    onNavigateToLogin()
+                    onNavigateToSignIn()
+                }
+                is UiEvent.Error -> {
+
                 }
             }
         }
     }
 
-    Column {
-        TextField(value = registerState.email, onValueChange = {
-            registerViewModel.onEvent(RegisterEvent.EmailChanged(it))
-        })
-        TextField(value = registerState.password, onValueChange = {
-            registerViewModel.onEvent(RegisterEvent.PasswordChanged(it))
-        })
+    RegisterForm(
+        state = state,
+        onFieldChange = { viewModel.onEvent(it) },
+        onClickRegister = { viewModel.onEvent(RegisterUserEvent.RegisterUser) }
+    )
 
-        Button(onClick = { registerViewModel.onEvent(RegisterEvent.Register) }) {
+}
+
+@Composable
+fun RegisterForm(
+    state: RegisterUiState,
+    onFieldChange: (RegisterUserEvent) -> Unit,
+    onClickRegister: () -> Unit
+) {
+
+    Column {
+        TextField(
+            value = state.email,
+            onValueChange = {
+                onFieldChange(RegisterUserEvent.EmailChanged(it))
+            }
+        )
+        TextField(
+            value = state.password,
+            onValueChange = {
+                onFieldChange(RegisterUserEvent.PasswordChanged(it))
+            }
+        )
+
+        Button(onClick = { onClickRegister() }) {
             Text("Register")
         }
-        Text(registerState.email)
 
-        Button(onClick = { onNavigateToLogin() }) {
+        Button(onClick = {
+            //onNavigateToLogin()
+        }) {
             Text("Nav to login")
         }
     }
+
 }
