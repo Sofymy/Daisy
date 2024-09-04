@@ -14,42 +14,42 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-data class CreatedCalendarsUiState(
+data class CreatedCalendarUiState(
     val isLoading: Boolean = true,
     val error: Throwable? = null,
     val isError: Boolean = error != null,
-    val calendars: List<CalendarUi?> = emptyList()
+    val calendar: CalendarUi? = CalendarUi()
 )
 
-sealed class CreatedCalendarsUserEvent {
-    data object GetCreatedCalendars : CreatedCalendarsUserEvent()
+sealed class CreatedCalendarUserEvent {
+    data class GetCreatedCalendar(val id: String) : CreatedCalendarUserEvent()
 }
 
 
 @HiltViewModel
-class CreatedCalendarsViewModel @Inject constructor(
+class CreatedCalendarViewModel @Inject constructor(
     private val calendarUseCases: CalendarUseCases
 ) : ViewModel() {
 
-    private var _state = MutableStateFlow(CreatedCalendarsUiState())
+    private var _state = MutableStateFlow(CreatedCalendarUiState())
     var state = _state
 
-    fun onEvent(event: CreatedCalendarsUserEvent) {
+    fun onEvent(event: CreatedCalendarUserEvent) {
         when(event) {
-            CreatedCalendarsUserEvent.GetCreatedCalendars -> {
-                getCreatedCalendars()
+            is CreatedCalendarUserEvent.GetCreatedCalendar -> {
+                getCreatedCalendar(id = event.id)
             }
         }
     }
 
-    private fun getCreatedCalendars() {
+    private fun getCreatedCalendar(id: String) {
         viewModelScope.launch {
             try {
                 CoroutineScope(coroutineContext).launch(Dispatchers.IO) {
-                    val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() }
+                    val calendar = calendarUseCases.getCreatedCalendarUseCase(id).getOrThrow()?.toUi()
                     _state.update { it.copy(
                         isLoading = false,
-                        calendars = calendars
+                        calendar = calendar
                     ) }
                 }
             } catch (e: Exception) {

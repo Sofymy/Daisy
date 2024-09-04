@@ -51,7 +51,8 @@ fun BottomNavigationBar(
     val items = listOf(
         BottomNavigationBarItem.Home,
         BottomNavigationBarItem.NewCalendar,
-        BottomNavigationBarItem.CreatedCalendars
+        BottomNavigationBarItem.CreatedCalendars,
+        BottomNavigationBarItem.ReceivedCalendars
     )
 
     Box(

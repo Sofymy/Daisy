@@ -1,6 +1,5 @@
 package com.example.daisy.feature.auth.sign_in
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.usecases.auth.AuthUseCases
@@ -15,6 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SignInUiState(
+    val isLoading: Boolean = true,
     val email: String = "",
     val password: String = "",
     val passwordVisibility: Boolean = false,
@@ -69,9 +69,10 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = authUseCases.isSignedInUseCase()
-                _state.update { it.copy(isSignedIn = result) }
+                _state.update { it.copy(isSignedIn = result, isLoading = false) }
             } catch (e: Exception) {
                 _uiEvent.send(UiEvent.Error(e.message.toString()))
+                _state.update { it.copy(isLoading = false) }
             }
         }
     }

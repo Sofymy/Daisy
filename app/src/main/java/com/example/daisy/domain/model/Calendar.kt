@@ -1,11 +1,9 @@
 package com.example.daisy.domain.model
 
-import com.example.daisy.domain.util.RecipientOption
-import com.example.daisy.domain.util.toDomain
-import com.example.daisy.domain.util.toUi
 import com.example.daisy.ui.model.CalendarUi
 
 data class Calendar(
+    val id: String = "",
     val dateRange: DateRange = DateRange(),
     val recipient: User = User(),
     val sender: User = User()
@@ -13,6 +11,7 @@ data class Calendar(
 
 fun CalendarUi.toDomain(): Calendar {
     return Calendar(
+        id = this.id,
         dateRange = this.dateRange.toDomain(),
         recipient = this.recipient.toDomain(),
         sender = this.sender.toDomain()
@@ -21,6 +20,7 @@ fun CalendarUi.toDomain(): Calendar {
 
 fun Calendar.toUi(): CalendarUi {
     return CalendarUi(
+        id = this.id,
         dateRange = this.dateRange.toUi(),
         recipient = this.recipient.toUi(),
         sender = this.sender.toUi()

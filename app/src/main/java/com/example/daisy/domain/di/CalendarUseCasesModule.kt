@@ -2,7 +2,9 @@ package com.example.daisy.domain.di
 
 import com.example.daisy.data.repository.calendar.CalendarRepository
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
+import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarUseCase
 import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarsUseCase
+import com.example.daisy.domain.usecases.calendar.GetReceivedCalendarsUseCase
 import com.example.daisy.domain.usecases.calendar.SetCalendarUseCase
 import dagger.Module
 import dagger.Provides
@@ -19,12 +21,16 @@ object CalendarUseCasesModule {
     fun provideCalendarUseCases(
         calendarRepository: CalendarRepository,
         setCalendarUseCase: SetCalendarUseCase,
-        getCreatedCalendarsUseCase: GetCreatedCalendarsUseCase
+        getCreatedCalendarsUseCase: GetCreatedCalendarsUseCase,
+        getCreatedCalendarUseCase: GetCreatedCalendarUseCase,
+        getReceivedCalendarsUseCase: GetReceivedCalendarsUseCase
     ): CalendarUseCases {
         return CalendarUseCases(
             repository = calendarRepository,
             setCalendarUseCase = setCalendarUseCase,
-            getCreatedCalendarsUseCase = getCreatedCalendarsUseCase
+            getCreatedCalendarsUseCase = getCreatedCalendarsUseCase,
+            getCreatedCalendarUseCase = getCreatedCalendarUseCase,
+            getReceivedCalendarsUseCase = getReceivedCalendarsUseCase
         )
     }
 
@@ -38,10 +44,27 @@ object CalendarUseCasesModule {
 
     @Provides
     @Singleton
-    fun provideGetCreatedCalendarUseCase(
+    fun provideGetCreatedCalendarsUseCase(
         calendarRepository: CalendarRepository
     ): GetCreatedCalendarsUseCase {
         return GetCreatedCalendarsUseCase(calendarRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCreatedCalendarUseCase(
+        calendarRepository: CalendarRepository
+    ): GetCreatedCalendarUseCase {
+        return GetCreatedCalendarUseCase(calendarRepository)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideGetReceivedCalendarsUseCase(
+        calendarRepository: CalendarRepository
+    ): GetReceivedCalendarsUseCase {
+        return GetReceivedCalendarsUseCase(calendarRepository)
     }
 
 }

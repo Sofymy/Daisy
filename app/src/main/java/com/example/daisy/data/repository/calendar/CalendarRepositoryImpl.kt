@@ -50,7 +50,31 @@ class CalendarRepositoryImpl @Inject constructor(
             .whereEqualTo("sender.uid", auth.currentUser?.uid)
             .snapshotFlow()
             .map { querySnapshot ->
-                querySnapshot.documents.map { it.toObject<Calendar>() }
+                querySnapshot.documents.map {
+                    it.toObject<Calendar>()?.copy(id = it.id)
+                }
+            }
+    }
+
+    override fun getCreatedCalendar(id: String): Flow<Calendar?> {
+        Log.d("eeeeeeeee", id.toString())
+
+        return firestore.collection("calendars")
+            .document(id)
+            .snapshots()
+            .map { querySnapshot ->
+                querySnapshot.toObject<Calendar>()?.copy(id = querySnapshot.id)
+            }
+    }
+
+    override fun getReceivedCalendars(): Flow<List<Calendar?>> {
+        return firestore.collection("calendars")
+            .whereEqualTo("recipient.email", auth.currentUser?.email)
+            .snapshotFlow()
+            .map { querySnapshot ->
+                querySnapshot.documents.map {
+                    it.toObject<Calendar>()?.copy(id = it.id)
+                }
             }
     }
 

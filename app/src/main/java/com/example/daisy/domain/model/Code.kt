@@ -1,7 +1,6 @@
 package com.example.daisy.domain.model
 
 import com.example.daisy.ui.model.CodeUi
-import com.example.daisy.ui.model.UserUi
 import kotlin.random.Random
 
 data class Code(

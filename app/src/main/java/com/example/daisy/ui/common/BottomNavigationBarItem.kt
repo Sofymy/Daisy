@@ -22,4 +22,9 @@ sealed class BottomNavigationBarItem(
         screen = Screen.CreatedCalendars,
     )
 
+    @Serializable
+    data object ReceivedCalendars : BottomNavigationBarItem(
+        screen = Screen.ReceivedCalendars,
+    )
+
 }

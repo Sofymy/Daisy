@@ -1,8 +1,9 @@
 package com.example.daisy.ui.model
 
-import com.example.daisy.domain.util.RecipientOption
+import kotlin.random.Random
 
 data class CalendarUi(
+    val id: String = Random.nextInt().toString(),
     val dateRange: DateRangeUi = DateRangeUi(),
     val recipient: UserUi = UserUi(),
     val sender: UserUi = UserUi()

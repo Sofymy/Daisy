@@ -1,4 +1,4 @@
-package com.example.daisy.feature.created_calendars
+package com.example.daisy.feature.received_calendars
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,39 +14,39 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-data class CreatedCalendarsUiState(
+data class ReceivedCalendarsUiState(
     val isLoading: Boolean = true,
     val error: Throwable? = null,
     val isError: Boolean = error != null,
-    val calendars: List<CalendarUi?> = emptyList()
+    val calendars: List<CalendarUi> = emptyList()
 )
 
-sealed class CreatedCalendarsUserEvent {
-    data object GetCreatedCalendars : CreatedCalendarsUserEvent()
+sealed class ReceivedCalendarsUserEvent {
+    data object GetReceivedCalendars : ReceivedCalendarsUserEvent()
 }
 
 
 @HiltViewModel
-class CreatedCalendarsViewModel @Inject constructor(
+class ReceivedCalendarsViewModel @Inject constructor(
     private val calendarUseCases: CalendarUseCases
 ) : ViewModel() {
 
-    private var _state = MutableStateFlow(CreatedCalendarsUiState())
+    private var _state = MutableStateFlow(ReceivedCalendarsUiState())
     var state = _state
 
-    fun onEvent(event: CreatedCalendarsUserEvent) {
+    fun onEvent(event: ReceivedCalendarsUserEvent) {
         when(event) {
-            CreatedCalendarsUserEvent.GetCreatedCalendars -> {
-                getCreatedCalendars()
+            ReceivedCalendarsUserEvent.GetReceivedCalendars -> {
+                getReceivedCalendars()
             }
         }
     }
 
-    private fun getCreatedCalendars() {
+    private fun getReceivedCalendars() {
         viewModelScope.launch {
             try {
                 CoroutineScope(coroutineContext).launch(Dispatchers.IO) {
-                    val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() }
+                    val calendars = calendarUseCases.getReceivedCalendarsUseCase().getOrThrow().map { it?.toUi() ?: CalendarUi() }
                     _state.update { it.copy(
                         isLoading = false,
                         calendars = calendars

@@ -6,7 +6,6 @@ import com.example.daisy.domain.model.toDomain
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.model.RecipientOptionUi
-import com.example.daisy.ui.model.UserUi
 import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
-import kotlin.random.Random
 
 data class NewCalendarUiState(
     val calendar: CalendarUi,

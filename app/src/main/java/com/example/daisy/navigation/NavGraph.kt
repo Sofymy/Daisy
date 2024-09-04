@@ -2,16 +2,16 @@ package com.example.daisy.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.daisy.feature.auth.register.RegisterScreen
 import com.example.daisy.feature.auth.sign_in.SignInScreen
+import com.example.daisy.feature.created_calendars.CreatedCalendarScreen
 import com.example.daisy.feature.created_calendars.CreatedCalendarsScreen
 import com.example.daisy.feature.new_calendar.NewCalendarScreen
 import com.example.daisy.feature.home.HomeScreen
+import com.example.daisy.feature.received_calendars.ReceivedCalendarsScreen
 
 @ExperimentalMaterial3Api
 @Composable
@@ -60,7 +60,21 @@ fun NavGraph(
         }
 
         composable<Screen.CreatedCalendars> {
-            CreatedCalendarsScreen()
+            CreatedCalendarsScreen(
+                onNavigateToCreatedCalendar = {
+                    navController.navigate(Screen.CreatedCalendar(it))
+                }
+            )
+        }
+
+        composable<Screen.CreatedCalendar> {backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+
+            CreatedCalendarScreen(id = id)
+        }
+
+        composable<Screen.ReceivedCalendars> {
+            ReceivedCalendarsScreen()
         }
 
     }

@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface CalendarRepository{
     fun setCalendar(calendar: Calendar)
     fun getCreatedCalendars(): Flow<List<Calendar?>>
+    fun getReceivedCalendars(): Flow<List<Calendar?>>
+    fun getCreatedCalendar(id: String): Flow<Calendar?>
 }

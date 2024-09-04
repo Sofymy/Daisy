@@ -7,6 +7,6 @@ import javax.inject.Inject
 class SetCalendarUseCase @Inject constructor(
     private val calendarRepository: CalendarRepository
 ) {
-    suspend operator fun invoke(calendar: Calendar) =
+    operator fun invoke(calendar: Calendar) =
         calendarRepository.setCalendar(calendar)
 }
