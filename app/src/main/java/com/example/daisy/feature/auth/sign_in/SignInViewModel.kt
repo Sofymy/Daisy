@@ -14,6 +14,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class SignInUiState(
+    val email: String = "",
+    val password: String = "",
+    val passwordVisibility: Boolean = false,
+    val isSignedIn: Boolean? = null
+)
+
+sealed class SignInUserEvent {
+    data class EmailChanged(val email: String): SignInUserEvent()
+    data class PasswordChanged(val password: String): SignInUserEvent()
+    data class SignInWithGoogle(val token: String?, val email: String?) : SignInUserEvent()
+    data object PasswordVisibilityChanged: SignInUserEvent()
+    data object SignIn: SignInUserEvent()
+    data object IsSignedId: SignInUserEvent()
+}
+
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
@@ -22,7 +38,7 @@ class SignInViewModel @Inject constructor(
     private val _state = MutableStateFlow(SignInUiState())
     val state = _state
 
-    private var _uiEvent = Channel<UiEvent<Any>>()
+    private var _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
 
@@ -39,7 +55,7 @@ class SignInViewModel @Inject constructor(
                 signIn()
             }
             is SignInUserEvent.SignInWithGoogle -> {
-                signInWithGoogle(event.token)
+                signInWithGoogle(event.token, event.email)
             }
             is SignInUserEvent.PasswordChanged -> {
                 val newPassword = event.password.trim()
@@ -64,20 +80,20 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 authUseCases.signInUseCase(state.value.email, state.value.password)
-                _uiEvent.send(UiEvent.Success(null))
+                _uiEvent.send(UiEvent.Success)
             } catch (e: Exception) {
                 _uiEvent.send(UiEvent.Error(e.message.toString()))
             }
         }
     }
 
-    private fun signInWithGoogle(token: String?) {
+    private fun signInWithGoogle(token: String?, email: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (token != null) {
-                    val result = authUseCases.signInWithGoogleUseCase(token)
+                if (token != null && email != null) {
+                    val result = authUseCases.signInWithGoogleUseCase(token, email)
                     if(result.isSuccess)
-                        _uiEvent.send(UiEvent.Success(token))
+                        _uiEvent.send(UiEvent.Success)
                 }
             } catch (e: Exception) {
                 _uiEvent.send(UiEvent.Error(e.message.toString()))

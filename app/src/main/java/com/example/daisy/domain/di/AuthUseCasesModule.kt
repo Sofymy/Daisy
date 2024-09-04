@@ -1,6 +1,6 @@
 package com.example.daisy.domain.di
 
-import com.example.daisy.data.datasource.auth.AuthenticationRepository
+import com.example.daisy.data.datasource.auth.AuthenticationService
 import com.example.daisy.domain.usecases.auth.AuthUseCases
 import com.example.daisy.domain.usecases.auth.GetUserUidUseCase
 import com.example.daisy.domain.usecases.auth.IsSignedInUseCase
@@ -22,7 +22,7 @@ object AuthUseCasesModule {
     @Provides
     @Singleton
     fun provideAuthUseCases(
-        authenticationRepository: AuthenticationRepository,
+        authenticationService: AuthenticationService,
         getUserUidUseCase: GetUserUidUseCase,
         isSignedInUseCase: IsSignedInUseCase,
         signInUseCase: SignInUseCase,
@@ -32,7 +32,7 @@ object AuthUseCasesModule {
         resetPasswordUseCase: ResetPasswordUseCase
     ): AuthUseCases {
         return AuthUseCases(
-            repository = authenticationRepository,
+            repository = authenticationService,
             getUserUidUseCase = getUserUidUseCase,
             isSignedInUseCase = isSignedInUseCase,
             signInUseCase = signInUseCase,
@@ -46,56 +46,56 @@ object AuthUseCasesModule {
     @Provides
     @Singleton
     fun provideGetUserUidUseCase(
-        authenticationRepository: AuthenticationRepository
+        authenticationService: AuthenticationService
     ): GetUserUidUseCase {
-        return GetUserUidUseCase(authenticationRepository)
+        return GetUserUidUseCase(authenticationService)
     }
 
     @Provides
     @Singleton
     fun provideIsLoggedInUseCase(
-        authenticationRepository: AuthenticationRepository
+        authenticationService: AuthenticationService
     ): IsSignedInUseCase {
-        return IsSignedInUseCase(authenticationRepository)
+        return IsSignedInUseCase(authenticationService)
     }
 
     @Provides
     @Singleton
     fun provideSignInUseCase(
-        authenticationRepository: AuthenticationRepository
+        authenticationService: AuthenticationService
     ): SignInUseCase {
-        return SignInUseCase(authenticationRepository)
+        return SignInUseCase(authenticationService)
     }
 
     @Provides
     @Singleton
     fun provideSignInWithGoogleUseCase(
-        authenticationRepository: AuthenticationRepository
+        authenticationService: AuthenticationService
     ): SignInWithGoogleUseCase {
-        return SignInWithGoogleUseCase(authenticationRepository)
+        return SignInWithGoogleUseCase(authenticationService)
     }
 
     @Provides
     @Singleton
     fun provideLogoutUseCase(
-        authenticationRepository: AuthenticationRepository
+        authenticationService: AuthenticationService
     ): LogoutUseCase {
-        return LogoutUseCase(authenticationRepository)
+        return LogoutUseCase(authenticationService)
     }
 
     @Provides
     @Singleton
     fun provideRegisterUseCase(
-        authenticationRepository: AuthenticationRepository
+        authenticationService: AuthenticationService
     ): RegisterUseCase {
-        return RegisterUseCase(authenticationRepository = authenticationRepository)
+        return RegisterUseCase(authenticationService = authenticationService)
     }
 
     @Provides
     @Singleton
     fun provideResetPasswordUseCase(
-        authenticationRepository: AuthenticationRepository
+        authenticationService: AuthenticationService
     ): ResetPasswordUseCase {
-        return ResetPasswordUseCase(authenticationRepository)
+        return ResetPasswordUseCase(authenticationService)
     }
 }

@@ -2,19 +2,22 @@ package com.example.daisy.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.daisy.feature.auth.register.RegisterScreen
 import com.example.daisy.feature.auth.sign_in.SignInScreen
-import com.example.daisy.feature.create_calendar.CreateCalendarScreen
+import com.example.daisy.feature.created_calendars.CreatedCalendarsScreen
+import com.example.daisy.feature.new_calendar.NewCalendarScreen
 import com.example.daisy.feature.home.HomeScreen
 
 @ExperimentalMaterial3Api
 @Composable
-fun NavGraph() {
-    val navController = rememberNavController()
-
+fun NavGraph(
+    navController: NavHostController
+) {
     NavHost(navController, startDestination = Screen.SignIn) {
 
         composable<Screen.SignIn> {
@@ -37,14 +40,27 @@ fun NavGraph() {
 
         composable<Screen.Home> {
             HomeScreen(
-                onNavigateToCreateCalendar = {
-                    navController.navigate(Screen.CreateCalendar)
+                onNavigateToNewCalendar = {
+                    navController.navigate(Screen.NewCalendar)
+                },
+                onNavigateToCreatedCalendars = {
+                    navController.navigate(Screen.CreatedCalendars)
                 }
             )
         }
 
-        composable<Screen.CreateCalendar> {
-            CreateCalendarScreen()
+        composable<Screen.NewCalendar> {
+            NewCalendarScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home) {
+                        popUpTo(Screen.NewCalendar) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Screen.CreatedCalendars> {
+            CreatedCalendarsScreen()
         }
 
     }

@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
-package com.example.daisy.feature.create_calendar.pages
+package com.example.daisy.feature.new_calendar.pages
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -19,37 +17,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.daisy.feature.create_calendar.CreateCalendarUiState
-import com.example.daisy.feature.create_calendar.CreateCalendarViewModel
-import com.example.daisy.feature.create_calendar.CreateCalendarUserEvent
+import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
+import com.example.daisy.feature.new_calendar.NewCalendarViewModel
+import com.example.daisy.ui.model.CalendarUi
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
 @Composable
-fun CreateCalendarDate() {
-    CreateCalendarDateContent()
+fun NewCalendarDate(
+    onClickNext: () -> Unit
+) {
+    NewCalendarDateContent(onClickNext = onClickNext)
 }
 
 @Composable
-fun CreateCalendarDateContent(
-    viewModel: CreateCalendarViewModel = hiltViewModel()
+fun NewCalendarDateContent(
+    viewModel: NewCalendarViewModel = hiltViewModel(),
+    onClickNext: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    CreateCalendarDateForm(
+    NewCalendarDateForm(
         state = state,
         onFieldChange = { viewModel.onEvent(it) },
-        onClickNext = {  }
+        onClickNext = onClickNext
     )
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateCalendarDateForm(
-    state: CreateCalendarUiState,
-    onFieldChange: (CreateCalendarUserEvent) -> Unit,
+fun NewCalendarDateForm(
+    state: CalendarUi,
+    onFieldChange: (NewCalendarUserEvent) -> Unit,
     onClickNext: () -> Unit
 ) {
 
@@ -60,14 +62,14 @@ fun CreateCalendarDateForm(
     
     LaunchedEffect(dateRangeState.selectedEndDateMillis, dateRangeState.selectedStartDateMillis) {
         onFieldChange(
-            CreateCalendarUserEvent.StartChanged(
+            NewCalendarUserEvent.StartChanged(
                 convertMillisToLocalDate(
                     dateRangeState.selectedStartDateMillis ?: 0
                 )
             )
         )
         onFieldChange(
-            CreateCalendarUserEvent.EndChanged(
+            NewCalendarUserEvent.EndChanged(
                 convertMillisToLocalDate(
                     dateRangeState.selectedEndDateMillis ?: 0
                 )
@@ -94,7 +96,7 @@ fun CreateCalendarDateForm(
         )
 
         Button(
-            onClick = { onClickNext() },
+            onClick = onClickNext,
             enabled = isCalendarValueSet.value
         ) {
             Text("Next")

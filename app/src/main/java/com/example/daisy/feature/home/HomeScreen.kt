@@ -1,15 +1,22 @@
 package com.example.daisy.feature.home
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
 fun HomeScreen(
-    onNavigateToCreateCalendar: () -> Unit
+    onNavigateToNewCalendar: () -> Unit,
+    onNavigateToCreatedCalendars: () -> Unit
 ) {
-    Text(text = "Home")
-    Button(onClick = { onNavigateToCreateCalendar() }) {
+    Column {
+        Text(text = "Home")
+        Button(onClick = { onNavigateToNewCalendar() }) {
 
+        }
+        Button(onClick = { onNavigateToCreatedCalendars() }) {
+
+        }
     }
 }

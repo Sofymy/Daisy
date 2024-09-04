@@ -31,9 +31,6 @@ fun RegisterContent(
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when(event) {
-                is UiEvent.Loading -> {
-
-                }
                 is UiEvent.Success -> {
                     onNavigateToSignIn()
                 }

@@ -1,10 +1,10 @@
 package com.example.daisy.domain.usecases.auth
 
-import com.example.daisy.data.datasource.auth.AuthenticationRepository
+import com.example.daisy.data.datasource.auth.AuthenticationService
 import javax.inject.Inject
 
 class IsSignedInUseCase @Inject constructor(
-    private val authenticationRepository: AuthenticationRepository
+    private val authenticationService: AuthenticationService
 ) {
-    operator fun invoke() = authenticationRepository.isSignedIn
+    operator fun invoke() = authenticationService.isSignedIn
 }

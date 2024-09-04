@@ -1,23 +1,21 @@
 package com.example.daisy.data.datasource.auth
 
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialResponse
-import com.google.firebase.auth.AuthResult
+import com.example.daisy.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
-class AuthenticationRepositoryImpl @Inject constructor(
-    private val auth: FirebaseAuth
-) : AuthenticationRepository {
+class AuthenticationServiceImpl @Inject constructor(
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
+) : AuthenticationService {
 
     override val isSignedIn: Boolean get() = auth.currentUser != null
 
@@ -34,11 +32,14 @@ class AuthenticationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signInWithGoogle(token: String): Result<String>{
+    override suspend fun signInWithGoogle(token: String, email: String): Result<String>{
         return suspendCancellableCoroutine { continuation ->
             val authCredential = GoogleAuthProvider.getCredential(token, null)
             auth.signInWithCredential(authCredential)
-                .addOnSuccessListener { continuation.resume(Result.success(token))}
+                .addOnSuccessListener { it ->
+                    createUser(it.user?.let { User(it.uid, email) })
+                    continuation.resume(Result.success(token))
+                }
                 .addOnFailureListener { continuation.resumeWithException(it) }
 
         }
@@ -47,6 +48,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override suspend fun register(email: String, password: String) = suspendCancellableCoroutine { continuation ->
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
+                createUser(result.user?.let { User(it.uid, email) })
                 val user = result.user
                 val profileChangeRequest = UserProfileChangeRequest.Builder()
                     .setDisplayName(user?.email?.substringBefore('@'))
@@ -55,5 +57,12 @@ class AuthenticationRepositoryImpl @Inject constructor(
                 continuation.resume(Unit)
             }
             .addOnFailureListener { continuation.resumeWithException(it) }
+    }
+
+    private fun createUser(user: User?){
+        if (user != null) {
+            firestore.collection("users").document(user.uid).set(user, SetOptions.merge())
+        }
+
     }
 }

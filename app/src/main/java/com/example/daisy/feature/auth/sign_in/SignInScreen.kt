@@ -45,7 +45,7 @@ fun SignInScreen(
     }
 
     when {
-        isLoading -> LoadingScreen()
+        isLoading -> LoadingContent()
         state.isSignedIn == true -> LaunchedEffect(Unit) { onNavigateToHome() }
         else -> SignInContent(
             onNavigateToRegister = onNavigateToRegister,
@@ -58,7 +58,7 @@ fun SignInScreen(
 }
 
 @Composable
-fun LoadingScreen() {
+fun LoadingContent() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
@@ -74,7 +74,7 @@ fun LoadingScreen() {
 fun SignInContent(
     onNavigateToRegister: () -> Unit,
     onNavigateToHome: () -> Unit,
-    uiEvent: Flow<UiEvent<Any>>,
+    uiEvent: Flow<UiEvent>,
     signInState: SignInUiState,
     onSignInEvent: (SignInUserEvent) -> Unit
 ) {
@@ -83,7 +83,6 @@ fun SignInContent(
             when (event) {
                 is UiEvent.Success -> onNavigateToHome()
                 is UiEvent.Error -> Log.e("SignInContent", "Sign-in error: ${event.message}")
-                is UiEvent.Loading -> {}
             }
         }
     }
@@ -100,8 +99,8 @@ fun SignInContent(
             onClickSignIn = { onSignInEvent(SignInUserEvent.SignIn) }
         )
         Spacer(modifier = Modifier.height(16.dp))
-        SignInWithGoogleButton { token ->
-            onSignInEvent(SignInUserEvent.SignInWithGoogle(token))
+        SignInWithGoogleButton { token, email ->
+            onSignInEvent(SignInUserEvent.SignInWithGoogle(token, email))
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onNavigateToRegister) {
@@ -137,7 +136,7 @@ fun SignInForm(
 
 @Composable
 fun SignInWithGoogleButton(
-    onClickSignInWithGoogleButton: (String?) -> Unit
+    onClickSignInWithGoogleButton: (String?, String?) -> Unit,
 ) {
     val context = LocalContext.current
     val googleSignInClient = remember {
@@ -153,7 +152,7 @@ fun SignInWithGoogleButton(
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         try {
             val account = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            onClickSignInWithGoogleButton(account.result.idToken)
+            onClickSignInWithGoogleButton(account.result.idToken, account.result.email)
         } catch (e: ApiException) {
             Log.e("SignInWithGoogleButton", "Google sign-in failed", e)
         }

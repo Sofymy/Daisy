@@ -13,12 +13,29 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class RegisterUiState(
+    val email: String = "",
+    val password: String = "",
+    val confirmPassword: String = "",
+    val passwordVisibility: Boolean = false,
+    val confirmPasswordVisibility: Boolean = false
+)
+
+sealed class RegisterUserEvent {
+    data class EmailChanged(val email: String): RegisterUserEvent()
+    data class PasswordChanged(val password: String): RegisterUserEvent()
+    data class ConfirmPasswordChanged(val password: String): RegisterUserEvent()
+    data object PasswordVisibilityChanged: RegisterUserEvent()
+    data object ConfirmPasswordVisibilityChanged: RegisterUserEvent()
+    data object RegisterUser: RegisterUserEvent()
+}
+
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-    private val _uiEvent = Channel<UiEvent<Nothing>>()
+    private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     private var _state = MutableStateFlow(RegisterUiState())
@@ -54,7 +71,7 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 authUseCases.registerUseCase(state.value.email, state.value.password)
-                _uiEvent.send(UiEvent.Success(null))
+                _uiEvent.send(UiEvent.Success)
             } catch (e: Exception) {
                 _uiEvent.send(UiEvent.Error(e.message.toString()))
             }

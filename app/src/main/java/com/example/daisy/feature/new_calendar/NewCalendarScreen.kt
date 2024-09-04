@@ -1,4 +1,4 @@
-package com.example.daisy.feature.create_calendar
+package com.example.daisy.feature.new_calendar
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,61 +12,81 @@ import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.daisy.feature.create_calendar.pages.CreateCalendarDate
-import com.example.daisy.feature.create_calendar.pages.CreateCalendarRecipient
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.daisy.feature.new_calendar.pages.NewCalendarDate
+import com.example.daisy.feature.new_calendar.pages.NewCalendarRecipient
+import com.example.daisy.ui.util.UiEvent
 import kotlinx.coroutines.launch
 
 @Composable
-fun CreateCalendarScreen(){
-
-    CreateCalendarContent()
+fun NewCalendarScreen(
+    onNavigateToHome: () -> Unit
+){
+    NewCalendarContent(
+        onNavigateToHome = onNavigateToHome
+    )
 }
 
 @Composable
-fun CreateCalendarContent(
-
+fun NewCalendarContent(
+    viewModel: NewCalendarViewModel = hiltViewModel(),
+    onNavigateToHome: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
-    val pagerTabs = createCalendarPagerTabs()
     val scope = rememberCoroutineScope()
 
-    CreateCalendarTabs(
-        pagerTabs = pagerTabs,
-        currentPage = pagerState.currentPage,
-        onClick = {
-            scope.launch {
-                pagerState.scrollToPage(it)
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when(event) {
+                is UiEvent.Success -> {
+                    onNavigateToHome()
+                }
+                is UiEvent.Error -> {
+
+                }
             }
         }
-    )
+    }
 
     HorizontalPager(
-        state = pagerState
+        state = pagerState,
+        userScrollEnabled = false
     ) { page ->
         Column(modifier = Modifier.fillMaxSize()) {
-            CreateCalendarPagerContent(
+            NewCalendarPagerContent(
                 page = page,
+                onClickNext = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
+                },
+                onClickCreate = {
+                    viewModel.onEvent(NewCalendarUserEvent.CreateCalendar)
+                }
             )
         }
     }
 }
 
 @Composable
-fun CreateCalendarPagerContent(
-    page: Int
+fun NewCalendarPagerContent(
+    page: Int,
+    onClickNext: () -> Unit,
+    onClickCreate: () -> Unit
 ) {
     when (page) {
-        0 -> CreateCalendarDate()
-        1 -> CreateCalendarRecipient()
+        0 -> NewCalendarDate(onClickNext = onClickNext)
+        1 -> NewCalendarRecipient(onClickCreate = onClickCreate)
     }
 }
 
 @Composable
-fun CreateCalendarTabs(
-    pagerTabs: List<CreateCalendarPagerTab>,
+fun NewCalendarTabs(
+    pagerTabs: List<NewCalendarPagerTab>,
     currentPage: Int,
     onClick: (Int) -> Unit
 ) {
@@ -99,14 +119,14 @@ fun CreateCalendarTabs(
 }
 
 @Composable
-fun createCalendarPagerTabs(): List<CreateCalendarPagerTab> = listOf(
-    CreateCalendarPagerTab.DateRange,
-    CreateCalendarPagerTab.Recipient,
+fun newCalendarPagerTabs(): List<NewCalendarPagerTab> = listOf(
+    NewCalendarPagerTab.DateRange,
+    NewCalendarPagerTab.Recipient,
 )
 
-sealed class CreateCalendarPagerTab(
+sealed class NewCalendarPagerTab(
     val title: String,
 ) {
-    data object DateRange : CreateCalendarPagerTab("DateRange")
-    data object Recipient : CreateCalendarPagerTab("Recipient")
+    data object DateRange : NewCalendarPagerTab("DateRange")
+    data object Recipient : NewCalendarPagerTab("Recipient")
 }
