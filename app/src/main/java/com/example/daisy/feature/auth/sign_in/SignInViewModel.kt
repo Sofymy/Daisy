@@ -80,7 +80,7 @@ class SignInViewModel @Inject constructor(
     private fun signIn() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                authUseCases.signInUseCase(state.value.email, state.value.password)
+                authUseCases.signInWithEmailAndPasswordUseCase(state.value.email, state.value.password)
                 _uiEvent.send(UiEvent.Success)
             } catch (e: Exception) {
                 _uiEvent.send(UiEvent.Error(e.message.toString()))

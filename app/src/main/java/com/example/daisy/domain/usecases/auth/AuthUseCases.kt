@@ -6,7 +6,7 @@ class AuthUseCases(
     val repository: AuthenticationService,
     val getUserUidUseCase: GetUserUidUseCase,
     val isSignedInUseCase: IsSignedInUseCase,
-    val signInUseCase: SignInUseCase,
+    val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
     val logoutUseCase: LogoutUseCase,
     val registerUseCase: RegisterUseCase,
     val resetPasswordUseCase: ResetPasswordUseCase,

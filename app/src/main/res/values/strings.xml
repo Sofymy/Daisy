@@ -7,4 +7,7 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="navigate_to_sign_in">Navigate to sign in</string>
+    <string name="biometric_authentication">Biometric authentication</string>
+    <string name="place_your_finger_the_sensor_to_authenticate">Place your finger in the sensor</string>
+    <string name="cancel">Cancel</string>
 </resources>

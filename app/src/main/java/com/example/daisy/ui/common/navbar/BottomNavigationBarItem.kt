@@ -1,4 +1,4 @@
-package com.example.daisy.ui.common
+package com.example.daisy.ui.common.navbar
 
 import com.example.daisy.navigation.Screen
 import kotlinx.serialization.Serializable

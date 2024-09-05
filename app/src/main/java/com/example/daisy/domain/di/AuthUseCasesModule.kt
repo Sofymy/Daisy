@@ -7,7 +7,7 @@ import com.example.daisy.domain.usecases.auth.IsSignedInUseCase
 import com.example.daisy.domain.usecases.auth.LogoutUseCase
 import com.example.daisy.domain.usecases.auth.RegisterUseCase
 import com.example.daisy.domain.usecases.auth.ResetPasswordUseCase
-import com.example.daisy.domain.usecases.auth.SignInUseCase
+import com.example.daisy.domain.usecases.auth.SignInWithEmailAndPasswordUseCase
 import com.example.daisy.domain.usecases.auth.SignInWithGoogleUseCase
 import dagger.Module
 import dagger.Provides
@@ -25,7 +25,7 @@ object AuthUseCasesModule {
         authenticationService: AuthenticationService,
         getUserUidUseCase: GetUserUidUseCase,
         isSignedInUseCase: IsSignedInUseCase,
-        signInUseCase: SignInUseCase,
+        signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
         logoutUseCase: LogoutUseCase,
         registerUseCase: RegisterUseCase,
         signInWithGoogleUseCase: SignInWithGoogleUseCase,
@@ -35,7 +35,7 @@ object AuthUseCasesModule {
             repository = authenticationService,
             getUserUidUseCase = getUserUidUseCase,
             isSignedInUseCase = isSignedInUseCase,
-            signInUseCase = signInUseCase,
+            signInWithEmailAndPasswordUseCase = signInWithEmailAndPasswordUseCase,
             logoutUseCase = logoutUseCase,
             registerUseCase = registerUseCase,
             signInWithGoogleUseCase = signInWithGoogleUseCase,
@@ -61,10 +61,10 @@ object AuthUseCasesModule {
 
     @Provides
     @Singleton
-    fun provideSignInUseCase(
+    fun provideSignInWithEmailAndPasswordUseCase(
         authenticationService: AuthenticationService
-    ): SignInUseCase {
-        return SignInUseCase(authenticationService)
+    ): SignInWithEmailAndPasswordUseCase {
+        return SignInWithEmailAndPasswordUseCase(authenticationService)
     }
 
     @Provides

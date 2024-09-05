@@ -1,5 +1,7 @@
 [versions]
 agp = "8.5.0"
+biometric = "1.2.0-alpha05"
+coreSplashscreen = "1.0.1"
 hiltAndroid = "2.49"
 hiltAndroidCompiler = "2.49"
 hiltNavigationCompose = "1.2.0"
@@ -30,7 +32,9 @@ playServicesAuth = "21.2.0"
 firebaseFirestore = "25.1.0"
 
 [libraries]
+androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-runtime-ktx-v283 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-navigation = { module = "androidx.navigation:navigation", version.ref = "navigation" }

@@ -105,6 +105,11 @@ dependencies {
     //Google sign in
     implementation(libs.play.services.auth)
 
+    //Splash screen
+    implementation(libs.androidx.core.splashscreen)
+    //Biometrics
+    implementation(libs.androidx.biometric)
+
 }
 
 kapt {
