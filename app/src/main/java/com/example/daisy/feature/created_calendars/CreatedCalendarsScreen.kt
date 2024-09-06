@@ -77,6 +77,7 @@ fun CreatedCalendarItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(20.dp)
             .background(Color.White)
             .clickable { onClickItem(calendarUi.id) }
             .padding(20.dp)

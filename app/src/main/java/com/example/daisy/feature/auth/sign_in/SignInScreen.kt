@@ -5,9 +5,25 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -15,10 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.R
 import com.example.daisy.ui.util.Constants
@@ -27,10 +39,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.flow.Flow
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 
 @Composable
 fun SignInScreen(
@@ -38,11 +46,8 @@ fun SignInScreen(
     onNavigateToHome: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    HandleLifecycleEvents(
-        onResume = { viewModel.onEvent(SignInUserEvent.IsSignedId) }, lifecycleOwner = lifecycleOwner)
     HandleUiEvents(
         uiEvent = viewModel.uiEvent,
         onNavigateToHome = onNavigateToHome
@@ -207,24 +212,6 @@ fun SignInWithGoogleButton(
 
     Button(onClick = { launcher.launch(googleSignInClient.signInIntent) }) {
         Text(stringResource(R.string.sign_in_with_google))
-    }
-}
-
-@Composable
-fun HandleLifecycleEvents(
-    onResume: () -> Unit,
-    lifecycleOwner: LifecycleOwner
-) {
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                onResume()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
     }
 }
 

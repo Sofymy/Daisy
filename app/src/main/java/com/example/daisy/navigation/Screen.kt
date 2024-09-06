@@ -8,6 +8,9 @@ sealed class Screen(
     val resourceId: String
 ){
     @Serializable
+    data object Onboarding: Screen("Onboarding")
+
+    @Serializable
     data object SignIn: Screen("SignIn")
 
     @Serializable

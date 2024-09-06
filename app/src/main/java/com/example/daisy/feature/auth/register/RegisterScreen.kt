@@ -3,6 +3,7 @@ package com.example.daisy.feature.auth.register
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.R
+import com.example.daisy.ui.common.elements.SecondaryButton
 import com.example.daisy.ui.util.UiEvent
 import kotlinx.coroutines.flow.Flow
 
@@ -30,9 +32,9 @@ fun RegisterScreen(
         onNavigateToSignIn = onNavigateToSignIn
     )
 
-    RegisterForm(
+    RegisterContent(
         state = state,
-        onFieldChange = viewModel::onEvent,
+        onValueChange = viewModel::onEvent,
         onRegisterClick = { viewModel.onEvent(RegisterUserEvent.RegisterUser) },
         onNavigateToSignIn = onNavigateToSignIn
     )
@@ -55,31 +57,51 @@ fun HandleUiEvents(
 }
 
 @Composable
-fun RegisterForm(
+fun RegisterContent(
     state: RegisterUiState,
-    onFieldChange: (RegisterUserEvent) -> Unit,
+    onValueChange: (RegisterUserEvent) -> Unit,
     onRegisterClick: () -> Unit,
     onNavigateToSignIn: () -> Unit
 ) {
-    Column {
-        TextField(
-            value = state.email,
-            onValueChange = { onFieldChange(RegisterUserEvent.EmailChanged(it)) },
-            label = { Text(stringResource(R.string.email)) }
+    Column(
+        Modifier.padding(20.dp)
+    ) {
+        RegisterForm(
+            state = state,
+            onValueChange = onValueChange
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = state.password,
-            onValueChange = { onFieldChange(RegisterUserEvent.PasswordChanged(it)) },
-            label = { Text(stringResource(R.string.password)) }
+        RegisterButtons(
+            onRegisterClick = onRegisterClick,
+            onNavigateToSignIn = onNavigateToSignIn
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRegisterClick) {
-            Text(stringResource(R.string.register))
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onNavigateToSignIn) {
-            Text(stringResource(R.string.navigate_to_sign_in))
-        }
     }
+}
+
+@Composable
+fun RegisterButtons(
+    onRegisterClick: () -> Unit,
+    onNavigateToSignIn: () -> Unit
+) {
+    Spacer(modifier = Modifier.height(16.dp))
+    SecondaryButton(onClick = onRegisterClick) {
+        Text(stringResource(R.string.register))
+    }
+}
+
+@Composable
+fun RegisterForm(
+    state: RegisterUiState,
+    onValueChange: (RegisterUserEvent) -> Unit
+) {
+    TextField(
+        value = state.email,
+        onValueChange = { onValueChange(RegisterUserEvent.EmailChanged(it)) },
+        label = { Text(stringResource(R.string.email)) }
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    TextField(
+        value = state.password,
+        onValueChange = { onValueChange(RegisterUserEvent.PasswordChanged(it)) },
+        label = { Text(stringResource(R.string.password)) }
+    )
 }

@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SignInUiState(
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val email: String = "",
     val password: String = "",
     val passwordVisibility: Boolean = false,
@@ -27,7 +27,6 @@ sealed class SignInUserEvent {
     data class SignInWithGoogle(val token: String?, val email: String?) : SignInUserEvent()
     data object PasswordVisibilityChanged: SignInUserEvent()
     data object SignIn: SignInUserEvent()
-    data object IsSignedId: SignInUserEvent()
 }
 
 @HiltViewModel
@@ -48,9 +47,7 @@ class SignInViewModel @Inject constructor(
                 val newEmail = event.email.trim()
                 _state.update { it.copy(email = newEmail) }
             }
-            is SignInUserEvent.IsSignedId -> {
-                isSignedIn()
-            }
+
             is SignInUserEvent.SignIn -> {
                 signIn()
             }
@@ -62,18 +59,6 @@ class SignInViewModel @Inject constructor(
                 _state.update { it.copy(email = newPassword) }
             }
             SignInUserEvent.PasswordVisibilityChanged -> TODO()
-        }
-    }
-
-    private fun isSignedIn() {
-        viewModelScope.launch {
-            try {
-                val result = authUseCases.isSignedInUseCase()
-                _state.update { it.copy(isSignedIn = result, isLoading = false) }
-            } catch (e: Exception) {
-                _uiEvent.send(UiEvent.Error(e.message.toString()))
-                _state.update { it.copy(isLoading = false) }
-            }
         }
     }
 
