@@ -11,4 +11,5 @@
     <string name="place_your_finger_the_sensor_to_authenticate">Place your finger in the sensor</string>
     <string name="cancel">Cancel</string>
     <string name="already_has_an_account_sign_in">Already have an account? Sign in</string>
+    <string name="confirm_password">Confirm password</string>
 </resources>

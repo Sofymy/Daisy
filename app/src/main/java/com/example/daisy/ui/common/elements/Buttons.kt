@@ -5,9 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,41 +25,42 @@ import com.example.daisy.ui.theme.gradient
 fun PrimaryButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    content: @Composable () -> Unit
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
 ){
-
+    val roundedCornerShapePercent = 10
     val brush = createStripeBrush(
         stripeColor = Purple,
-        stripeWidth = 3.dp,
+        stripeWidth = 4.dp,
         stripeToGapRatio = 0.2f
     )
+    val borderWidth = 2.dp
 
     Box(
-        Modifier
-            .offset(10.dp)
-            .bounceClick(onClick)
-            .padding(vertical = 10.dp)
+        modifier
+            .bounceClick { if (enabled) onClick() }
     ) {
         Box(
             modifier
+                .graphicsLayer {
+                    translationX = 20f
+                    translationY = 20f
+                }
                 .matchParentSize()
-                .background(brush, RoundedCornerShape(30))
-                .border(1.dp, Purple, RoundedCornerShape(30))
+                .background(brush, RoundedCornerShape(roundedCornerShapePercent))
+                .border(borderWidth, Purple, RoundedCornerShape(roundedCornerShapePercent))
         )
         Box(
             modifier = modifier
-                .graphicsLayer {
-                    translationX = -20f
-                    translationY = -20f
-                }
-                .clip(RoundedCornerShape(30))
+                .border(borderWidth, Purple, RoundedCornerShape(roundedCornerShapePercent))
+                .clip(RoundedCornerShape(roundedCornerShapePercent))
                 .background(Color.White)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 Modifier
-                    .padding(10.dp),
+                    .padding(20.dp),
             ) {
                 content()
             }
@@ -71,36 +72,39 @@ fun PrimaryButton(
 fun SecondaryButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    content: @Composable () -> Unit
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
 ){
-
+    val roundedCornerShapePercent = 10
     val brush = Brush.linearGradient(gradient)
+    val borderWidth = 2.dp
 
     Box(
-        Modifier
-            .offset(10.dp)
-            .bounceClick(onClick)
-            .padding(start = 0.dp, end = 10.dp, top = 10.dp, bottom = 10.dp)
+        modifier
+            .bounceClick { if (enabled) onClick() }
+            .padding(bottom = 10.dp)
     ) {
         Box(
             modifier
                 .matchParentSize()
-                .background(Color.White, RoundedCornerShape(30))
+                .graphicsLayer {
+                    translationX = 20f
+                    translationY = 20f
+                }
+                .background(Purple, RoundedCornerShape(roundedCornerShapePercent))
+                .border(borderWidth, Purple, RoundedCornerShape(roundedCornerShapePercent))
         )
         Box(
             modifier = modifier
-                .graphicsLayer {
-                    translationX = -20f
-                    translationY = -20f
-                }
-                .clip(RoundedCornerShape(30))
-                .background(brush)
+                .border(borderWidth, Purple, RoundedCornerShape(roundedCornerShapePercent))
+                .clip(RoundedCornerShape(roundedCornerShapePercent))
+                .background(MaterialTheme.colorScheme.background)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 Modifier
-                    .padding(10.dp),
+                    .padding(20.dp),
             ) {
                 content()
             }

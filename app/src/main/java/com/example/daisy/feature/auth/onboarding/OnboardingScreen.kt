@@ -1,31 +1,38 @@
 package com.example.daisy.feature.auth.onboarding
 
-import android.util.Log
-import androidx.compose.animation.*
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.EaseInOutBounce
-import androidx.compose.animation.core.EaseOutBounce
-import androidx.compose.animation.core.EaseOutCubic
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.draw.*
-import androidx.compose.ui.geometry.*
-import androidx.compose.ui.graphics.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.platform.*
-import androidx.compose.ui.res.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -33,7 +40,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.R
@@ -41,13 +49,10 @@ import com.example.daisy.ui.common.elements.PrimaryButton
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.theme.DaisyTheme
-import com.example.daisy.ui.theme.Blue
+import com.example.daisy.ui.theme.LightPurple
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.random.Random
 
 @Preview
@@ -89,38 +94,7 @@ fun OnboardingContent(
     onNavigateToRegister: () -> Unit,
     onNavigateToSignIn: () -> Unit
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val showContent = remember { mutableStateOf(false) }
-
-    val giftSize = Random.nextInt(70, 120)
-    val gift = remember {
-        FallingGiftState(
-            color = Color.White,
-            startX = Random.nextInt(giftSize, screenWidth.value.toInt()).dp-giftSize.dp,
-            initialY = (-giftSize).dp - 20.dp,
-            finalY = screenHeight - giftSize.dp,
-            size = giftSize.dp
-        )
-    }
-
-    var giftIsOpen by remember { mutableStateOf(false) }
-    val giftTop = remember { Animatable(0f) }
-    val giftTranslatedX = remember { Animatable(0f) }
-    val giftTranslatedY = remember { Animatable(0f) }
-
-    val balloonSize = Random.nextInt(70, 120)
-    val balloon = remember {
-        FallingGiftState(
-            color = Purple,
-            startX = Random.nextInt(balloonSize, screenWidth.value.toInt()).dp-balloonSize.dp,
-            initialY = (-100).dp,
-            finalY = screenHeight - giftSize.dp,
-            size = balloonSize.dp
-        )
-    }
-    val balloonTranslatedY = remember { Animatable(0f) }
-    var balloonIsClicked by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         delay(100)
@@ -128,24 +102,8 @@ fun OnboardingContent(
     }
 
     Box(modifier = Modifier
-        .fillMaxSize()) {
-        OnboardingFallingGift(
-            gift = gift,
-            isOpenGift = giftIsOpen,
-            onChangeGiftState = { giftIsOpen = giftIsOpen.not() },
-            rotatedGiftTop = giftTop,
-            translatedX = giftTranslatedX,
-            translatedY = giftTranslatedY,
-        )
-
-        OnboardingFallingBalloon(
-            balloon = balloon,
-            isClickedBalloon = balloonIsClicked,
-            onClickBalloon = { balloonIsClicked = balloonIsClicked.not() },
-            screenHeight = screenHeight,
-            translatedY = balloonTranslatedY,
-        )
-
+        .fillMaxSize()
+    ) {
         OnboardingTextAndButtons(
             showContent = showContent.value,
             onNavigateToRegister = onNavigateToRegister,
@@ -154,181 +112,6 @@ fun OnboardingContent(
     }
 }
 
-@Composable
-fun OnboardingFallingBalloon(
-    balloon: FallingGiftState,
-    translatedY: Animatable<Float, AnimationVector1D>,
-    onClickBalloon: () -> Unit,
-    isClickedBalloon: Boolean,
-    screenHeight: Dp
-) {
-    val coroutineScope = rememberCoroutineScope()
-
-    val fallingAnimation = remember { Animatable(balloon.initialY.value) }
-
-    val targetY = if (isClickedBalloon) -screenHeight.toPx() + balloon.size.toPx() + 100 else -balloon.size.toPx() / 2
-
-
-
-    LaunchedEffect(balloon) {
-        coroutineScope.launch {
-            fallingAnimation.animateTo(
-                targetValue = balloon.finalY.value,
-                animationSpec = tween(durationMillis = (5000..9000).random(), easing = LinearOutSlowInEasing, delayMillis = 1000)
-            )
-        }
-    }
-
-
-    LaunchedEffect(isClickedBalloon) {
-        coroutineScope.launch {
-            translatedY.animateTo(
-                targetValue = targetY,
-                animationSpec = tween(durationMillis = 5000, easing = FastOutSlowInEasing)
-            )
-        }
-    }
-
-    OnboardingBalloonBox(
-        gift = balloon,
-        fallingAnimation = fallingAnimation,
-        translatedY = translatedY,
-        onClick = { onClickBalloon() }
-    )
-}
-
-@Composable
-fun OnboardingBalloonBox(
-    gift: FallingGiftState,
-    fallingAnimation: Animatable<Float, AnimationVector1D>,
-    translatedY: Animatable<Float, AnimationVector1D>,
-    onClick: () -> Unit
-) {
-    Column(
-        Modifier
-            .size(gift.size)
-            .offset { IntOffset(gift.startX.roundToPx(), fallingAnimation.value.dp.roundToPx()) }
-        ,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(R.drawable.heart_balloon),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(gift.color),
-            modifier = Modifier
-                .weight(1f)
-                .graphicsLayer {
-                    translationY = translatedY.value
-                }
-                .clickable(
-                    interactionSource = remember {
-                        MutableInteractionSource()
-                    },
-                    indication = null,
-                    onClick = onClick
-                )
-        )
-    }
-}
-
-@Composable
-fun OnboardingFallingGift(
-    gift: FallingGiftState,
-    isOpenGift: Boolean,
-    onChangeGiftState: (Boolean) -> Unit,
-    rotatedGiftTop: Animatable<Float, AnimationVector1D>,
-    translatedX: Animatable<Float, AnimationVector1D>,
-    translatedY: Animatable<Float, AnimationVector1D>
-) {
-    Log.d("eeeeeee", isOpenGift.toString())
-    val coroutineScope = rememberCoroutineScope()
-
-    val startFireworkInit = remember {
-        mutableStateOf(false)
-    }
-    val startFireworkParticles = remember {
-        mutableStateOf(false)
-    }
-    val finishedFireworkInit = {
-        startFireworkParticles.value = true
-    }
-    val fallingAnimation = remember { Animatable(gift.initialY.value) }
-    val animatedOffset = animateFloatAsState(targetValue = if(startFireworkInit.value) -(gift.size.value/2f) else -2.5f, finishedListener = { finishedFireworkInit() },
-        label = ""
-    )
-
-    val targetY = if (isOpenGift) -gift.size.value / 2 else 0f
-    val targetX = if (isOpenGift) gift.size.value else 0f
-    val fireworkInitiated: Boolean = isOpenGift
-    val fireworkInitColor = animateColorAsState(targetValue = if (startFireworkParticles.value) Color.Transparent else Color.White,
-        label = ""
-    )
-
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            fallingAnimation.animateTo(
-                targetValue = gift.finalY.value,
-                animationSpec = tween(durationMillis = (5000..9000).random(), easing = EaseOutCubic, delayMillis = 1000)
-            )
-        }
-    }
-
-    LaunchedEffect(isOpenGift){
-        coroutineScope.launch {
-            translatedY.animateTo(
-                targetValue = targetY,
-                animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
-            )
-            translatedX.animateTo(
-                targetValue = targetX,
-                animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
-            )
-            startFireworkInit.value = fireworkInitiated
-        }
-    }
-
-    LaunchedEffect(startFireworkParticles.value) {
-        if(startFireworkParticles.value){
-            delay(3000)
-            onChangeGiftState(false)
-        }
-    }
-
-    if(startFireworkInit.value && isOpenGift){
-        Box(
-            Modifier
-                .offset(
-                    gift.startX + gift.size / 2 - 2.5.dp,
-                    gift.finalY + gift.size / 2 + animatedOffset.value.dp
-                )
-                .background(fireworkInitColor.value, CircleShape)
-                .size(6.dp)) {
-        }
-    }
-
-    if (startFireworkParticles.value){
-        OnboardingFireworkEffect(
-            triggerPoint = Offset(gift.startX.toPx() + gift.size.toPx() / 2, gift.finalY.toPx())
-        )
-    }
-
-    OnboardingGiftBox(
-        gift = gift,
-        fallingAnimation = fallingAnimation,
-        rotatedGiftTop = rotatedGiftTop,
-        translatedX = translatedX,
-        translatedY = translatedY,
-        onClick = onChangeGiftState
-    )
-}
-
-
-@Composable
-fun Dp.toPx(): Float {
-    val density = LocalContext.current.resources.displayMetrics.density
-    return this.value * density
-}
 
 @Composable
 fun OnboardingTextAndButtons(
@@ -336,11 +119,17 @@ fun OnboardingTextAndButtons(
     onNavigateToRegister: () -> Unit,
     onNavigateToSignIn: () -> Unit
 ) {
+    val background = LightPurple
+
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         Column(
-            Modifier.padding(start = 40.dp, end = 40.dp)
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(0.dp, 0.dp, 0.dp, 40.dp))
+                .padding(start = 40.dp, end = 40.dp)
         ) {
             Spacer(modifier = Modifier.fillMaxHeight(0.3f))
             OnboardingTypewriterText(
@@ -350,8 +139,18 @@ fun OnboardingTextAndButtons(
                 parts = listOf("christmas.", "birthday.", "anniversary."),
                 gradient = gradient
             )
+            Spacer(modifier = Modifier.fillMaxHeight(0.4f))
         }
-
+        Box(
+            modifier = Modifier
+        ){
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(0.dp, 40.dp, 0.dp, 0.dp))
+                    .fillMaxWidth()
+                    .fillMaxSize(0.3f)
+            )
+        }
         AnimatedVisibility(
             enter = scaleIn(
                 animationSpec = spring(stiffness = Spring.StiffnessLow),
@@ -362,122 +161,23 @@ fun OnboardingTextAndButtons(
         ) {
             Column(
                 Modifier
+                    .fillMaxSize()
                     .padding(start = 40.dp, end = 40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-                PrimaryButton(onClick = onNavigateToRegister) {
+                PrimaryButton(onClick = onNavigateToRegister, content = {
                     Text(
                         stringResource(R.string.register),
                         color = Color.Black,
                         fontWeight = FontWeight.Bold
                     )
-                }
+                })
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(stringResource(R.string.already_has_an_account_sign_in), Modifier.clickable { onNavigateToSignIn() })
             }
         }
     }
 }
-
-
-@Composable
-fun OnboardingGiftBox(
-    gift: FallingGiftState,
-    fallingAnimation: Animatable<Float, AnimationVector1D>,
-    rotatedGiftTop: Animatable<Float, AnimationVector1D>,
-    translatedX: Animatable<Float, AnimationVector1D>,
-    translatedY: Animatable<Float, AnimationVector1D>,
-    onClick: (Boolean) -> Unit
-) {
-    Column(
-        Modifier
-            .size(gift.size)
-            .offset { IntOffset(gift.startX.roundToPx(), fallingAnimation.value.dp.roundToPx()) }
-            .clickable(
-                interactionSource = remember {
-                    MutableInteractionSource()
-                },
-                indication = null,
-                onClick = { onClick(true) }
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(R.drawable.gift_top),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(gift.color),
-            modifier = Modifier
-                .weight(1f)
-                .graphicsLayer {
-                    rotationZ = rotatedGiftTop.value
-                    translationX = translatedX.value * 1.5f
-                    translationY = translatedY.value / 2
-                }
-        )
-        Image(
-            painter = painterResource(R.drawable.gift_bottom),
-            contentDescription = null,
-            Modifier.weight(1f),
-            colorFilter = ColorFilter.tint(gift.color)
-        )
-    }
-}
-
-@Composable
-fun OnboardingFireworkEffect(
-    modifier: Modifier = Modifier,
-    triggerPoint: Offset,
-    particlesCount: Int = 30,
-    durationMillis: Int = 3000
-) {
-    val scope = rememberCoroutineScope()
-    var particles by remember { mutableStateOf(emptyList<FireworkParticle>()) }
-    val animatable = remember { Animatable(0f) }
-
-    LaunchedEffect(triggerPoint) {
-        particles = generateFireworkParticles(triggerPoint, particlesCount)
-        scope.launch { animatable.animateTo(1f, animationSpec = tween(durationMillis)) }
-        delay(durationMillis.toLong())
-        particles = emptyList()
-    }
-
-    Canvas(modifier = modifier.fillMaxSize()) {
-        particles.forEach { drawFireworkParticle(it, animatable.value) }
-    }
-}
-
-fun generateFireworkParticles(triggerPoint: Offset, particlesCount: Int): List<FireworkParticle> {
-    return List(particlesCount) {
-        val angle = (360 * it / particlesCount) * (Math.PI / 180)
-        FireworkParticle(
-            initialPosition = triggerPoint,
-            velocity = Offset(cos(angle).toFloat(), sin(angle).toFloat()) * Random.nextInt(0, 120)
-                .toFloat(),
-            color = listOf(Purple, Color.White, Blue).random()
-        )
-    }
-}
-
-fun DrawScope.drawFireworkParticle(particle: FireworkParticle, animProgress: Float) {
-    val position = particle.initialPosition + particle.velocity * animProgress
-    drawCircle(particle.color, radius = 2.dp.toPx(), center = position)
-}
-
-data class FireworkParticle(
-    val initialPosition: Offset,
-    val velocity: Offset,
-    val color: Color
-)
-
-data class FallingGiftState(
-    val color: Color,
-    val startX: Dp,
-    val initialY: Dp,
-    val finalY: Dp,
-    val size: Dp
-)
-
 
 // SOURCE: https://blog.canopas.com/jetpack-compose-typewriter-animation-with-highlighted-texts-74397fee42f1
 
@@ -593,4 +293,17 @@ fun TextLayoutResult.getBoundingBoxesForRange(start: Int, end: Int): List<Rect> 
         prevRect = rect
     }
     return boundingBoxes
+}
+
+fun DrawScope.drawRandomCircles(count: Int) {
+    for (i in 0 until count) {
+        val radius = Random.nextInt(2, 8).toFloat()
+        val x = Random.nextFloat() * size.width
+        val y = Random.nextFloat() * size.height
+        drawCircle(
+            color = Color.White.copy(0.2f),
+            radius = radius,
+            center = androidx.compose.ui.geometry.Offset(x, y)
+        )
+    }
 }

@@ -25,3 +25,38 @@ fun createStripeBrush(
         tileMode = TileMode.Repeated
     )
 }
+
+fun createHorizontalStripeBrush(
+    stripeColor: Color,
+    stripeWidth: Dp,
+    stripeToGapRatio: Float
+): Brush {
+    val stripeWidthPx = stripeWidth.value
+    val stripeGapWidthPx = stripeWidthPx / stripeToGapRatio
+    val brushSizePx = stripeGapWidthPx + stripeWidthPx
+    val stripeStart = stripeGapWidthPx / brushSizePx
+
+    return Brush.linearGradient(
+        stripeStart to Color.Transparent, stripeStart to stripeColor,
+        start = Offset(0f, brushSizePx),
+        end = Offset(0f, 0f),
+        tileMode = TileMode.Repeated
+    )
+}
+
+fun createVerticalStripeBrush(
+    stripeColor: Color,
+    stripeWidth: Dp,
+    stripeToGapRatio: Float
+): Brush {
+    val stripeWidthPx = stripeWidth.value
+    val stripeGapWidthPx = stripeWidthPx / stripeToGapRatio
+    val brushSizePx = stripeGapWidthPx + stripeWidthPx
+    val stripeStart = stripeGapWidthPx / brushSizePx
+
+    return Brush.linearGradient(
+        0.4f to Color.Transparent, stripeStart to stripeColor, stripeStart to Color.Transparent,
+        start = Offset(brushSizePx, brushSizePx),
+        end = Offset(0f, brushSizePx)
+    )
+}

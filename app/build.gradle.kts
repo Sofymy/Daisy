@@ -110,6 +110,11 @@ dependencies {
     //Biometrics
     implementation(libs.androidx.biometric)
 
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
+
+
 }
 
 kapt {

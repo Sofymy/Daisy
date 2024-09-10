@@ -1,6 +1,7 @@
 package com.example.daisy
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.daisy.feature.auth.onboarding.drawRandomCircles
 import com.example.daisy.navigation.NavGraph
 import com.example.daisy.navigation.Screen
 import com.example.daisy.ui.common.navbar.BottomNavigationBar
@@ -74,6 +76,11 @@ fun MainScreen() {
                 modifier = Modifier
                     .padding(innerPadding),
             ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawRandomCircles(30)
+                    }
+                }
                 NavGraph(
                     navController = navController,
                     onTopNavigationBarTitleChange = {
