@@ -24,8 +24,6 @@ data class RegisterUiState(
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
-    val passwordVisibility: Boolean = false,
-    val confirmPasswordVisibility: Boolean = false,
     val registerValidation: RegisterValidation = RegisterValidation()
 )
 
@@ -33,8 +31,6 @@ sealed class RegisterUserEvent {
     data class EmailChanged(val email: String): RegisterUserEvent()
     data class PasswordChanged(val password: String): RegisterUserEvent()
     data class ConfirmPasswordChanged(val password: String): RegisterUserEvent()
-    data object PasswordVisibilityChanged: RegisterUserEvent()
-    data object ConfirmPasswordVisibilityChanged: RegisterUserEvent()
     data object RegisterUser: RegisterUserEvent()
 }
 
@@ -66,12 +62,6 @@ class RegisterViewModel @Inject constructor(
             is RegisterUserEvent.ConfirmPasswordChanged -> {
                 val newConfirmPassword = event.password.trim()
                 _state.update { it.copy(confirmPassword = newConfirmPassword) }
-            }
-            RegisterUserEvent.PasswordVisibilityChanged -> {
-                _state.update { it.copy(passwordVisibility = !state.value.passwordVisibility) }
-            }
-            RegisterUserEvent.ConfirmPasswordVisibilityChanged -> {
-                _state.update { it.copy(confirmPasswordVisibility = !state.value.confirmPasswordVisibility) }
             }
             RegisterUserEvent.RegisterUser -> {
                 register()

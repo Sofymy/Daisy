@@ -1,5 +1,6 @@
 package com.example.daisy.ui.common.elements
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.daisy.ui.common.animations.bounceClick
 import com.example.daisy.ui.common.brushes.createStripeBrush
+import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient
 
@@ -35,6 +37,9 @@ fun PrimaryButton(
         stripeToGapRatio = 0.2f
     )
     val borderWidth = 2.dp
+    val backgroundColor = animateColorAsState(targetValue = if(enabled) Color.White else DarkGrey,
+        label = ""
+    )
 
     Box(
         modifier

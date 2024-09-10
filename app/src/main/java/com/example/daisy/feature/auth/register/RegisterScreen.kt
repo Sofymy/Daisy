@@ -11,7 +11,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,12 +30,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,12 +62,14 @@ import com.example.daisy.ui.common.brushes.createHorizontalStripeBrush
 import com.example.daisy.ui.common.brushes.createVerticalStripeBrush
 import com.example.daisy.ui.common.elements.PrimaryButton
 import com.example.daisy.ui.common.elements.PrimaryTextField
+import com.example.daisy.ui.common.elements.RectangleWithCutCorners
 import com.example.daisy.ui.theme.Blue
+import com.example.daisy.ui.theme.DarkBlue
+import com.example.daisy.ui.theme.LightBlue
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient
 import com.example.daisy.ui.util.UiEvent
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -114,19 +115,20 @@ fun RegisterContent(
     onRegisterClick: () -> Unit,
     onNavigateToSignIn: () -> Unit
 ) {
-    val showContent = remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        delay(100)
-        showContent.value = true
-    }
 
     LazyColumn(
     ) {
         item {
-            RegisterChecklistAnimation(
-                state = state
-            )
+            AuthChecklistAnimation{
+                Text(text = buildAnnotatedString {
+                    withStyle(SpanStyle(brush = Brush.linearGradient(gradient), fontWeight = FontWeight.Black)) {
+                        append("SIGN UP TO-DO")
+                    }
+                }, Modifier.padding(start = 20.dp))
+                AuthFormChecklistItem("Valid email", state.registerValidation.isEmailValid)
+                AuthFormChecklistItem("Password length", state.registerValidation.hasPasswordLength)
+                AuthFormChecklistItem("Passwords matching", state.registerValidation.isPasswordsMatching)
+            }
         }
         item {
             RegisterFormAndButtons(
@@ -134,7 +136,7 @@ fun RegisterContent(
                 onValueChange = onValueChange,
                 onRegisterClick = onRegisterClick,
                 onNavigateToSignIn = onNavigateToSignIn,
-                enabled = !state.registerValidation.hasError
+                enabled = !state.registerValidation.successful
             )
         }
     }
@@ -152,7 +154,7 @@ fun RegisterFormAndButtons(
         Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .background(MediumGrey, RoundedCornerShape(10, 10, 10, 10))
+            .background(MediumGrey, RectangleWithCutCorners())
     ) {
         Box(Modifier
             .fillMaxSize()
@@ -185,7 +187,7 @@ fun RegisterFormAndButtons(
             RegisterButtons(
                 onRegisterClick = onRegisterClick,
                 onNavigateToSignIn = onNavigateToSignIn,
-                enabled = !state.registerValidation.hasError
+                enabled = state.registerValidation.successful
             )
         }
     }
@@ -193,13 +195,16 @@ fun RegisterFormAndButtons(
 }
 
 @Composable
-fun RegisterChecklistAnimation(
-    state: RegisterUiState
+fun AuthChecklistAnimation(
+    content: @Composable () -> Unit
 ) {
+
     val infiniteTransition = rememberInfiniteTransition(label = "")
+
+
     val rotate by infiniteTransition.animateFloat(
-        initialValue = -3f,
-        targetValue = 3f,
+        initialValue = -5f,
+        targetValue = 5f,
         animationSpec = infiniteRepeatable(tween(3000), repeatMode = RepeatMode.Reverse),
         label = ""
     )
@@ -218,62 +223,77 @@ fun RegisterChecklistAnimation(
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier
-            .padding(horizontal = 100.dp, vertical = 60.dp)
+            .padding(start = 100.dp, end = 100.dp, top = 40.dp, bottom = 40.dp)
     ) {
         Box(
             Modifier
                 .align(Alignment.TopCenter)
+                .offset(-rotate.dp, 0.dp)
                 .graphicsLayer {
                     rotationZ = rotate
-                    rotationY = rotate
                 }
                 .aspectRatio(1f)
-                .background(Color.White, RoundedCornerShape(5))
-                .background(brushHorizontal, RoundedCornerShape(5))
-                .background(brushVertical, RoundedCornerShape(5))
-                .fillMaxHeight(0.5f)
-                .fillMaxWidth()) {
-        }
+                .background(Color.White, RoundedCornerShape(2))
+                .background(brushHorizontal, RoundedCornerShape(2))
+                .background(brushVertical, RoundedCornerShape(2))
+                .fillMaxWidth()
+        )
+
         Column(
             horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Box(
-                Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 10.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray)
-                    .size(30.dp)
-                    .border((30 / 4).dp, Color.LightGray, CircleShape)
-            )
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    Modifier
+                        .offset(y = (3).dp)
+                        .clip(CircleShape)
+                        .background(Color.LightGray)
+                        .size(35.dp)
+                )
+                Box(
+                    Modifier
+                        .offset(y = (0).dp)
+                        .clip(CircleShape)
+                        .background(Blue)
+                        .size(35.dp)
+                )
+                Box(
+                    Modifier
+                        .offset(y = (-12).dp)
+                        .clip(CircleShape)
+                        .background(DarkBlue)
+                        .size(22.dp)
+                )
+                Box(
+                    Modifier
+                        .offset(y = (-15).dp)
+                        .clip(CircleShape)
+                        .background(LightBlue)
+                        .size(22.dp)
+                )
+            }
+
             Column(
                 Modifier
-                    .padding(top = 5.dp)
-                    .fillMaxWidth()
+                    .offset(-rotate.dp, 0.dp)
                     .graphicsLayer {
                         rotationZ = rotate
-                        rotationY = rotate
                     }
+                    .padding(top = 5.dp)
+                    .fillMaxWidth()
             ) {
-                Text(text = buildAnnotatedString {
-                    withStyle(SpanStyle(brush = Brush.linearGradient(gradient), fontWeight = FontWeight.Black)) {
-                        append("SIGN UP TO-DO")
-                    }
-                }, Modifier.padding(start = 20.dp))
-                RegisterFormChecklistItem("Valid email", state.registerValidation.isEmailValid)
-                RegisterFormChecklistItem("Password length", state.registerValidation.hasPasswordLength)
-                RegisterFormChecklistItem("Passwords matching", state.registerValidation.isPasswordsMatching)
+                content()
             }
         }
     }
-
-
 }
 
 @Composable
-fun RegisterFormChecklistItem(
+fun AuthFormChecklistItem(
     text: String,
     isValid: Boolean
 ) {
@@ -297,7 +317,7 @@ fun RegisterFormChecklistItem(
         Row {
             RegisterCheckmark(isChecked = isValid)
             Spacer(modifier = Modifier.width(10.dp))
-            Text(text = text, color = color.value, textDecoration = if(isValid) TextDecoration.LineThrough else TextDecoration.None)
+            Text(text = text, color = color.value, textDecoration = if(isValid) TextDecoration.LineThrough else TextDecoration.None, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

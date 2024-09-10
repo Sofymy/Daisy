@@ -1,9 +1,21 @@
 package com.example.daisy.feature.auth.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.EaseInElastic
+import androidx.compose.animation.core.EaseInOutQuart
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +24,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -32,6 +48,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -40,18 +58,22 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.R
 import com.example.daisy.ui.common.elements.PrimaryButton
+import com.example.daisy.ui.common.elements.WavyShape
+import com.example.daisy.ui.common.for_later_use.toPx
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.theme.DaisyTheme
 import com.example.daisy.ui.theme.LightPurple
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient
+import com.example.daisy.ui.theme.gradient2
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -95,21 +117,46 @@ fun OnboardingContent(
     onNavigateToSignIn: () -> Unit
 ) {
     val showContent = remember { mutableStateOf(false) }
+    val showShootingStar = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         delay(100)
         showContent.value = true
+        delay(500)
+        showShootingStar.value = true
     }
 
     Box(modifier = Modifier
         .fillMaxSize()
     ) {
+        OnboardingShootingStar(showShootingStar.value)
         OnboardingTextAndButtons(
             showContent = showContent.value,
             onNavigateToRegister = onNavigateToRegister,
             onNavigateToSignIn = onNavigateToSignIn
         )
     }
+}
+
+@Composable
+fun OnboardingShootingStar(
+    value: Boolean
+) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val animateShootingStarX = animateIntAsState(targetValue = if(value) screenWidth.toPx().toInt()+30 else -30,
+        label = "", animationSpec = tween(2000, easing = FastOutSlowInEasing)
+    )
+    val animateShootingStarY = animateIntAsState(targetValue = if(value) 400 else 0,
+        label = "", animationSpec = tween(2000, easing = FastOutSlowInEasing)
+    )
+
+    Box(
+        Modifier
+            .offset { IntOffset(animateShootingStarX.value, animateShootingStarY.value) }
+            .size(10.dp)
+            .background(Color.White, CircleShape)
+    )
+
 }
 
 
@@ -131,7 +178,7 @@ fun OnboardingTextAndButtons(
                 .clip(RoundedCornerShape(0.dp, 0.dp, 0.dp, 40.dp))
                 .padding(start = 40.dp, end = 40.dp)
         ) {
-            Spacer(modifier = Modifier.fillMaxHeight(0.3f))
+            Spacer(modifier = Modifier.fillMaxHeight(0.4f))
             OnboardingTypewriterText(
                 baseText = "Create ",
                 highlightedText = "calendars\n",
@@ -140,16 +187,6 @@ fun OnboardingTextAndButtons(
                 gradient = gradient
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-        }
-        Box(
-            modifier = Modifier
-        ){
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(0.dp, 40.dp, 0.dp, 0.dp))
-                    .fillMaxWidth()
-                    .fillMaxSize(0.3f)
-            )
         }
         AnimatedVisibility(
             enter = scaleIn(
@@ -168,7 +205,7 @@ fun OnboardingTextAndButtons(
                 PrimaryButton(onClick = onNavigateToRegister, content = {
                     Text(
                         stringResource(R.string.register),
-                        color = Color.Black,
+                        color = Purple,
                         fontWeight = FontWeight.Bold
                     )
                 })
@@ -293,17 +330,4 @@ fun TextLayoutResult.getBoundingBoxesForRange(start: Int, end: Int): List<Rect> 
         prevRect = rect
     }
     return boundingBoxes
-}
-
-fun DrawScope.drawRandomCircles(count: Int) {
-    for (i in 0 until count) {
-        val radius = Random.nextInt(2, 8).toFloat()
-        val x = Random.nextFloat() * size.width
-        val y = Random.nextFloat() * size.height
-        drawCircle(
-            color = Color.White.copy(0.2f),
-            radius = radius,
-            center = androidx.compose.ui.geometry.Offset(x, y)
-        )
-    }
 }

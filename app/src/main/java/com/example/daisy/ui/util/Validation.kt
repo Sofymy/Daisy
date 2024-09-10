@@ -7,7 +7,15 @@ data class RegisterValidation(
     val hasPasswordLength: Boolean = false,
     val isPasswordsMatching: Boolean = false,
     val isEmailValid: Boolean = false,
-    val hasError: Boolean = true
+    val successful: Boolean = false
+)
+
+
+data class SignInValidation(
+    val isPasswordNotEmpty: Boolean = false,
+    val isEmailValid: Boolean = false,
+    val isSignInHit: Boolean = false,
+    val successful: Boolean = false
 )
 
 class ValidateRegister {
@@ -36,7 +44,38 @@ class ValidateRegister {
             hasPasswordLength = validPasswordLength,
             isEmailValid = validEmail,
             isPasswordsMatching = validPasswords,
-            hasError = hasError
+            successful = hasError
+        )
+    }
+}
+
+class ValidateSignIn {
+    private fun validateEmail(email: String): Boolean =
+        Patterns.EMAIL_ADDRESS.matcher(email).matches()
+
+    private fun validatePasswordNotEmpty(password: String): Boolean =
+        password.isNotBlank()
+
+    private fun validateSignInHit(): Boolean =
+        false
+
+    fun execute(password: String, email: String): SignInValidation {
+
+        val validPasswordNotEmpty = validatePasswordNotEmpty(password)
+        val validEmail = validateEmail(email)
+        val validSignInHit = validateSignInHit()
+
+        val hasError = listOf(
+            validPasswordNotEmpty,
+            validEmail,
+            validSignInHit
+        ).all { it }
+
+        return SignInValidation(
+            isPasswordNotEmpty = validPasswordNotEmpty,
+            isEmailValid = validEmail,
+            isSignInHit = validSignInHit,
+            successful = hasError
         )
     }
 }

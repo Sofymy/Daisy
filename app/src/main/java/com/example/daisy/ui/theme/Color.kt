@@ -9,6 +9,10 @@ val Green = Color(0xFF00796B)
 
 val Purple = Color(0xFF6650a4)
 val Blue = Color(0xFF00796B)
+val LightBlue = Color(0xFF368F85)
+val DarkBlue = Color(0xFF006358)
+
+
 val LightPurple = Color(0xFFD0C8E7)
 
 val Purple40 = Color(0xFF6650a4)
@@ -19,3 +23,5 @@ val DarkGrey = Color(0xFF131313)
 val MediumGrey = Color(0xFF202020)
 
 val gradient = listOf(Blue, Purple)
+
+val gradient2 = listOf(Color.Transparent, Color.Transparent, Blue, Purple, Color.Transparent, Color.Transparent)

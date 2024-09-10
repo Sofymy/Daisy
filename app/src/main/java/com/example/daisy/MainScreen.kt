@@ -16,15 +16,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.daisy.feature.auth.onboarding.drawRandomCircles
 import com.example.daisy.navigation.NavGraph
 import com.example.daisy.navigation.Screen
 import com.example.daisy.ui.common.navbar.BottomNavigationBar
 import com.example.daisy.ui.common.navbar.TopNavigationBar
 import com.example.daisy.ui.theme.DaisyTheme
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +42,9 @@ fun MainScreen() {
     var showBottomSheet by remember { mutableStateOf(false) }
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val topBarState = rememberSaveable { (mutableStateOf(false)) }
+
+    // Memorize the circles so they don't get recomposed every time
+    val circles = remember { generateRandomCircles(30) }
 
     LaunchedEffect(navBackStackEntry?.destination?.route) {
         when (navBackStackEntry?.destination?.route) {
@@ -58,7 +63,7 @@ fun MainScreen() {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                if(topBarState.value)
+                if (topBarState.value)
                     TopNavigationBar(
                         navController = navController,
                         topNavigationBarTitle = topNavigationBarTitle,
@@ -68,7 +73,7 @@ fun MainScreen() {
                     )
             },
             bottomBar = {
-                if(bottomBarState.value)
+                if (bottomBarState.value)
                     BottomNavigationBar(navController = navController)
             }
         ) { innerPadding ->
@@ -78,7 +83,7 @@ fun MainScreen() {
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Canvas(modifier = Modifier.fillMaxSize()) {
-                        drawRandomCircles(30)
+                        drawCircles(circles)
                     }
                 }
                 NavGraph(
@@ -91,3 +96,29 @@ fun MainScreen() {
         }
     }
 }
+
+fun generateRandomCircles(count: Int): List<CircleData> {
+    return List(count) {
+        val radius = Random.nextInt(2, 8).toFloat()
+        val x = Random.nextFloat()
+        val y = Random.nextFloat()
+        CircleData(radius, x, y)
+    }
+}
+
+fun DrawScope.drawCircles(circles: List<CircleData>) {
+    circles.forEach { circle ->
+        drawCircle(
+            color = Color.White.copy(0.4f),
+            radius = circle.radius,
+            center = Offset(circle.x * size.width, circle.y * size.height)
+        )
+    }
+}
+
+data class CircleData(
+    val radius: Float,
+    val x: Float,
+    val y: Float
+)
+

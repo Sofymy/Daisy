@@ -7,32 +7,70 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AlternateEmail
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.R
+import com.example.daisy.feature.auth.register.AuthChecklistAnimation
+import com.example.daisy.feature.auth.register.AuthFormChecklistItem
+import com.example.daisy.ui.common.elements.PrimaryButton
+import com.example.daisy.ui.common.elements.PrimaryTextField
+import com.example.daisy.ui.common.elements.RectangleWithCutCorners
+import com.example.daisy.ui.common.elements.SecondaryButton
+import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.Purple
+import com.example.daisy.ui.theme.gradient
 import com.example.daisy.ui.util.Constants
 import com.example.daisy.ui.util.UiEvent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -87,19 +125,23 @@ fun SignInContent(
     onSignInClick: () -> Unit,
     onGoogleSignIn: (String?, String?) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        SignInForm(state, onFieldChange, onSignInClick)
-        Spacer(modifier = Modifier.height(16.dp))
-        SignInWithGoogleButton(onGoogleSignIn)
-        SignInWithFingerprintButton()
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onNavigateToRegister) {
-            Text(stringResource(R.string.register))
+    LazyColumn() {
+        item {
+            AuthChecklistAnimation{
+                Text(text = buildAnnotatedString {
+                    withStyle(SpanStyle(brush = Brush.linearGradient(gradient), fontWeight = FontWeight.Black)) {
+                        append("SIGN IN TO-DO")
+                    }
+                }, Modifier.padding(start = 20.dp))
+                AuthFormChecklistItem("Valid email", state.signInValidation.isEmailValid)
+                AuthFormChecklistItem("Remember your super-secret password", state.signInValidation.isPasswordNotEmpty)
+                AuthFormChecklistItem("Hit Sign in button", state.signInValidation.isSignInHit)
+            }
+        }
+        item {
+            SignInForm(state = state, onFieldChange = onFieldChange, onGoogleSignIn = onGoogleSignIn) {
+                onSignInClick()
+            }
         }
     }
 }
@@ -167,23 +209,57 @@ fun fingerprintAuthenticate(
 fun SignInForm(
     state: SignInUiState,
     onFieldChange: (SignInUserEvent) -> Unit,
-    onClickSignIn: () -> Unit
+    onGoogleSignIn: (String?, String?) -> Unit,
+    onClickSignIn: () -> Unit,
 ) {
-    Column {
-        TextField(
-            value = state.email,
-            onValueChange = { onFieldChange(SignInUserEvent.EmailChanged(it)) },
-            label = { Text(stringResource(R.string.email)) }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = state.password,
-            onValueChange = { onFieldChange(SignInUserEvent.PasswordChanged(it)) },
-            label = { Text(stringResource(R.string.password)) }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onClickSignIn) {
-            Text(stringResource(R.string.sign_in))
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+            .background(MediumGrey, RectangleWithCutCorners())
+    ) {
+        Box(Modifier
+            .fillMaxSize()
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                val trianglePath = Path().let {
+                    it.moveTo(this.size.width * .40f, 0f)
+                    it.lineTo(this.size.width * .50f, -70f)
+                    it.lineTo(this.size.width * .60f, 0f)
+                    it.close()
+                    it
+                }
+                drawPath(
+                    path = trianglePath,
+                    MediumGrey
+                )
+            }
+        }
+        Column(
+            Modifier.padding(top = 20.dp)
+        ) {
+            PrimaryTextField(
+                value = state.email,
+                onValueChange = { onFieldChange(SignInUserEvent.EmailChanged(it)) },
+                label = stringResource(R.string.email),
+                icon = Icons.Default.AlternateEmail
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            PrimaryTextField(
+                value = state.password,
+                keyboardType = KeyboardType.Password,
+                onValueChange = { onFieldChange(SignInUserEvent.PasswordChanged(it)) },
+                label = stringResource(R.string.password),
+                icon = Icons.Default.Password
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            PrimaryButton(onClick = onClickSignIn, modifier = Modifier.padding(horizontal = 10.dp)) {
+                Text(stringResource(R.string.sign_in), color = Purple, fontWeight = FontWeight.Bold)
+            }
+            SignInWithGoogleButton(onGoogleSignIn)
         }
     }
 }
@@ -209,9 +285,32 @@ fun SignInWithGoogleButton(
             Log.e("SignInWithGoogleButton", "Google sign-in failed", e)
         }
     }
-
-    Button(onClick = { launcher.launch(googleSignInClient.signInIntent) }) {
-        Text(stringResource(R.string.sign_in_with_google))
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.padding(top = 40.dp)
+    ) {
+        HorizontalDivider(color = Color.White, modifier = Modifier.padding(20.dp), thickness = 2.dp)
+        Text("or", Modifier
+            .background(MediumGrey)
+            .padding(horizontal = 20.dp)
+        )
+    }
+    SecondaryButton(
+        onClick = { launcher.launch(googleSignInClient.signInIntent) },
+        modifier = Modifier.padding(10.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(id = R.drawable.ic_google_logo),
+                contentScale = ContentScale.Fit,
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(stringResource(R.string.sign_in_with_google), fontWeight = FontWeight.Bold)
+        }
     }
 }
 
