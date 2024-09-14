@@ -8,4 +8,5 @@ interface CalendarRepository{
     fun getCreatedCalendars(): Flow<List<Calendar?>>
     fun getReceivedCalendars(): Flow<List<Calendar?>>
     fun getCreatedCalendar(id: String): Flow<Calendar?>
+    suspend fun addReceivedCalendarByCode(code: String)
 }

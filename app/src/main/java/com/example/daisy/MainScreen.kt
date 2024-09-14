@@ -4,7 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -19,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.daisy.navigation.NavGraph
@@ -43,7 +48,6 @@ fun MainScreen() {
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val topBarState = rememberSaveable { (mutableStateOf(false)) }
 
-    // Memorize the circles so they don't get recomposed every time
     val circles = remember { generateRandomCircles(30) }
 
     LaunchedEffect(navBackStackEntry?.destination?.route) {
@@ -53,8 +57,8 @@ fun MainScreen() {
                 topBarState.value = false
             }
             else -> {
+                topBarState.value = navBackStackEntry?.destination?.route != Screen.Home::class.qualifiedName.toString()
                 bottomBarState.value = true
-                topBarState.value = true
             }
         }
     }

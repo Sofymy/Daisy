@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.model.toDomain
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.ui.model.CalendarUi
-import com.example.daisy.ui.model.RecipientOptionUi
+import com.example.daisy.ui.model.UserUi
 import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,16 +16,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlin.random.Random
 
 data class NewCalendarUiState(
     val calendar: CalendarUi,
-    val calendarOption: RecipientOptionUi.RecipientByCode
 )
 
 sealed class NewCalendarUserEvent {
     data class StartChanged(val dateStart: LocalDate): NewCalendarUserEvent()
     data class EndChanged(val dateEnd: LocalDate): NewCalendarUserEvent()
-    data class RecipientNameChanged(val recipientName: String): NewCalendarUserEvent()
+    data object RecipientOptionSelected: NewCalendarUserEvent()
+    data object CodeOptionSelected: NewCalendarUserEvent()
     data class RecipientEmailChanged(val recipientEmail: String): NewCalendarUserEvent()
     data object CreateCalendar : NewCalendarUserEvent()
 
@@ -43,6 +44,7 @@ class NewCalendarViewModel @Inject constructor(
     var state = _state
 
     fun onEvent(event: NewCalendarUserEvent) {
+
         when (event) {
             is NewCalendarUserEvent.StartChanged -> {
                 _state.update { it.copy(dateRange = it.dateRange.copy(dateStart = event.dateStart)) }
@@ -52,18 +54,23 @@ class NewCalendarViewModel @Inject constructor(
                 _state.update { it.copy(dateRange = it.dateRange.copy(dateEnd = event.dateEnd)) }
             }
 
-            is NewCalendarUserEvent.RecipientNameChanged -> {
-                _state.update { it.copy(recipient = it.recipient.copy(name = event.recipientName)) }
-            }
-
             is NewCalendarUserEvent.RecipientEmailChanged -> {
-                _state.update { it.copy(recipient = it.recipient.copy(email = event.recipientEmail)) }
+                _state.update { it.copy(recipients = listOf(event.recipientEmail)) }
             }
 
             is NewCalendarUserEvent.CreateCalendar -> {
                 createCalendar()
             }
 
+            is NewCalendarUserEvent.CodeOptionSelected -> {
+                _state.update { it.copy(recipients = emptyList()) }
+                _state.update { it.copy(code = Random.nextInt(100000,999999).toString()) }
+            }
+
+            is NewCalendarUserEvent.RecipientOptionSelected -> {
+                _state.update { it.copy(code = null) }
+                _state.update { it.copy(recipients = emptyList()) }
+            }
         }
     }
 

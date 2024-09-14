@@ -2,6 +2,7 @@ package com.example.daisy.domain.di
 
 import com.example.daisy.data.datasource.auth.AuthenticationService
 import com.example.daisy.domain.usecases.auth.AuthUseCases
+import com.example.daisy.domain.usecases.auth.GetCurrentUserUseCase
 import com.example.daisy.domain.usecases.auth.GetUserUidUseCase
 import com.example.daisy.domain.usecases.auth.IsSignedInUseCase
 import com.example.daisy.domain.usecases.auth.LogoutUseCase
@@ -29,7 +30,8 @@ object AuthUseCasesModule {
         logoutUseCase: LogoutUseCase,
         registerUseCase: RegisterUseCase,
         signInWithGoogleUseCase: SignInWithGoogleUseCase,
-        resetPasswordUseCase: ResetPasswordUseCase
+        resetPasswordUseCase: ResetPasswordUseCase,
+        getCurrentUserUseCase: GetCurrentUserUseCase
     ): AuthUseCases {
         return AuthUseCases(
             repository = authenticationService,
@@ -39,7 +41,8 @@ object AuthUseCasesModule {
             logoutUseCase = logoutUseCase,
             registerUseCase = registerUseCase,
             signInWithGoogleUseCase = signInWithGoogleUseCase,
-            resetPasswordUseCase = resetPasswordUseCase
+            resetPasswordUseCase = resetPasswordUseCase,
+            getCurrentUserUseCase = getCurrentUserUseCase
         )
     }
 
@@ -49,6 +52,14 @@ object AuthUseCasesModule {
         authenticationService: AuthenticationService
     ): GetUserUidUseCase {
         return GetUserUidUseCase(authenticationService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCurrentUserUseCase(
+        authenticationService: AuthenticationService
+    ): GetCurrentUserUseCase {
+        return GetCurrentUserUseCase(authenticationService)
     }
 
     @Provides

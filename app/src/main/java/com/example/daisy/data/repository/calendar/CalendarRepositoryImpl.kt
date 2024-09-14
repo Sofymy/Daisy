@@ -11,13 +11,19 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.tasks.await
+import okhttp3.internal.notify
 import javax.inject.Inject
 
 class CalendarRepositoryImpl @Inject constructor(
@@ -46,18 +52,18 @@ class CalendarRepositoryImpl @Inject constructor(
     }
 
     override fun getCreatedCalendars(): Flow<List<Calendar?>> {
+
         return firestore.collection("calendars")
-            .whereEqualTo("sender.uid", auth.currentUser?.uid)
+            .whereEqualTo("sender.uid", auth.currentUser?.uid!!)
             .snapshotFlow()
             .map { querySnapshot ->
-                querySnapshot.documents.map {
-                    it.toObject<Calendar>()?.copy(id = it.id)
+                querySnapshot.map {
+                    it.toObject<Calendar>().copy(id = it.id)
                 }
             }
     }
 
     override fun getCreatedCalendar(id: String): Flow<Calendar?> {
-        Log.d("eeeeeeeee", id.toString())
 
         return firestore.collection("calendars")
             .document(id)
@@ -67,13 +73,31 @@ class CalendarRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun addReceivedCalendarByCode(code: String) {
+
+        Log.d("zzzzzzzzz", code.toString())
+        val calendarsSnapshot = firestore.collection("calendars")
+            .whereEqualTo("code", code)
+            .get()
+            .await()
+
+        Log.d("zzzzzzzzzsnaps", calendarsSnapshot.documents.toString())
+
+        calendarsSnapshot.documents.forEach { document ->
+            firestore.collection("calendars")
+                .document(document.id)
+                .update("recipients", FieldValue.arrayUnion(auth.currentUser?.email!!))
+                .await()
+        }
+    }
+
     override fun getReceivedCalendars(): Flow<List<Calendar?>> {
         return firestore.collection("calendars")
-            .whereEqualTo("recipient.email", auth.currentUser?.email)
+            .whereArrayContains("recipients", auth.currentUser?.email!!)
             .snapshotFlow()
             .map { querySnapshot ->
-                querySnapshot.documents.map {
-                    it.toObject<Calendar>()?.copy(id = it.id)
+                querySnapshot.map {
+                    it.toObject<Calendar>().copy(id = it.id)
                 }
             }
     }

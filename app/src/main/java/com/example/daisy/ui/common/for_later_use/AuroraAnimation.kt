@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -26,12 +27,12 @@ import com.example.daisy.ui.theme.gradient2
 @Composable
 fun OnboardingAurora() {
 
-    val transition = rememberInfiniteTransition(label = "shimmer")
+    val transition = rememberInfiniteTransition(label = "")
     val animatedProgress by transition.animateFloat(
-        initialValue = 0.2f,
-        targetValue = 0.8f,
+        initialValue = 0.3f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = EaseInOutQuart),
+            animation = tween(5000, easing = EaseInOutQuart),
             repeatMode = RepeatMode.Reverse
         ), label = ""
     )
@@ -43,12 +44,12 @@ fun OnboardingAurora() {
         Modifier
         .fillMaxHeight(0.2f)
         .fillMaxWidth()
-        .clip(WavyShape(2.dp,150.dp*animatedProgress))
+        .clip(WavyShape(2.dp,10.dp*animatedProgress))
         .padding(top = 0.dp)
         .graphicsLayer {
             alpha = animatedProgress
         }
-        .blur(40.dp)
+        .blur(30.dp, edgeTreatment = BlurredEdgeTreatment.Rectangle)
         .background(brush))
 
 }

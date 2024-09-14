@@ -56,8 +56,7 @@ fun CreatedCalendarItem(
                 .fillMaxWidth()
         ) {
             Text(text = it.id.toString())
-            Text(text = it.recipient?.name.orEmpty()) // Ensure null-safety here
-            Text(text = it.dateRange?.dateStart.toString())
+            Text(text = it.dateRange.dateStart.toString())
         }
     } ?: run {
         Text("No calendar data available.")

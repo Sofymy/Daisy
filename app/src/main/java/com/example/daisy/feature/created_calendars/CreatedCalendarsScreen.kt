@@ -78,12 +78,12 @@ fun CreatedCalendarItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp)
-            .background(Color.White)
+            .background(Color.Transparent)
             .clickable { onClickItem(calendarUi.id) }
             .padding(20.dp)
     ) {
         Text(text = calendarUi.id)
-        Text(text = calendarUi.recipient.name)
+        Text(text = calendarUi.recipients.toString())
         Text(text = calendarUi.dateRange.dateStart.toString())
     }
 }

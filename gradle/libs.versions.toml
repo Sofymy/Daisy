@@ -1,7 +1,10 @@
 [versions]
+accompanistSystemuicontroller = "0.27.0"
 agp = "8.5.0"
 biometric = "1.2.0-alpha05"
+coil = "2.7.0"
 coreSplashscreen = "1.0.1"
+graphicsShapes = "1.0.1"
 hiltAndroid = "2.49"
 hiltAndroidCompiler = "2.49"
 hiltNavigationCompose = "1.2.0"
@@ -33,9 +36,11 @@ playServicesAuth = "21.2.0"
 firebaseFirestore = "25.1.0"
 
 [libraries]
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "graphicsShapes" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-runtime-ktx-v283 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
@@ -47,6 +52,8 @@ androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:na
 androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationTesting" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationUi" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 hilt-android = { module = "com.google.dagger:hilt-android", version = "2.48" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version = "2.48" }

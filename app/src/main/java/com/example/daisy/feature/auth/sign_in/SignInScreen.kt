@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Password
@@ -68,6 +69,7 @@ import com.example.daisy.ui.common.elements.PrimaryButton
 import com.example.daisy.ui.common.elements.PrimaryTextField
 import com.example.daisy.ui.common.elements.RectangleWithCutCorners
 import com.example.daisy.ui.common.elements.SecondaryButton
+import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient
@@ -101,19 +103,6 @@ fun SignInScreen(
             onSignInClick = { viewModel.onEvent(SignInUserEvent.SignIn) },
             onGoogleSignIn = { token, email -> viewModel.onEvent(SignInUserEvent.SignInWithGoogle(token, email)) }
         )
-    }
-}
-
-@Composable
-fun LoadingContent() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.loading))
-            CircularProgressIndicator()
-        }
     }
 }
 
@@ -216,7 +205,7 @@ fun SignInForm(
         Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .background(MediumGrey, RectangleWithCutCorners())
+            .background(MediumGrey, CutCornerShape(20.dp))
     ) {
         Box(Modifier
             .fillMaxSize()

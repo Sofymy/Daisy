@@ -1,6 +1,7 @@
 package com.example.daisy.domain.di
 
 import com.example.daisy.data.repository.calendar.CalendarRepository
+import com.example.daisy.domain.usecases.calendar.AddReceivedCalendarByCodeUseCase
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarUseCase
 import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarsUseCase
@@ -23,14 +24,16 @@ object CalendarUseCasesModule {
         setCalendarUseCase: SetCalendarUseCase,
         getCreatedCalendarsUseCase: GetCreatedCalendarsUseCase,
         getCreatedCalendarUseCase: GetCreatedCalendarUseCase,
-        getReceivedCalendarsUseCase: GetReceivedCalendarsUseCase
+        getReceivedCalendarsUseCase: GetReceivedCalendarsUseCase,
+        addReceivedCalendarByCodeUseCase: AddReceivedCalendarByCodeUseCase
     ): CalendarUseCases {
         return CalendarUseCases(
             repository = calendarRepository,
             setCalendarUseCase = setCalendarUseCase,
             getCreatedCalendarsUseCase = getCreatedCalendarsUseCase,
             getCreatedCalendarUseCase = getCreatedCalendarUseCase,
-            getReceivedCalendarsUseCase = getReceivedCalendarsUseCase
+            getReceivedCalendarsUseCase = getReceivedCalendarsUseCase,
+            addReceivedCalendarByCodeUseCase = addReceivedCalendarByCodeUseCase
         )
     }
 
@@ -41,6 +44,15 @@ object CalendarUseCasesModule {
     ): SetCalendarUseCase {
         return SetCalendarUseCase(calendarRepository)
     }
+
+    @Provides
+    @Singleton
+    fun provideAddReceivedCalendarByCodeUseCase(
+        calendarRepository: CalendarRepository
+    ): AddReceivedCalendarByCodeUseCase {
+        return AddReceivedCalendarByCodeUseCase(calendarRepository)
+    }
+
 
     @Provides
     @Singleton

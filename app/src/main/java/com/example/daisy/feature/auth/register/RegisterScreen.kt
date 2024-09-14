@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
@@ -154,7 +155,7 @@ fun RegisterFormAndButtons(
         Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .background(MediumGrey, RectangleWithCutCorners())
+            .background(MediumGrey, CutCornerShape(20.dp))
     ) {
         Box(Modifier
             .fillMaxSize()

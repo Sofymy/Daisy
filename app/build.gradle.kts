@@ -113,6 +113,14 @@ dependencies {
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
+    // Coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+
+    // Set navbar color
+    implementation(libs.accompanist.systemuicontroller)
+
+    implementation(libs.androidx.graphics.shapes)
 
 
 }

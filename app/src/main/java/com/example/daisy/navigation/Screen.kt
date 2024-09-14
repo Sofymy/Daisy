@@ -1,33 +1,37 @@
 package com.example.daisy.navigation
 
-import androidx.annotation.StringRes
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Screen(
-    val resourceId: String
+    val resourceId: String,
+    val label: String,
 ){
     @Serializable
-    data object Onboarding: Screen("Onboarding")
+    data object Onboarding: Screen("Onboarding", "Onboarding")
 
     @Serializable
-    data object SignIn: Screen("SignIn")
+    data object SignIn: Screen("SignIn", "Sign in")
 
     @Serializable
-    data object Register: Screen("Register")
+    data object Register: Screen("Register", "Register")
 
     @Serializable
-    data object Home: Screen("Home")
+    data object Home: Screen("Home", "Home")
 
     @Serializable
-    data object NewCalendar: Screen("NewCalendar")
+    data object NewCalendar: Screen("NewCalendar", "New")
 
     @Serializable
-    data object CreatedCalendars: Screen("CreatedCalendars")
+    data object CreatedCalendars: Screen("CreatedCalendars", "Created")
 
     @Serializable
-    data class CreatedCalendar(val id: String) : Screen("CreatedCalendar")
+    data class CreatedCalendar(val id: String) : Screen("CreatedCalendar", "Created preview")
 
     @Serializable
-    data object ReceivedCalendars: Screen("ReceivedCalendars")
+    data object ReceivedCalendars: Screen("ReceivedCalendars", "Received")
+
+    @Serializable
+    data object More: Screen("More", "More")
+
 }

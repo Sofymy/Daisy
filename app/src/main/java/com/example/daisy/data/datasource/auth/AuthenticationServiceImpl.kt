@@ -2,6 +2,7 @@ package com.example.daisy.data.datasource.auth
 
 import com.example.daisy.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,6 +21,8 @@ class AuthenticationServiceImpl @Inject constructor(
     override val isSignedIn: Boolean get() = auth.currentUser != null
 
     override suspend fun userUid(): String = auth.currentUser?.uid ?: ""
+
+    override suspend fun currentUser(): FirebaseUser? = auth.currentUser
 
     override suspend fun logout() = auth.signOut()
 

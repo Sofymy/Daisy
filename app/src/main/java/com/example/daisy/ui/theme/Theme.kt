@@ -11,6 +11,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple,
@@ -54,6 +55,11 @@ fun DaisyTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setNavigationBarColor(
+        color = MediumGrey
+    )
 
     MaterialTheme(
         colorScheme = colorScheme,

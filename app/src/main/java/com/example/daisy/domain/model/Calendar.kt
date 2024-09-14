@@ -5,16 +5,18 @@ import com.example.daisy.ui.model.CalendarUi
 data class Calendar(
     val id: String = "",
     val dateRange: DateRange = DateRange(),
-    val recipient: User = User(),
-    val sender: User = User()
+    val recipients: List<String> = emptyList(),
+    val sender: User = User(),
+    val code: String? = null
 )
 
 fun CalendarUi.toDomain(): Calendar {
     return Calendar(
         id = this.id,
         dateRange = this.dateRange.toDomain(),
-        recipient = this.recipient.toDomain(),
-        sender = this.sender.toDomain()
+        recipients = this.recipients,
+        sender = this.sender.toDomain(),
+        code = this.code
     )
 }
 
@@ -22,7 +24,8 @@ fun Calendar.toUi(): CalendarUi {
     return CalendarUi(
         id = this.id,
         dateRange = this.dateRange.toUi(),
-        recipient = this.recipient.toUi(),
-        sender = this.sender.toUi()
+        recipients = this.recipients,
+        sender = this.sender.toUi(),
+        code = this.code
     )
 }

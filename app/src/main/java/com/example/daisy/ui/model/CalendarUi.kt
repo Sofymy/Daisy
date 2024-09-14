@@ -5,6 +5,7 @@ import kotlin.random.Random
 data class CalendarUi(
     val id: String = Random.nextInt().toString(),
     val dateRange: DateRangeUi = DateRangeUi(),
-    val recipient: UserUi = UserUi(),
-    val sender: UserUi = UserUi()
+    val recipients: List<String> = listOf(""),
+    val sender: UserUi = UserUi(),
+    val code: String? = null
 )

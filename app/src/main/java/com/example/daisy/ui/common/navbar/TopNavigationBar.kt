@@ -5,15 +5,22 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -30,14 +37,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.daisy.R
+import com.example.daisy.ui.theme.DarkGrey
+import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.Purple
+import com.example.daisy.ui.theme.gradient
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,10 +86,9 @@ fun TopNavigationBar(
     Column {
         TopAppBar(
             modifier = Modifier
-                .padding(horizontal = 5.dp)
                 .shadow(0.dp),
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Blue,
+                containerColor = DarkGrey,
                 titleContentColor = Color.White,
             ),
             title = {
@@ -93,42 +112,31 @@ fun TopNavigationBar(
                 }
             },
             navigationIcon = {
-                if (navController.previousBackStackEntry != null && (items.none {
-                        it.screen::class.qualifiedName.toString() == currentDestination?.route?.substringBefore(
-                            "/"
-                        ).toString()
-                    }
-                            )) {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.TwoTone.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                } else {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.background
-                        )
-                    }
+                IconButton(onClick = { navController.navigateUp() }) {
+
                 }
             },
             actions = {
-                IconButton(
-                    onClick = {
-                        onShowBottomSheet()
-                    },
-                    modifier = Modifier
-                ) {
-                    Column {
-                        Icon(imageVector = Icons.Rounded.Person, contentDescription = null)
+                Row {
+                    IconButton(onClick = { }) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(Firebase.auth.currentUser?.photoUrl)
+                                .placeholder(R.drawable.heart_balloon)
+                                .build(),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .border(2.dp, Color.White.copy(0.1f), CircleShape)
+                                .padding(5.dp)
+                                .size(50.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop,
+                        )
                     }
                 }
             }
         )
 
-        HorizontalDivider(color = Color.Red)
+        HorizontalDivider(color = MediumGrey)
     }
 }

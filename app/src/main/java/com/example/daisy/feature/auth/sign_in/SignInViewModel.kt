@@ -3,11 +3,8 @@ package com.example.daisy.feature.auth.sign_in
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.usecases.auth.AuthUseCases
-import com.example.daisy.feature.auth.register.RegisterUiState
-import com.example.daisy.ui.util.RegisterValidation
 import com.example.daisy.ui.util.SignInValidation
 import com.example.daisy.ui.util.UiEvent
-import com.example.daisy.ui.util.ValidateRegister
 import com.example.daisy.ui.util.ValidateSignIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +19,6 @@ data class SignInUiState(
     val isLoading: Boolean = false,
     val email: String = "",
     val password: String = "",
-    val passwordVisibility: Boolean = false,
     val isSignedIn: Boolean? = null,
     val signInValidation: SignInValidation = SignInValidation()
 )
@@ -31,7 +27,6 @@ sealed class SignInUserEvent {
     data class EmailChanged(val email: String): SignInUserEvent()
     data class PasswordChanged(val password: String): SignInUserEvent()
     data class SignInWithGoogle(val token: String?, val email: String?) : SignInUserEvent()
-    data object PasswordVisibilityChanged: SignInUserEvent()
     data object SignIn: SignInUserEvent()
 }
 
@@ -58,16 +53,17 @@ class SignInViewModel @Inject constructor(
             }
 
             is SignInUserEvent.SignIn -> {
+                _state.update { it.copy(isLoading = true) }
                 signIn()
             }
             is SignInUserEvent.SignInWithGoogle -> {
+                _state.update { it.copy(isLoading = true) }
                 signInWithGoogle(event.token, event.email)
             }
             is SignInUserEvent.PasswordChanged -> {
                 val newPassword = event.password.trim()
                 _state.update { it.copy(password = newPassword) }
             }
-            SignInUserEvent.PasswordVisibilityChanged -> TODO()
         }
     }
 

@@ -46,7 +46,7 @@ class CreatedCalendarsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 CoroutineScope(coroutineContext).launch(Dispatchers.IO) {
-                    val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() }
+                    val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() ?: CalendarUi() }
                     _state.update { it.copy(
                         isLoading = false,
                         calendars = calendars
