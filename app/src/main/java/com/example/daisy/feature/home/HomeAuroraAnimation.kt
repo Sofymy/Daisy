@@ -1,4 +1,4 @@
-package com.example.daisy.ui.common.for_later_use
+package com.example.daisy.feature.home
 
 import androidx.compose.animation.core.EaseInOutQuart
 import androidx.compose.animation.core.RepeatMode
@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,12 +26,12 @@ import com.example.daisy.ui.theme.gradient2
 
 
 @Composable
-fun OnboardingAurora() {
+fun HomeAuroraAnimation() {
 
     val transition = rememberInfiniteTransition(label = "")
     val animatedProgress by transition.animateFloat(
         initialValue = 0.3f,
-        targetValue = 1f,
+        targetValue = 0.3f,
         animationSpec = infiniteRepeatable(
             animation = tween(5000, easing = EaseInOutQuart),
             repeatMode = RepeatMode.Reverse
@@ -40,12 +41,10 @@ fun OnboardingAurora() {
         colors = gradient2,
     )
 
-    Box(
-        Modifier
-        .fillMaxHeight(0.2f)
+    Box(Modifier
+        .height(130.dp)
         .fillMaxWidth()
         .clip(WavyShape(2.dp,10.dp*animatedProgress))
-        .padding(top = 0.dp)
         .graphicsLayer {
             alpha = animatedProgress
         }

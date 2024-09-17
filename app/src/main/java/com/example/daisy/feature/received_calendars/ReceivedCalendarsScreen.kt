@@ -1,9 +1,7 @@
 package com.example.daisy.feature.received_calendars
 
-import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -47,9 +45,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -62,6 +60,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.ui.common.state.ErrorContent
@@ -160,7 +159,7 @@ fun ReceivedCalendarsEmpty(
                 animationSpec = tween(1000)
             )
         ) {
-            DrawUFO()
+            ReceivedCalendarsAnimatedUFO()
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.fillMaxHeight(0.4f))
@@ -186,7 +185,6 @@ fun ReceivedCalendarsCodeInput(
     LaunchedEffect(value.value.length) {
         if (value.value.length == 6){
             send(value.value)
-            Log.d("zzzzzzz", "sent")
         }
     }
 
@@ -267,7 +265,7 @@ fun ReceivedCalendarItem(
 }
 
 @Composable
-fun DrawUFO() {
+fun ReceivedCalendarsAnimatedUFO() {
     val rotate = rememberInfiniteTransition(label = "")
     val infiniteRotation = rotate.animateFloat(initialValue = 0.5f, targetValue = 0.7f, animationSpec = infiniteRepeatable(
         tween(3000), repeatMode = RepeatMode.Reverse
@@ -309,14 +307,10 @@ fun DrawUFO() {
         )
 
         drawOval(
-            color = MediumGrey,
+            color = Color.Transparent,
             topLeft = Offset(size.width * 0.35f * infiniteRotation.value, size.height * 0.6f),
             size = Size(size.width * (1.2f-infiniteRotation.value), size.height * 0.07f),
         )
-
-
-
-
 
 
         val lightOffsetY = size.height * 0.18f

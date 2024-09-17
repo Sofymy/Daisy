@@ -28,4 +28,4 @@ val MediumGrey = Color(0xFF202020)
 
 val gradient = listOf(Blue, Purple)
 
-val gradient2 = listOf(Color.Transparent, Color.Transparent, Blue, Purple, Color.Transparent, Color.Transparent)
+val gradient2 = listOf(Blue, Purple, Color.Transparent, Color.Transparent)

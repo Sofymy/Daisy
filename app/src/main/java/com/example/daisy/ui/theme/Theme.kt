@@ -57,7 +57,7 @@ fun DaisyTheme(
     }
 
     val systemUiController = rememberSystemUiController()
-    systemUiController.setNavigationBarColor(
+    systemUiController.setSystemBarsColor(
         color = MediumGrey
     )
 

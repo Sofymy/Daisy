@@ -1,6 +1,7 @@
 package com.example.daisy
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -83,9 +84,11 @@ fun MainScreen() {
         ) { innerPadding ->
             Surface(
                 modifier = Modifier
-                    .padding(innerPadding),
+                    .padding(innerPadding)
+                ,
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier
+                    .fillMaxSize()) {
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         drawCircles(circles)
                     }
