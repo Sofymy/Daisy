@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.daisy.feature.auth.onboarding.OnboardingScreen
 import com.example.daisy.feature.auth.register.RegisterScreen
 import com.example.daisy.feature.auth.sign_in.SignInScreen
-import com.example.daisy.feature.created_calendars.CreatedCalendarScreen
+import com.example.daisy.feature.created_calendars.CreatedCalendarEditorScreen
 import com.example.daisy.feature.created_calendars.CreatedCalendarsScreen
 import com.example.daisy.feature.new_calendar.NewCalendarScreen
 import com.example.daisy.feature.home.HomeScreen
@@ -87,16 +87,16 @@ fun NavGraph(
 
             CreatedCalendarsScreen(
                 onNavigateToCreatedCalendar = {
-                    navController.navigate(Screen.CreatedCalendar(it))
+                    navController.navigate(Screen.CreatedCalendarEditor(it))
                 }
             )
         }
 
-        composable<Screen.CreatedCalendar> {backStackEntry ->
+        composable<Screen.CreatedCalendarEditor> { backStackEntry ->
             onTopNavigationBarTitleChange("Calendar preview")
 
             val id = backStackEntry.arguments?.getString("id")
-            CreatedCalendarScreen(id = id)
+            CreatedCalendarEditorScreen(id = id)
         }
 
         composable<Screen.ReceivedCalendars> {

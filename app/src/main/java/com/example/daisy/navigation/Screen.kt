@@ -26,7 +26,7 @@ sealed class Screen(
     data object CreatedCalendars: Screen("CreatedCalendars", "Created")
 
     @Serializable
-    data class CreatedCalendar(val id: String) : Screen("CreatedCalendar", "Created preview")
+    data class CreatedCalendarEditor(val id: String) : Screen("CreatedCalendar", "Created preview")
 
     @Serializable
     data object ReceivedCalendars: Screen("ReceivedCalendars", "Received")

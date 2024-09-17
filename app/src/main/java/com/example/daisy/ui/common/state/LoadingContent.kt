@@ -16,8 +16,8 @@ import com.example.daisy.ui.theme.Purple
 
 @Composable
 fun LoadingContent() {
-    Box(modifier = Modifier
-        .fillMaxSize(),
+    Box(
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(

@@ -1,16 +1,25 @@
 package com.example.daisy.feature.home
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +33,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,22 +49,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
+import com.example.daisy.ui.common.elements.pluralize
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.DarkBlue
 import com.example.daisy.ui.theme.DarkPurple
 import com.example.daisy.ui.theme.LightBlue
 import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.PurpleGrey40
 import java.time.Duration.between
 import java.time.LocalDate
+import kotlin.math.absoluteValue
 
 
 @Composable
@@ -100,7 +122,10 @@ fun HomeCreatedCalendarContentLazyRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         item { Spacer(modifier = Modifier.width(20.dp)) }
-        itemsIndexed(items = createdCalendars) { index, calendarUi ->
+        itemsIndexed(
+            items = createdCalendars,
+            key = {_, item ->  item.id}
+        ) { index, calendarUi ->
             HomeCreatedCalendarContentItem(index, state, calendarUi, colors)
         }
     }
@@ -114,9 +139,10 @@ fun HomeCreatedCalendarContentItem(
     colors: List<Color>
 ) {
     val firstIndex = remember { derivedStateOf { state.firstVisibleItemIndex == index } }
-    val size = animateFloatAsState(
+
+    val size by animateFloatAsState(
         targetValue = if (firstIndex.value) 1.9f else 1.5f,
-        animationSpec = tween(600),
+        animationSpec = spring(),
         label = ""
     )
 
@@ -128,7 +154,7 @@ fun HomeCreatedCalendarContentItem(
                 .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(10))
                 .clip(RoundedCornerShape(10))
                 .background(MediumGrey)
-                .size(size = (size.value * 100).dp),
+                .size(size = (size * 100).dp),
         ) {
             HomeCreatedCalendarContentTitleAndInfos(calendarUi, Modifier, firstIndex.value)
         }
@@ -137,6 +163,7 @@ fun HomeCreatedCalendarContentItem(
 
     Spacer(modifier = Modifier.width(15.dp))
 }
+
 
 @Composable
 fun HomeCreatedCalendarContentRecipients(
@@ -291,15 +318,21 @@ fun HomeCreatedCalendarContentAnimatedVisibility(
 fun HomeCreatedCalendarContentDateCountdown(calendarUi: CalendarUi) {
     val now = LocalDate.now()
     if (calendarUi.dateRange.dateStart.isBefore(now.plusDays(1))) {
+
+        val daysBetween = between(now.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays().toInt()
+
         Text(
-            text = "Ends in ${between(now.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays()} days",
+            text = "Ends in $daysBetween day".pluralize(daysBetween),
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(.5f),
             fontWeight = FontWeight.Bold
         )
     } else {
+
+        val daysBetween = between(now.atStartOfDay(), calendarUi.dateRange.dateStart.atStartOfDay()).toDays().toInt()
+
         Text(
-            text = "Opens in ${between(now.atStartOfDay(), calendarUi.dateRange.dateStart.atStartOfDay()).toDays()} days",
+            text = "Opens in $daysBetween day".pluralize(daysBetween),
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(.5f),
             fontWeight = FontWeight.Bold

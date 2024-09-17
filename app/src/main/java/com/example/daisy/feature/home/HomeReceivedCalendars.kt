@@ -1,11 +1,9 @@
 package com.example.daisy.feature.home
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -45,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -58,6 +55,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.example.daisy.ui.common.elements.pluralize
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
@@ -191,25 +189,28 @@ fun HomeReceivedCalendarsBoxes(
     onChangeDragDirection: (Direction) -> Unit,
     receivedCalendars: List<CalendarUi>
 ) {
+    val dragState = rememberDraggable2DState(onDelta = { delta ->
+        onChangeDragDirection(if (delta.x <= 0) Direction.LEFT else Direction.RIGHT)
+    })
+
     Box(
-        Modifier
+        modifier = Modifier
             .draggable2D(
                 startDragImmediately = false,
-                state = rememberDraggable2DState(onDelta = {
-                    if (it.x <= 0) {
-                        onChangeDragDirection(Direction.LEFT)
-                    } else
-                        onChangeDragDirection(Direction.RIGHT)
-                }),
+                state = dragState,
                 interactionSource = interactionSource
             )
             .padding(horizontal = 20.dp)
     ) {
-        for(i in (numberOfReceivedCalendars.coerceIn(0,3)-1 downTo 0)){
+
+        val displayedCalendars = (numberOfReceivedCalendars.coerceIn(0, 3) - 1 downTo 0)
+
+        for (i in displayedCalendars) {
             HomeReceivedCalendarBox(i, isDragged)
         }
-        if(receivedCalendars.isNotEmpty()) {
-            HomeReceivedCalendarBoxContent(receivedCalendars[activeCalendar], modifier = Modifier.matchParentSize())
+
+        receivedCalendars.getOrNull(activeCalendar)?.let { activeCalendarUi ->
+            HomeReceivedCalendarBoxContent(activeCalendarUi, modifier = Modifier.matchParentSize())
         }
     }
 }
@@ -219,16 +220,6 @@ fun HomeReceivedCalendarBoxContent(
     calendarUi: CalendarUi,
     modifier: Modifier
 ) {
-    var days by remember { mutableIntStateOf(0) }
-
-    val daysCounter by animateIntAsState(
-        targetValue = days,
-        animationSpec = tween(
-            durationMillis = 250,
-            easing = FastOutSlowInEasing
-        ), label = ""
-    )
-
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val rotateLock = infiniteTransition.animateFloat(
         initialValue = -10f,
@@ -237,15 +228,11 @@ fun HomeReceivedCalendarBoxContent(
         label = ""
     )
 
-    LaunchedEffect(Unit) {
-        days = 24
-    }
-
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
         HomeReceivedCalendarBoxContentSender(calendarUi, Modifier.align(Alignment.TopStart))
-        HomeReceivedCalendarBoxContentDayCounter(daysCounter, Modifier.align(Alignment.TopEnd))
+        HomeReceivedCalendarBoxContentDayCounter(calendarUi, Modifier.align(Alignment.TopEnd))
         HomeReceivedCalendarBoxContentLockButton(rotateLock.value, Modifier.align(Alignment.BottomEnd))
         HomeReceivedCalendarBoxContentOpenText(calendarUi, Modifier.align(Alignment.BottomStart))
     }
@@ -291,9 +278,11 @@ fun HomeReceivedCalendarBoxContentSender(
 
 @Composable
 fun HomeReceivedCalendarBoxContentDayCounter(
-    daysCounter: Int,
+    calendarUi: CalendarUi,
     modifier: Modifier
 ) {
+    val daysBetweenStartAndEnd = between(calendarUi.dateRange.dateStart.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays().toInt()
+
     Box(
         modifier
             .padding(20.dp)
@@ -308,7 +297,7 @@ fun HomeReceivedCalendarBoxContentDayCounter(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = daysCounter.toString(),
+                text = daysBetweenStartAndEnd.toString(),
                 color = Color.White.copy(.5f),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall
@@ -353,6 +342,8 @@ fun HomeReceivedCalendarBoxContentOpenText(
     calendarUi: CalendarUi,
     modifier: Modifier
 ) {
+    val daysBetween = between(LocalDate.now().atStartOfDay(), calendarUi.dateRange.dateStart.atStartOfDay()).toDays().toInt()
+
     Box(
         modifier
             .padding(20.dp)
@@ -364,7 +355,7 @@ fun HomeReceivedCalendarBoxContentOpenText(
         ) {
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "Opens in ${between(LocalDate.now().atStartOfDay(), calendarUi.dateRange.dateStart.atStartOfDay()).toDays()} days",
+                text = "Opens in $daysBetween day".pluralize(daysBetween),
                 fontWeight = FontWeight.Bold
             )
         }

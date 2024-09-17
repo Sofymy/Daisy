@@ -2,13 +2,16 @@ package com.example.daisy.feature.created_calendars
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,6 +23,7 @@ import com.example.daisy.ui.common.state.ErrorContent
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.model.CalendarUi
+import com.example.daisy.ui.theme.MediumGrey
 
 @Composable
 fun CreatedCalendarsScreen(
@@ -41,7 +45,6 @@ fun CreatedCalendarsContent(
         onResume = { viewModel.onEvent(CreatedCalendarsUserEvent.GetCreatedCalendars) }
     )
 
-    Log.d("eeeeeeee", state.toString())
     when {
         state.isLoading -> LoadingContent()
         state.isError -> ErrorContent()
@@ -79,9 +82,10 @@ fun CreatedCalendarItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
-            .background(Color.Transparent)
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(20.dp))
             .clickable { onClickItem(calendarUi.id) }
+            .background(MediumGrey, RoundedCornerShape(20.dp))
             .padding(20.dp)
     ) {
         Text(text = calendarUi.id)

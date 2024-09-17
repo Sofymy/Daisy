@@ -14,15 +14,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-data class CreatedCalendarUiState(
+data class CreatedCalendarEditorUiState(
     val isLoading: Boolean = true,
     val error: Throwable? = null,
     val isError: Boolean = error != null,
     val calendar: CalendarUi? = CalendarUi()
 )
 
-sealed class CreatedCalendarUserEvent {
-    data class GetCreatedCalendar(val id: String) : CreatedCalendarUserEvent()
+sealed class CreatedCalendarEditorUserEvent {
+    data class GetCreatedCalendar(val id: String) : CreatedCalendarEditorUserEvent()
 }
 
 
@@ -31,12 +31,12 @@ class CreatedCalendarViewModel @Inject constructor(
     private val calendarUseCases: CalendarUseCases
 ) : ViewModel() {
 
-    private var _state = MutableStateFlow(CreatedCalendarUiState())
+    private var _state = MutableStateFlow(CreatedCalendarEditorUiState())
     var state = _state
 
-    fun onEvent(event: CreatedCalendarUserEvent) {
+    fun onEvent(event: CreatedCalendarEditorUserEvent) {
         when(event) {
-            is CreatedCalendarUserEvent.GetCreatedCalendar -> {
+            is CreatedCalendarEditorUserEvent.GetCreatedCalendar -> {
                 getCreatedCalendar(id = event.id)
             }
         }
