@@ -45,13 +45,11 @@ class CreatedCalendarsViewModel @Inject constructor(
     private fun getCreatedCalendars() {
         viewModelScope.launch {
             try {
-                CoroutineScope(coroutineContext).launch(Dispatchers.IO) {
-                    val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() ?: CalendarUi() }
-                    _state.update { it.copy(
-                        isLoading = false,
-                        calendars = calendars
-                    ) }
-                }
+                val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() ?: CalendarUi() }
+                _state.update { it.copy(
+                    isLoading = false,
+                    calendars = calendars
+                ) }
             } catch (e: Exception) {
                 _state.update {  it.copy(
                     isLoading = false,

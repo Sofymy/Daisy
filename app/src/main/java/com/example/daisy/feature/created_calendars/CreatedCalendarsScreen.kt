@@ -1,5 +1,6 @@
 package com.example.daisy.feature.created_calendars
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -24,31 +25,32 @@ import com.example.daisy.ui.model.CalendarUi
 fun CreatedCalendarsScreen(
     onNavigateToCreatedCalendar: (String) -> Unit
 ) {
-    val viewModel: CreatedCalendarsViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    HandleLifecycleEvents(
-        onResume = { viewModel.onEvent(CreatedCalendarsUserEvent.GetCreatedCalendars) }
-    )
-
     CreatedCalendarsContent(
-        state = state,
         onNavigateToCreatedCalendar = onNavigateToCreatedCalendar
     )
 }
 
 @Composable
 fun CreatedCalendarsContent(
-    state: CreatedCalendarsUiState,
+    viewModel: CreatedCalendarsViewModel = hiltViewModel(),
     onNavigateToCreatedCalendar: (String) -> Unit,
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    HandleLifecycleEvents(
+        onResume = { viewModel.onEvent(CreatedCalendarsUserEvent.GetCreatedCalendars) }
+    )
+
+    Log.d("eeeeeeee", state.toString())
     when {
         state.isLoading -> LoadingContent()
         state.isError -> ErrorContent()
-        else -> CalendarsList(
-            calendars = state.calendars,
-            onNavigateToCreatedCalendar = onNavigateToCreatedCalendar
-        )
+        else -> {
+            CalendarsList(
+                calendars = state.calendars,
+                onNavigateToCreatedCalendar = onNavigateToCreatedCalendar
+            )
+        }
     }
 }
 

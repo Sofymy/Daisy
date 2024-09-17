@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.SupervisedUserCircle
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -52,7 +54,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.daisy.R
+import com.example.daisy.ui.theme.Blue
 import com.example.daisy.ui.theme.DarkGrey
+import com.example.daisy.ui.theme.DarkPurple
+import com.example.daisy.ui.theme.LightBlue
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient
@@ -119,18 +124,14 @@ fun TopNavigationBar(
             actions = {
                 Row {
                     IconButton(onClick = { }) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(Firebase.auth.currentUser?.photoUrl)
-                                .placeholder(R.drawable.heart_balloon)
-                                .build(),
-                            contentDescription = "",
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            tint = LightBlue,
+                            contentDescription = null,
                             modifier = Modifier
-                                .border(2.dp, Color.White.copy(0.1f), CircleShape)
-                                .padding(5.dp)
-                                .size(50.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop,
+                                .size(35.dp)
+                                .border(1.dp, MediumGrey, CircleShape)
+                                .border(3.dp, DarkGrey, CircleShape)
                         )
                     }
                 }
