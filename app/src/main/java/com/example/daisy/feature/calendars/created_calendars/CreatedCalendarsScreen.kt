@@ -1,4 +1,4 @@
-package com.example.daisy.feature.created_calendars
+package com.example.daisy.feature.calendars.created_calendars
 
 import android.util.Log
 import androidx.compose.foundation.background

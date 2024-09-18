@@ -6,8 +6,8 @@ import com.example.daisy.domain.model.Calendar
 import com.example.daisy.domain.model.toUi
 import com.example.daisy.domain.usecases.auth.AuthUseCases
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
-import com.example.daisy.feature.created_calendars.CreatedCalendarsUserEvent
-import com.example.daisy.feature.received_calendars.ReceivedCalendarsUserEvent
+import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsUserEvent
+import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsUserEvent
 import com.example.daisy.ui.model.CalendarUi
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel

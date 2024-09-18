@@ -6,6 +6,10 @@ import androidx.compose.material.icons.outlined.BorderAll
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.CardGiftcard
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.ManageAccounts
+import androidx.compose.material.icons.outlined.PeopleOutline
+import androidx.compose.material.icons.outlined.SupervisorAccount
+import androidx.compose.material.icons.outlined.TagFaces
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.daisy.navigation.Screen
 import kotlinx.serialization.Serializable
@@ -24,19 +28,19 @@ sealed class BottomNavigationBarItem(
         icon = Icons.Outlined.Add
     )
 
-    data object CreatedCalendars : BottomNavigationBarItem(
-        screen = Screen.CreatedCalendars,
+    data object Calendars : BottomNavigationBarItem(
+        screen = Screen.Calendars,
         icon = Icons.Outlined.CalendarToday
     )
 
-    data object ReceivedCalendars : BottomNavigationBarItem(
-        screen = Screen.ReceivedCalendars,
-        icon = Icons.Outlined.CardGiftcard
+    data object Community : BottomNavigationBarItem(
+        screen = Screen.Community,
+        icon = Icons.Outlined.TagFaces
     )
 
-    data object More : BottomNavigationBarItem(
-        screen = Screen.More,
-        icon = Icons.Outlined.BorderAll
+    data object Profile : BottomNavigationBarItem(
+        screen = Screen.Profile,
+        icon = Icons.Outlined.ManageAccounts
     )
 
 }

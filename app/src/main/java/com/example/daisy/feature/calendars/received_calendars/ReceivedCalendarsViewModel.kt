@@ -1,4 +1,4 @@
-package com.example.daisy.feature.received_calendars
+package com.example.daisy.feature.calendars.received_calendars
 
 import android.util.Log
 import androidx.compose.ui.platform.LocalFocusManager

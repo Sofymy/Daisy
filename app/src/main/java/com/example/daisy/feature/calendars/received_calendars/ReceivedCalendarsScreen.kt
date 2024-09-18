@@ -1,4 +1,4 @@
-package com.example.daisy.feature.received_calendars
+package com.example.daisy.feature.calendars.received_calendars
 
 import android.view.ViewTreeObserver
 import androidx.compose.animation.AnimatedVisibility

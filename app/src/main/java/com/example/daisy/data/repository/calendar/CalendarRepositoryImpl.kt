@@ -75,13 +75,11 @@ class CalendarRepositoryImpl @Inject constructor(
 
     override suspend fun addReceivedCalendarByCode(code: String) {
 
-        Log.d("zzzzzzzzz", code.toString())
         val calendarsSnapshot = firestore.collection("calendars")
             .whereEqualTo("code", code)
             .get()
             .await()
 
-        Log.d("zzzzzzzzzsnaps", calendarsSnapshot.documents.toString())
 
         calendarsSnapshot.documents.forEach { document ->
             firestore.collection("calendars")

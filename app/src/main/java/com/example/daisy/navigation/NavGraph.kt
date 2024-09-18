@@ -8,11 +8,14 @@ import androidx.navigation.compose.composable
 import com.example.daisy.feature.auth.onboarding.OnboardingScreen
 import com.example.daisy.feature.auth.register.RegisterScreen
 import com.example.daisy.feature.auth.sign_in.SignInScreen
-import com.example.daisy.feature.created_calendars.CreatedCalendarEditorScreen
-import com.example.daisy.feature.created_calendars.CreatedCalendarsScreen
+import com.example.daisy.feature.calendars.CalendarsScreen
+import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarEditorScreen
+import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsScreen
 import com.example.daisy.feature.new_calendar.NewCalendarScreen
 import com.example.daisy.feature.home.HomeScreen
-import com.example.daisy.feature.received_calendars.ReceivedCalendarsScreen
+import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsScreen
+import com.example.daisy.feature.community.CommunityScreen
+import com.example.daisy.feature.profile.ProfileScreen
 
 @ExperimentalMaterial3Api
 @Composable
@@ -80,6 +83,28 @@ fun NavGraph(
                     }
                 }
             )
+        }
+
+        composable<Screen.Calendars> {
+            onTopNavigationBarTitleChange("Calendars")
+
+            CalendarsScreen(
+                onNavigateToCreatedCalendar = {
+                    navController.navigate(Screen.CreatedCalendarEditor(it))
+                }
+            )
+        }
+
+        composable<Screen.Profile> {
+            onTopNavigationBarTitleChange("Profile")
+
+            ProfileScreen()
+        }
+
+        composable<Screen.Community> {
+            onTopNavigationBarTitleChange("Community")
+
+            CommunityScreen()
         }
 
         composable<Screen.CreatedCalendars> {

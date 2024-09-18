@@ -1,4 +1,4 @@
-package com.example.daisy.feature.created_calendars
+package com.example.daisy.feature.calendars.created_calendars
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

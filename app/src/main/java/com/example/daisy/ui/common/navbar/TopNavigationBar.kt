@@ -76,12 +76,6 @@ fun TopNavigationBar(
     val currentDestination = navBackStackEntry?.destination
     val show = remember { mutableStateOf(false) }
 
-    val items = listOf(
-        BottomNavigationBarItem.Home,
-        BottomNavigationBarItem.NewCalendar,
-        BottomNavigationBarItem.CreatedCalendars,
-        BottomNavigationBarItem.ReceivedCalendars
-    )
 
     LaunchedEffect(currentDestination?.route) {
         delay(1500)
@@ -124,15 +118,7 @@ fun TopNavigationBar(
             actions = {
                 Row {
                     IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            tint = LightBlue,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(35.dp)
-                                .border(1.dp, MediumGrey, CircleShape)
-                                .border(3.dp, DarkGrey, CircleShape)
-                        )
+
                     }
                 }
             }

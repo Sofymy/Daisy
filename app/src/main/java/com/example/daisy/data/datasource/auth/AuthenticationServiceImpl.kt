@@ -40,7 +40,12 @@ class AuthenticationServiceImpl @Inject constructor(
             val authCredential = GoogleAuthProvider.getCredential(token, null)
             auth.signInWithCredential(authCredential)
                 .addOnSuccessListener { it ->
-                    createUser(it.user?.let { User(it.uid, email) })
+                    createUser(it.user?.let { User(
+                        uid = it.uid,
+                        email = email,
+                        name = it.displayName,
+                        photoUrl = it.photoUrl.toString()
+                    ) })
                     continuation.resume(Result.success(token))
                 }
                 .addOnFailureListener { continuation.resumeWithException(it) }
@@ -51,12 +56,18 @@ class AuthenticationServiceImpl @Inject constructor(
     override suspend fun register(email: String, password: String) = suspendCancellableCoroutine { continuation ->
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
-                createUser(result.user?.let { User(it.uid, email) })
                 val user = result.user
                 val profileChangeRequest = UserProfileChangeRequest.Builder()
                     .setDisplayName(user?.email?.substringBefore('@'))
                     .build()
                 user?.updateProfile(profileChangeRequest)
+
+                createUser(user?.let { User(
+                    uid = it.uid,
+                    email = email,
+                    name = it.displayName,
+                    photoUrl = it.photoUrl.toString()
+                ) })
                 continuation.resume(Unit)
             }
             .addOnFailureListener { continuation.resumeWithException(it) }
@@ -64,8 +75,8 @@ class AuthenticationServiceImpl @Inject constructor(
 
     private fun createUser(user: User?){
         if (user != null) {
-            firestore.collection("users").document(user.uid).set(user, SetOptions.merge())
+            firestore.collection("users").document(user.uid)
+                .set(user, SetOptions.merge())
         }
-
     }
 }
