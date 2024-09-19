@@ -97,8 +97,5 @@ fun TopNavigationBar(
                 }
             }
         )
-        AnimatedVisibility(visible = topNavigationBarTitle != "Calendars") {
-            HorizontalDivider(color = MediumGrey)
-        }
     }
 }
