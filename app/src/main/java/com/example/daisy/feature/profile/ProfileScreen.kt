@@ -28,11 +28,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asComposePath
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.CornerRounding
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.toPath
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -168,16 +175,53 @@ fun ProfileItem(
 
 @Composable
 fun ProfileBadges() {
-    val colors = listOf(DarkBlue, DarkPurple, LightBlue, DarkBlue)
+    val colors = listOf(DarkBlue, DarkPurple, LightBlue, Purple, DarkBlue)
 
     LazyRow {
         items(10){
             Box(modifier = Modifier
                 .padding(start = 15.dp)
-                .clip(CutCornerShape(20.dp))
+                .drawWithCache {
+                    val roundedPolygon = RoundedPolygon(
+                        numVertices = 6,
+                        radius = size.minDimension / 2 - 0.2f,
+                        centerX = size.width / 2,
+                        centerY = size.height / 2,
+                        rounding = CornerRounding(
+                            size.minDimension / 10f,
+                            smoothing = 0.1f
+                        )
+                    )
+                    val roundedPolygonPath = roundedPolygon
+                        .toPath()
+                        .asComposePath()
+                    onDrawBehind {
+                        rotate(degrees = 30f, pivot = Offset(size.width / 2, size.height / 2)) {
+                            drawPath(roundedPolygonPath, color = Color.White.copy(.3f))
+                        }
+                    }
+                }
+                .drawWithCache {
+                    val roundedPolygon = RoundedPolygon(
+                        numVertices = 6,
+                        radius = size.minDimension / 2 - 1,
+                        centerX = size.width / 2,
+                        centerY = size.height / 2,
+                        rounding = CornerRounding(
+                            size.minDimension / 10f,
+                            smoothing = 0.1f
+                        )
+                    )
+                    val roundedPolygonPath = roundedPolygon
+                        .toPath()
+                        .asComposePath()
+                    onDrawBehind {
+                        rotate(degrees = 30f, pivot = Offset(size.width / 2, size.height / 2)) {
+                            drawPath(roundedPolygonPath, Purple)
+                        }
+                    }
+                }
                 .size(100.dp)
-                .border(1.dp, Color.White.copy(.3f), CutCornerShape(20.dp))
-                .background(MediumGrey)
             )
         }
     }

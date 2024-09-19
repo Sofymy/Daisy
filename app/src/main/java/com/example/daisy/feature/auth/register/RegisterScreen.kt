@@ -155,7 +155,7 @@ fun RegisterFormAndButtons(
         Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .background(MediumGrey, CutCornerShape(20.dp))
+            .background(MediumGrey, RoundedCornerShape(30.dp))
     ) {
         Box(Modifier
             .fillMaxSize()

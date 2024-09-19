@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Password
@@ -208,7 +209,7 @@ fun SignInForm(
         Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .background(MediumGrey, CutCornerShape(20.dp))
+            .background(MediumGrey, RoundedCornerShape(30.dp))
     ) {
         Box(Modifier
             .fillMaxSize()
