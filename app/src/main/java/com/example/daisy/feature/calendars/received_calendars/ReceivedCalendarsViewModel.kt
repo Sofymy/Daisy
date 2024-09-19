@@ -25,7 +25,7 @@ data class ReceivedCalendarsUiState(
     val isLoading: Boolean = true,
     val error: Throwable? = null,
     val isError: Boolean = error != null,
-    val calendars: List<CalendarUi?> = emptyList()
+    val calendars: List<CalendarUi> = emptyList()
 )
 
 sealed class ReceivedCalendarsUserEvent {

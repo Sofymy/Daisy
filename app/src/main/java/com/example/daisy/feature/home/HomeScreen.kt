@@ -100,7 +100,9 @@ fun HomeScreenContent(
                     }
                 }
                 item {
-                    HomeReceivedCalendars(state.receivedCalendars.ifEmpty { mockedReceivedCalendars })
+                    HomeReceivedCalendars(
+                        receivedCalendars = state.receivedCalendars.ifEmpty { mockedReceivedCalendars },
+                    )
                 }
                 item {
                     HomeCreatedCalendars(state.createdCalendars.ifEmpty { mockedCreatedCalendars })

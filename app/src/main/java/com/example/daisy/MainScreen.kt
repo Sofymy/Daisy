@@ -68,7 +68,9 @@ fun MainScreen() {
         }
     }
 
-    DaisyTheme {
+    DaisyTheme(
+        navController = navController
+    ) {
         Scaffold(
             containerColor = Color.Transparent,
             modifier = Modifier.fillMaxSize(),

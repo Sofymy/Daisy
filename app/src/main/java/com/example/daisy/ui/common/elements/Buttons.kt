@@ -31,7 +31,7 @@ fun PrimaryButton(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ){
-    val roundedCornerShapePercent = 10
+    val roundedCornerShapePercent = 20.dp
     val brush = createStripeBrush(
         stripeColor = Purple,
         stripeWidth = 4.dp,
@@ -81,7 +81,7 @@ fun SecondaryButton(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ){
-    val roundedCornerShapePercent = 10
+    val roundedCornerShapePercent = 20.dp
     val brush = Brush.linearGradient(gradient)
     val borderWidth = 2.dp
 

@@ -63,7 +63,7 @@ class NewCalendarViewModel @Inject constructor(
             }
 
             is NewCalendarUserEvent.CodeOptionSelected -> {
-                _state.update { it.copy(recipients = emptyList()) }
+                _state.update { it.copy(recipients = listOf("")) }
                 _state.update { it.copy(code = Random.nextInt(100000,999999).toString()) }
             }
 

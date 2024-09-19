@@ -83,8 +83,7 @@ fun NewCalendarRecipientContentForm(
                     RecipientOption.EMAIL -> {
 
                         Column {
-
-                            TextField(value = state.recipients.first(), onValueChange = { it2->
+                            TextField(value = state.recipients.firstNotNullOf { it }, onValueChange = { it2->
                                 onFieldChange(NewCalendarUserEvent.RecipientEmailChanged(it2))
                             })
 

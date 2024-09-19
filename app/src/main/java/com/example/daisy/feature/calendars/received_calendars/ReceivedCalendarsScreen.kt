@@ -253,14 +253,20 @@ fun ReceivedCalendarsCodeInput(
 
 @Composable
 fun ReceivedCalendarItem(
-    calendarUi: CalendarUi?
+    calendarUi: CalendarUi
 ) {
     Column(
         modifier = Modifier
-            .padding(30.dp)
             .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(20.dp))
+            //.clickable { onClickItem(calendarUi.id) }
+            .background(MediumGrey, RoundedCornerShape(20.dp))
+            .padding(20.dp)
     ) {
-        Text(text = calendarUi.toString())
+        Text(text = calendarUi.id)
+        Text(text = calendarUi.recipients.toString())
+        Text(text = calendarUi.dateRange.dateStart.toString())
     }
 }
 

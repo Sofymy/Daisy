@@ -122,6 +122,9 @@ dependencies {
 
     implementation(libs.androidx.graphics.shapes)
 
+    // Shimmer
+    implementation(libs.compose.shimmer)
+
 
 }
 

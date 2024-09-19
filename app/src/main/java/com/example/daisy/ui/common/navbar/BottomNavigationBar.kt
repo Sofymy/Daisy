@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,12 +35,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asComposePath
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.CornerRounding
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.toPath
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -62,6 +72,10 @@ fun BottomNavigationBar(
         BottomNavigationBarItem.Community,
         BottomNavigationBarItem.Profile
     )
+
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
 
     Box(
         modifier = Modifier
@@ -96,16 +110,58 @@ fun BottomNavigationBar(
                 .align(Alignment.TopCenter)
                 .offset(y = (-25).dp)
         ) {
-            FloatingActionButton(
-                containerColor = Purple,
-                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
-                onClick = { navController.navigate(Screen.NewCalendar) },
-                shape = CutCornerShape(20),
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .border(1.dp, Color.White.copy(.4f), CutCornerShape(20))
-                    .border(3.dp, Purple, CutCornerShape(20))
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = Color.White.copy(.5f))
+                    .clickable(
+                        indication = null,
+                        interactionSource = interactionSource
+                    ) {
+                        navController.navigate(Screen.NewCalendar)
+                    }
+                    .drawWithCache {
+                        val roundedPolygon = RoundedPolygon(
+                            numVertices = 6,
+                            radius = size.minDimension / 2 - 0.2f,
+                            centerX = size.width / 2,
+                            centerY = size.height / 2,
+                            rounding = CornerRounding(
+                                size.minDimension / 10f,
+                                smoothing = 0.1f
+                            )
+                        )
+                        val roundedPolygonPath = roundedPolygon
+                            .toPath()
+                            .asComposePath()
+                        onDrawBehind {
+                            rotate(degrees = 30f, pivot = Offset(size.width / 2, size.height / 2)) {
+                                drawPath(roundedPolygonPath, color = Color.White.copy(.5f))
+                            }
+                        }
+                    }
+                    .drawWithCache {
+                        val roundedPolygon = RoundedPolygon(
+                            numVertices = 6,
+                            radius = size.minDimension / 2 - 1,
+                            centerX = size.width / 2,
+                            centerY = size.height / 2,
+                            rounding = CornerRounding(
+                                size.minDimension / 10f,
+                                smoothing = 0.1f
+                            )
+                        )
+                        val roundedPolygonPath = roundedPolygon
+                            .toPath()
+                            .asComposePath()
+                        onDrawBehind {
+                            rotate(degrees = 30f, pivot = Offset(size.width / 2, size.height / 2)) {
+                                drawPath(roundedPolygonPath, color = Purple)
+                            }
+                        }
+                    }
+                    .size(55.dp)
+            ){
+                Icon(Icons.Default.Add, tint = Color.White, contentDescription = null)
             }
         }
     }
@@ -120,10 +176,8 @@ fun NavigationItem(
 ) {
     val selected = currentDestination?.route.toString().substringAfterLast(".") == item.toString()
 
-    val contentColor = Color.White.copy(0.5f)
-
     val animatedColor by animateColorAsState(
-        targetValue = if(selected)contentColor else Color.White.copy(0.3f),
+        targetValue = if(selected) Purple else Color.White.copy(0.3f),
         animationSpec = tween(
             durationMillis = 400,
             easing = LinearEasing
@@ -160,13 +214,15 @@ fun NavigationItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(100))
-                    .width(dividerWidth.value)
-                    .background(Purple)
-                    .height(3.dp))
-            Icon(modifier = Modifier.padding(top = 5.dp), imageVector = item.icon, contentDescription = "", tint = if(item.screen.label != "New") animatedColor else Color.Transparent)
+            if(item.screen.label!= "New") {
+                Box(
+                    Modifier
+                        .clip(CircleShape)
+                        .width(dividerWidth.value)
+                        .background(Purple)
+                        .height(3.dp))
+            }
+            Icon(modifier = Modifier.padding(top = 5.dp).size(24.dp), imageVector = item.icon, contentDescription = "", tint = if(item.screen.label != "New") animatedColor else Color.Transparent)
             Spacer(Modifier.height(5.dp))
             Text(text = item.screen.label, color = animatedColor, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Normal)
             Spacer(Modifier.height(5.dp))

@@ -50,7 +50,7 @@ fun PrimaryTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholderText: String = "",
-    label: String,
+    label: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     icon: ImageVector
 ){
@@ -61,7 +61,9 @@ fun PrimaryTextField(
     Column(
         Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
     ) {
-        Text(label, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+        if (label != null) {
+            Text(label, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+        }
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
             enabled = enabled,
@@ -93,7 +95,7 @@ fun PrimaryTextField(
                 }
             ),
             visualTransformation = if (keyboardType == KeyboardType.Password && !showPassword.value ) PasswordVisualTransformation() else VisualTransformation.None,
-            shape = RoundedCornerShape(10),
+            shape = RoundedCornerShape(20.dp),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White.copy(0.1f),
                 unfocusedContainerColor = Color.White.copy(0.1f),
