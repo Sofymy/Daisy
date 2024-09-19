@@ -2,10 +2,12 @@ package com.example.daisy.domain.di
 
 import com.example.daisy.data.datasource.auth.AuthenticationService
 import com.example.daisy.domain.usecases.auth.AuthUseCases
+import com.example.daisy.domain.usecases.auth.ChangeNameUseCase
+import com.example.daisy.domain.usecases.auth.ChangePhotoUriUseCase
 import com.example.daisy.domain.usecases.auth.GetCurrentUserUseCase
 import com.example.daisy.domain.usecases.auth.GetUserUidUseCase
 import com.example.daisy.domain.usecases.auth.IsSignedInUseCase
-import com.example.daisy.domain.usecases.auth.LogoutUseCase
+import com.example.daisy.domain.usecases.auth.SignOutUseCase
 import com.example.daisy.domain.usecases.auth.RegisterUseCase
 import com.example.daisy.domain.usecases.auth.ResetPasswordUseCase
 import com.example.daisy.domain.usecases.auth.SignInWithEmailAndPasswordUseCase
@@ -27,22 +29,26 @@ object AuthUseCasesModule {
         getUserUidUseCase: GetUserUidUseCase,
         isSignedInUseCase: IsSignedInUseCase,
         signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
-        logoutUseCase: LogoutUseCase,
+        signOutUseCase: SignOutUseCase,
         registerUseCase: RegisterUseCase,
         signInWithGoogleUseCase: SignInWithGoogleUseCase,
         resetPasswordUseCase: ResetPasswordUseCase,
-        getCurrentUserUseCase: GetCurrentUserUseCase
+        getCurrentUserUseCase: GetCurrentUserUseCase,
+        changeNameUseCase: ChangeNameUseCase,
+        changePhotoUriUseCase: ChangePhotoUriUseCase
     ): AuthUseCases {
         return AuthUseCases(
             repository = authenticationService,
             getUserUidUseCase = getUserUidUseCase,
             isSignedInUseCase = isSignedInUseCase,
             signInWithEmailAndPasswordUseCase = signInWithEmailAndPasswordUseCase,
-            logoutUseCase = logoutUseCase,
+            signOutUseCase = signOutUseCase,
             registerUseCase = registerUseCase,
             signInWithGoogleUseCase = signInWithGoogleUseCase,
             resetPasswordUseCase = resetPasswordUseCase,
-            getCurrentUserUseCase = getCurrentUserUseCase
+            getCurrentUserUseCase = getCurrentUserUseCase,
+            changeNameUseCase = changeNameUseCase,
+            changePhotoUriUseCase = changePhotoUriUseCase
         )
     }
 
@@ -52,6 +58,22 @@ object AuthUseCasesModule {
         authenticationService: AuthenticationService
     ): GetUserUidUseCase {
         return GetUserUidUseCase(authenticationService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChangePhotoUriUseCase(
+        authenticationService: AuthenticationService
+    ): ChangePhotoUriUseCase {
+        return ChangePhotoUriUseCase(authenticationService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChangeNameUseCase(
+        authenticationService: AuthenticationService
+    ): ChangeNameUseCase {
+        return ChangeNameUseCase(authenticationService)
     }
 
     @Provides
@@ -90,8 +112,8 @@ object AuthUseCasesModule {
     @Singleton
     fun provideLogoutUseCase(
         authenticationService: AuthenticationService
-    ): LogoutUseCase {
-        return LogoutUseCase(authenticationService)
+    ): SignOutUseCase {
+        return SignOutUseCase(authenticationService)
     }
 
     @Provides

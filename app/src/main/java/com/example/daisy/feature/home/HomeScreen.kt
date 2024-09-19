@@ -1,5 +1,7 @@
 package com.example.daisy.feature.home
 
+import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.core.EaseInOutQuart
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -50,6 +52,10 @@ import com.example.daisy.R
 import com.example.daisy.ui.common.elements.WavyShape
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
+import com.example.daisy.ui.model.CalendarUi
+import com.example.daisy.ui.model.DateRangeUi
+import com.example.daisy.ui.model.UserUi
+import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient2
 import com.google.firebase.auth.FirebaseUser
 
@@ -67,6 +73,9 @@ fun HomeScreenContent(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val mockedReceivedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2"), sender = UserUi(name = "Sender1")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")))
+    val mockedCreatedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")))
 
     HandleLifecycleEvents(
         onResume = {
@@ -91,10 +100,10 @@ fun HomeScreenContent(
                     }
                 }
                 item {
-                    HomeReceivedCalendars(state.receivedCalendars)
+                    HomeReceivedCalendars(state.receivedCalendars.ifEmpty { mockedReceivedCalendars })
                 }
                 item {
-                    HomeCreatedCalendars(state.createdCalendars)
+                    HomeCreatedCalendars(state.createdCalendars.ifEmpty { mockedCreatedCalendars })
                 }
             }
         }
@@ -131,6 +140,7 @@ fun HomeAuroraAnimation() {
 
 @Composable
 fun HomeHeader(currentUser: FirebaseUser?) {
+
     if (currentUser != null) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -148,22 +158,13 @@ fun HomeHeader(currentUser: FirebaseUser?) {
                         .build(),
                     contentDescription = "",
                     modifier = Modifier
-                        .border(2.dp, Color.White, CircleShape)
+                        .border(1.dp, Color.White.copy(.1f), CircleShape)
+                        .padding(4.dp)
                         .size(50.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop,
                 )
-                Box(modifier = Modifier
-                    .offset(x = 5.dp)
-                    .size(20.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(3.dp)
-                    ,
-                    contentAlignment = Alignment.Center
-                ){
-                    Icon(imageVector = Icons.Outlined.Favorite, contentDescription = null, tint = Color.Black)
-                }
+
             }
             Spacer(modifier = Modifier.width(20.dp))
             Column {

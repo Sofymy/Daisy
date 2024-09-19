@@ -8,8 +8,10 @@ class AuthUseCases(
     val getCurrentUserUseCase: GetCurrentUserUseCase,
     val isSignedInUseCase: IsSignedInUseCase,
     val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
-    val logoutUseCase: LogoutUseCase,
+    val signOutUseCase: SignOutUseCase,
     val registerUseCase: RegisterUseCase,
     val resetPasswordUseCase: ResetPasswordUseCase,
-    val signInWithGoogleUseCase: SignInWithGoogleUseCase
+    val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+    val changeNameUseCase: ChangeNameUseCase,
+    val changePhotoUriUseCase: ChangePhotoUriUseCase
 )

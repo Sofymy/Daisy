@@ -3,6 +3,9 @@ package com.example.daisy
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -66,9 +70,10 @@ fun MainScreen() {
 
     DaisyTheme {
         Scaffold(
+            containerColor = Color.Transparent,
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                if (topBarState.value)
+                if (topBarState.value) {
                     TopNavigationBar(
                         navController = navController,
                         topNavigationBarTitle = topNavigationBarTitle,
@@ -76,17 +81,25 @@ fun MainScreen() {
                             showBottomSheet = true
                         },
                     )
+                }
             },
             bottomBar = {
-                if (bottomBarState.value)
+                if (bottomBarState.value) {
                     BottomNavigationBar(navController = navController)
+                }
             }
         ) { innerPadding ->
-            Surface(
-                modifier = Modifier
-                    .padding(innerPadding)
-                ,
-            ) {
+            Surface(modifier = Modifier
+                    .padding(
+                        paddingValues = PaddingValues(
+                            start = innerPadding.calculateStartPadding(
+                                LayoutDirection.Ltr
+                            ),
+                            top = innerPadding.calculateTopPadding(),
+                            end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                            bottom = if(innerPadding.calculateBottomPadding()>20.dp) innerPadding.calculateBottomPadding() - 20.dp else innerPadding.calculateBottomPadding()
+                        )
+                    )) {
                 Box(modifier = Modifier
                     .fillMaxSize()) {
                     Canvas(modifier = Modifier.fillMaxSize()) {

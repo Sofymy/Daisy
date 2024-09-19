@@ -46,6 +46,7 @@ fun PrimaryTextFieldPreview(){
 
 @Composable
 fun PrimaryTextField(
+    enabled: Boolean = true,
     value: String,
     onValueChange: (String) -> Unit,
     placeholderText: String = "",
@@ -63,6 +64,7 @@ fun PrimaryTextField(
         Text(label, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
+            enabled = enabled,
             singleLine = true,
             leadingIcon = { Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground.copy(0.2f)) },
             trailingIcon = {
@@ -96,7 +98,11 @@ fun PrimaryTextField(
                 focusedContainerColor = Color.White.copy(0.1f),
                 unfocusedContainerColor = Color.White.copy(0.1f),
                 focusedIndicatorColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledContainerColor = Color.White.copy(0.05f),
+                disabledTextColor = Color.White.copy(0.2f),
+                disabledLeadingIconColor = Color.White.copy(0.2f),
+                disabledIndicatorColor = Color.Transparent
             ),
             modifier = Modifier.fillMaxWidth(),
             onValueChange = onValueChange

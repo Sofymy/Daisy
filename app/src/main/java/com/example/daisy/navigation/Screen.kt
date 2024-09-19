@@ -38,6 +38,9 @@ sealed class Screen(
     data object Profile: Screen("Profile", "Profile")
 
     @Serializable
+    data object ProfileAccount: Screen("Account", "Account")
+
+    @Serializable
     data object Calendars: Screen("Calendars", "Calendars")
 
     @Serializable

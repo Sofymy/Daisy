@@ -12,4 +12,5 @@
     <string name="cancel">Cancel</string>
     <string name="already_has_an_account_sign_in">Already have an account? Sign in</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="name">Name</string>
 </resources>

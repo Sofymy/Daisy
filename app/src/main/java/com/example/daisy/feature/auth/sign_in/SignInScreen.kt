@@ -80,6 +80,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.flow.Flow
 
+
+// todo error handling
+
 @Composable
 fun SignInScreen(
     onNavigateToRegister: () -> Unit,

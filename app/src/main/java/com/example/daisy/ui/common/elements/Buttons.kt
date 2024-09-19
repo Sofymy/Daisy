@@ -3,6 +3,7 @@ package com.example.daisy.ui.common.elements
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -91,11 +92,11 @@ fun SecondaryButton(
     ) {
         Box(
             modifier
-                .matchParentSize()
                 .graphicsLayer {
                     translationX = 20f
                     translationY = 20f
                 }
+                .matchParentSize()
                 .background(Purple, RoundedCornerShape(roundedCornerShapePercent))
                 .border(borderWidth, Purple, RoundedCornerShape(roundedCornerShapePercent))
         )
@@ -103,7 +104,7 @@ fun SecondaryButton(
             modifier = modifier
                 .border(borderWidth, Purple, RoundedCornerShape(roundedCornerShapePercent))
                 .clip(RoundedCornerShape(roundedCornerShapePercent))
-                .background(MaterialTheme.colorScheme.background)
+                .background(DarkGrey)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
@@ -114,5 +115,20 @@ fun SecondaryButton(
                 content()
             }
         }
+    }
+}
+
+@Composable
+fun TertiaryButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+){
+    Box(
+        modifier = modifier.clickable {
+            onClick()
+        }.border(1.dp, Color.White.copy(.5f), RoundedCornerShape(20)).padding(8.dp)
+    ){
+        content()
     }
 }

@@ -16,6 +16,7 @@ import com.example.daisy.feature.home.HomeScreen
 import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsScreen
 import com.example.daisy.feature.community.CommunityScreen
 import com.example.daisy.feature.profile.ProfileScreen
+import com.example.daisy.feature.profile.account.ProfileAccountScreen
 
 @ExperimentalMaterial3Api
 @Composable
@@ -98,7 +99,26 @@ fun NavGraph(
         composable<Screen.Profile> {
             onTopNavigationBarTitleChange("Profile")
 
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateToProfileAccount = {
+                    navController.navigate(Screen.ProfileAccount)
+                },
+                onNavigateToOnBoarding = {
+                    navController.navigate(Screen.Onboarding) {
+                        popUpTo(Screen.Home) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Screen.ProfileAccount> {
+            onTopNavigationBarTitleChange("Account settings")
+
+            ProfileAccountScreen(
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile)
+                }
+            )
         }
 
         composable<Screen.Community> {

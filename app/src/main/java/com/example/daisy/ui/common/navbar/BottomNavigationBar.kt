@@ -33,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,8 +43,10 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.daisy.navigation.Screen
+import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
+import com.example.daisy.ui.theme.gradient2
 
 @Composable
 fun BottomNavigationBar(
@@ -61,14 +65,11 @@ fun BottomNavigationBar(
 
     Box(
         modifier = Modifier
-            //.background(Brush.verticalGradient(gradient2))
             .fillMaxWidth()
-            //.systemBarsPadding()
         ,
     ) {
         Column(
             modifier = Modifier
-                //.border(1.dp, Color.White.copy(0.08f), RoundedCornerShape(30, 30, 0, 0))
                 .clip(RoundedCornerShape(30, 30, 0, 0))
                 .background(MediumGrey)
                 .fillMaxWidth(),

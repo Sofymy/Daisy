@@ -308,10 +308,6 @@ fun AuthFormChecklistItem(
         label = ""
     )
 
-    val dividerWidth = animateFloatAsState(targetValue = if(isValid) 1f else 0f,
-        label = ""
-    )
-
     Box(
         Modifier.padding(start = 25.dp, top = 8.dp)
     ) {
