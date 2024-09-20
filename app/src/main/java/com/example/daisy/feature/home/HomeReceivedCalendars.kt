@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.daisy.feature.calendars.CalendarItemContent
+import com.example.daisy.feature.calendars.Type
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.Purple
 import kotlinx.coroutines.delay
@@ -192,7 +193,7 @@ fun HomeReceivedCalendarsBoxes(
         }
 
         receivedCalendars.getOrNull(activeCalendar)?.let { activeCalendarUi ->
-            CalendarItemContent(calendarUi = activeCalendarUi, modifier = Modifier.matchParentSize())
+            CalendarItemContent(calendarUi = activeCalendarUi, type = Type.RECEIVED, modifier = Modifier.matchParentSize())
         }
     }
 }

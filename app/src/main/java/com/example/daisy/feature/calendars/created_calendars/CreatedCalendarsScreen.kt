@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
+import com.example.daisy.feature.calendars.Type
 import com.example.daisy.ui.common.state.ErrorContent
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
@@ -88,7 +89,8 @@ fun CreatedCalendarItem(
         )
         CalendarItemContent(
             calendarUi = calendarUi,
-            modifier = Modifier.matchParentSize()
+            modifier = Modifier.matchParentSize(),
+            type = Type.CREATED
             //onClickItem = {  }
         )
     }

@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +32,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -42,7 +46,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.daisy.ui.common.elements.pluralize
 import com.example.daisy.ui.model.CalendarUi
+import com.example.daisy.ui.theme.Blue
+import com.example.daisy.ui.theme.DarkPurple
 import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.Purple
 import java.time.Duration.between
 import java.time.LocalDate
 
@@ -66,8 +73,15 @@ fun CalendarItemBackground(
     )
 }
 
+
+enum class Type {
+    CREATED,
+    RECEIVED
+}
+
 @Composable
 fun CalendarItemContent(
+    type: Type,
     calendarUi: CalendarUi,
     modifier: Modifier = Modifier
 ) {
@@ -84,8 +98,63 @@ fun CalendarItemContent(
     ) {
         CalendarItemContentSender(calendarUi, Modifier.align(Alignment.TopStart))
         CalendarItemContentDayCounter(calendarUi, Modifier.align(Alignment.TopEnd))
-        CalendarItemContentLockButton(rotateLock.value, Modifier.align(Alignment.BottomEnd))
+        when(type){
+            Type.CREATED -> {
+                CalendarItemRecipients(calendarUi = calendarUi, colors = listOf(Purple, DarkPurple, Blue), modifier = Modifier.align(Alignment.BottomEnd))
+            }
+            Type.RECEIVED -> {
+                CalendarItemContentLockButton(rotateLock.value, Modifier.align(Alignment.BottomEnd))
+            }
+        }
         CalendarItemContentOpenText(calendarUi, Modifier.align(Alignment.BottomStart))
+    }
+}
+
+@Composable
+fun CalendarItemRecipients(
+    calendarUi: CalendarUi,
+    colors: List<Color>,
+    modifier: Modifier
+) {
+    val numberOfCreatedCalendarRecipients = remember {
+        mutableIntStateOf(calendarUi.recipients.size)
+    }
+
+    Box(modifier = modifier.padding(bottom = 20.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy((-10).dp),
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier
+                .padding(horizontal = 15.dp)
+        ) {
+            calendarUi.recipients.forEachIndexed { i, recipient ->
+                if (i < 2 || numberOfCreatedCalendarRecipients.intValue == 3) {
+                    Box(
+                        modifier = Modifier
+                            .border(1.dp, Color.White.copy(.1f), CircleShape)
+                            .clip(CircleShape)
+                            .background(colors[i])
+                            .size(50.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = recipient[0].toString())
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .border(1.dp, Color.White.copy(.1f), CircleShape)
+                            .clip(CircleShape)
+                            .background(colors[i])
+                            .size(50.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "+${numberOfCreatedCalendarRecipients.intValue - i}")
+                    }
+                    return@Box
+                }
+            }
+
+        }
     }
 }
 
