@@ -82,7 +82,7 @@ fun CalendarsScreenContent(
     onNavigateToCreatedCalendar: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = {2})
-    val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.1f to Color.Black)
+    val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.2f to Color.Black)
 
     Column(
         Modifier

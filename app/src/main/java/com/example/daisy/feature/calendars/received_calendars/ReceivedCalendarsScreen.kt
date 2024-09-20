@@ -97,7 +97,7 @@ fun ReceivedCalendarsContent(
                 if(state.calendars.isNotEmpty())
                     LazyColumn {
                         item {
-                            Spacer(modifier = Modifier.height(25.dp))
+                            Spacer(modifier = Modifier.height(35.dp))
                         }
                         items(
                             items = state.calendars.sortedBy { it.dateRange.dateStart },
