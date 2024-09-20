@@ -52,6 +52,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.debugInspectorInfo
@@ -82,7 +83,7 @@ fun CalendarsScreenContent(
     onNavigateToCreatedCalendar: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = {2})
-    val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.2f to Color.Black)
+    val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.1f to Color.Black)
 
     Column(
         Modifier
@@ -103,7 +104,9 @@ fun CalendarsScreenContent(
             state = pagerState,
             modifier = Modifier
                 .zIndex(0f)
-                .offset(y = (-25).dp)
+                .graphicsLayer {
+                    translationY = -60f
+                }
                 .fadingEdge(topFade)
                 .fillMaxSize()
         ) { page ->
