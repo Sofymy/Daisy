@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -45,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
@@ -53,6 +51,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
@@ -60,9 +59,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.feature.calendars.CalendarItemBackground
+import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.ui.common.state.ErrorContent
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
@@ -96,10 +96,15 @@ fun ReceivedCalendarsContent(
             else -> {
                 if(state.calendars.isNotEmpty())
                     LazyColumn {
+                        item {
+                            Spacer(modifier = Modifier.height(25.dp))
+                        }
                         items(
-                            items = state.calendars,
-                        ){
-                            ReceivedCalendarItem(it)
+                            items = state.calendars.sortedBy { it.dateRange.dateStart },
+                        ){calendar ->
+                            ReceivedCalendarItem(
+                                calendarUi = calendar,
+                            )
                         }
                     }
                 else ReceivedCalendarsEmpty(
@@ -111,6 +116,27 @@ fun ReceivedCalendarsContent(
         }
     }
 
+}
+
+@Composable
+fun ReceivedCalendarItem(
+    calendarUi: CalendarUi
+) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(15.dp)
+    ) {
+        CalendarItemBackground(
+            borderColor = Color.White.copy(0.3f),
+            backgroundColor = Purple
+        )
+        CalendarItemContent(
+            calendarUi = calendarUi,
+            modifier = Modifier.matchParentSize()
+            //onClickItem = {  }
+        )
+    }
 }
 
 @Composable
@@ -252,25 +278,6 @@ fun ReceivedCalendarsCodeInput(
 }
 
 @Composable
-fun ReceivedCalendarItem(
-    calendarUi: CalendarUi
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 10.dp)
-            .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(20.dp))
-            //.clickable { onClickItem(calendarUi.id) }
-            .background(MediumGrey, RoundedCornerShape(20.dp))
-            .padding(20.dp)
-    ) {
-        Text(text = calendarUi.id)
-        Text(text = calendarUi.recipients.toString())
-        Text(text = calendarUi.dateRange.dateStart.toString())
-    }
-}
-
-@Composable
 fun ReceivedCalendarsAnimatedUFO() {
     val rotate = rememberInfiniteTransition(label = "")
     val infiniteRotation = rotate.animateFloat(initialValue = 0.5f, targetValue = 0.7f, animationSpec = infiniteRepeatable(
@@ -313,9 +320,10 @@ fun ReceivedCalendarsAnimatedUFO() {
         )
 
         drawOval(
-            color = Color.Transparent,
-            topLeft = Offset(size.width * 0.35f * infiniteRotation.value, size.height * 0.6f),
-            size = Size(size.width * (1.2f-infiniteRotation.value), size.height * 0.07f),
+            color = Color.White.copy(.3f),
+            topLeft = Offset(size.width * 0.25f, size.height * 0.15f),
+            size = Size(size.width * 0.5f, size.height * 0.07f),
+            style = Stroke(3f)
         )
 
 

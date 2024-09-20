@@ -1,20 +1,19 @@
 package com.example.daisy.feature.calendars
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,11 +21,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -41,7 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -62,13 +59,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsScreen
 import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsScreen
 import com.example.daisy.ui.common.elements.PrimaryTextField
+import com.example.daisy.ui.common.elements.fadingEdge
 import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.theme.MediumGrey
-import com.example.daisy.ui.theme.Purple
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -85,9 +82,7 @@ fun CalendarsScreenContent(
     onNavigateToCreatedCalendar: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = {2})
-    val show = remember {
-        mutableStateOf(false)
-    }
+    val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.1f to Color.Black)
 
     Column(
         Modifier
@@ -95,16 +90,22 @@ fun CalendarsScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .zIndex(1f)
+                .fillMaxWidth(),
             contentAlignment = Alignment.BottomCenter
         ){
             CalendarsTabViewBackGround()
             TabView(pagerState)
+
         }
-        Spacer(modifier = Modifier.height(20.dp))
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .zIndex(0f)
+                .offset(y = (-25).dp)
+                .fadingEdge(topFade)
+                .fillMaxSize()
         ) { page ->
             when (page) {
                 0 -> ReceivedCalendarsScreen()
@@ -116,19 +117,18 @@ fun CalendarsScreenContent(
 
 @Composable
 fun CalendarsTabViewBackGround(
-
+    modifier: Modifier = Modifier
 ) {
     Box(
-        Modifier
+        modifier
             .fillMaxWidth()
             .padding(bottom = 25.dp)
-            .background(MediumGrey, RoundedCornerShape(0.dp, 0.dp, 50.dp, 50.dp))
         ,
         contentAlignment = Alignment.TopCenter
     ) {
         Box(
             Modifier
-                .clip(RoundedCornerShape(50.dp))
+                .clip(RoundedCornerShape(0.dp, 0.dp, 50.dp, 50.dp))
                 .background(MediumGrey)
                 .fillMaxWidth()
                 .matchParentSize()
@@ -136,7 +136,7 @@ fun CalendarsTabViewBackGround(
                 .drawBehind {
                     drawCircle(
                         Color.Black.copy(.2f),
-                        center = Offset(150f, size.height + 400),
+                        center = Offset(size.width - 150f, size.height + 400),
                         radius = 650f
                     )
                 }
@@ -177,8 +177,8 @@ fun TabView(
     }
 
     TabRow(
-            selectedTabPosition = selectedTabPosition
-            ) {
+        selectedTabPosition = selectedTabPosition
+    ) {
         items.forEachIndexed { index, s ->
             TabTitle(s, position = index, isSelected = index == selectedTabPosition) {
                 selectedTabPosition = index
