@@ -223,7 +223,7 @@ fun HomeCreatedCalendarContentTitleRow(
             .fillMaxWidth()
     ) {
         Icon(
-            imageVector = Icons.Rounded.Cake,
+            imageVector = calendarUi.icon.icon,
             contentDescription = null,
             Modifier
                 .border(1.dp, Color.White.copy(.3f), CircleShape)

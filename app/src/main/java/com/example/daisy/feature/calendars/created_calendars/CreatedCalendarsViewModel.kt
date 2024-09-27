@@ -6,8 +6,6 @@ import com.example.daisy.domain.model.toUi
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.ui.model.CalendarUi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

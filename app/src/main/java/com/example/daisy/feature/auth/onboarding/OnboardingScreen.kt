@@ -152,8 +152,6 @@ fun OnboardingTextAndButtons(
     onNavigateToRegister: () -> Unit,
     onNavigateToSignIn: () -> Unit
 ) {
-    val background = LightPurple
-
     Column(
         modifier = Modifier
             .fillMaxSize()

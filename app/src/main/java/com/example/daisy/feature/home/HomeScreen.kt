@@ -1,7 +1,5 @@
 package com.example.daisy.feature.home
 
-import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.core.EaseInOutQuart
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -17,15 +15,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,9 +47,7 @@ import com.example.daisy.ui.common.elements.WavyShape
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.model.CalendarUi
-import com.example.daisy.ui.model.DateRangeUi
 import com.example.daisy.ui.model.UserUi
-import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient2
 import com.google.firebase.auth.FirebaseUser
 
@@ -74,8 +66,11 @@ fun HomeScreenContent(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val mockedReceivedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2"), sender = UserUi(name = "Sender1")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")))
-    val mockedCreatedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")))
+    val mockedReceivedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2"), sender = UserUi(name = "Sender1")), CalendarUi(
+        title = "Mocked1", recipients = listOf("MockUser2")))
+    val mockedCreatedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2")), CalendarUi(
+        title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(
+        title = "Mocked1", recipients = listOf("MockUser2")))
 
     HandleLifecycleEvents(
         onResume = {

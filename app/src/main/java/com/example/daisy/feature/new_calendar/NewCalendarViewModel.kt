@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.model.toDomain
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.ui.model.CalendarUi
-import com.example.daisy.ui.model.UserUi
+import com.example.daisy.ui.model.IconOptionUi
 import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +27,8 @@ sealed class NewCalendarUserEvent {
     data class EndChanged(val dateEnd: LocalDate): NewCalendarUserEvent()
     data object RecipientOptionSelected: NewCalendarUserEvent()
     data object CodeOptionSelected: NewCalendarUserEvent()
+    data class TitleChanged(val title: String): NewCalendarUserEvent()
+    data class IconChanged(val icon: IconOptionUi): NewCalendarUserEvent()
     data class RecipientEmailChanged(val recipientEmail: String): NewCalendarUserEvent()
     data object CreateCalendar : NewCalendarUserEvent()
 
@@ -58,6 +60,10 @@ class NewCalendarViewModel @Inject constructor(
                 _state.update { it.copy(recipients = listOf(event.recipientEmail)) }
             }
 
+            is NewCalendarUserEvent.TitleChanged -> {
+                _state.update { it.copy(title = event.title) }
+            }
+
             is NewCalendarUserEvent.CreateCalendar -> {
                 createCalendar()
             }
@@ -69,7 +75,11 @@ class NewCalendarViewModel @Inject constructor(
 
             is NewCalendarUserEvent.RecipientOptionSelected -> {
                 _state.update { it.copy(code = null) }
-                _state.update { it.copy(recipients = emptyList()) }
+                _state.update { it.copy(recipients = listOf("")) }
+            }
+
+            is NewCalendarUserEvent.IconChanged -> {
+                _state.update { it.copy(icon = event.icon) }
             }
         }
     }

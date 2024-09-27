@@ -105,6 +105,7 @@ fun ReceivedCalendarsContent(
                         ){calendar ->
                             ReceivedCalendarItem(
                                 calendarUi = calendar,
+                                modifier = Modifier.animateItem()
                             )
                         }
                     }
@@ -121,10 +122,11 @@ fun ReceivedCalendarsContent(
 
 @Composable
 fun ReceivedCalendarItem(
-    calendarUi: CalendarUi
+    calendarUi: CalendarUi,
+    modifier: Modifier
 ) {
     Box(
-        Modifier
+        modifier
             .fillMaxSize()
             .padding(15.dp)
     ) {

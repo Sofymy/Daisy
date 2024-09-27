@@ -75,7 +75,7 @@ fun NavGraph(
         }
 
         composable<Screen.NewCalendar> {
-            onTopNavigationBarTitleChange("New calendar")
+            onTopNavigationBarTitleChange("")
 
             NewCalendarScreen(
                 onNavigateToHome = {

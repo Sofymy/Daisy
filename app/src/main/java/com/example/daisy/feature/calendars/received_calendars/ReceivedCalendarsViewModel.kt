@@ -1,11 +1,7 @@
 package com.example.daisy.feature.calendars.received_calendars
 
-import android.util.Log
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.daisy.domain.model.Calendar
-import com.example.daisy.domain.model.toDomain
 import com.example.daisy.domain.model.toUi
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.ui.model.CalendarUi

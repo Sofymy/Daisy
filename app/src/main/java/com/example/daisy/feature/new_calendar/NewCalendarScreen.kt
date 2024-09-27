@@ -1,7 +1,10 @@
 package com.example.daisy.feature.new_calendar
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -14,11 +17,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.daisy.feature.new_calendar.pages.NewCalendarDate
+import com.example.daisy.feature.new_calendar.pages.NewCalendarPersonalize
 import com.example.daisy.feature.new_calendar.pages.NewCalendarRecipient
+import com.example.daisy.ui.common.elements.SecondaryButton
+import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.util.UiEvent
 import kotlinx.coroutines.launch
 
@@ -36,7 +45,7 @@ fun NewCalendarContent(
     viewModel: NewCalendarViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
@@ -52,22 +61,34 @@ fun NewCalendarContent(
         }
     }
 
-    HorizontalPager(
-        state = pagerState,
-        userScrollEnabled = false
-    ) { page ->
-        Column(modifier = Modifier.fillMaxSize()) {
-            NewCalendarPagerContent(
-                page = page,
-                onClickNext = {
+    Box(
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false
+        ) { page ->
+            Column(modifier = Modifier.fillMaxSize()) {
+                NewCalendarPagerContent(
+                    page = page,
+                )
+            }
+        }
+        Box(
+            Modifier
+                .background(Brush.verticalGradient(listOf(Color.Transparent, DarkGrey, DarkGrey)))
+                .padding(bottom = 55.dp, start = 20.dp, end = 20.dp, top = 20.dp)
+                .fillMaxWidth()
+        ) {
+            SecondaryButton(
+                onClick = {
                     scope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 },
-                onClickCreate = {
-                    viewModel.onEvent(NewCalendarUserEvent.CreateCalendar)
-                }
-            )
+            ) {
+                Text("Next")
+            }
         }
     }
 }
@@ -75,12 +96,11 @@ fun NewCalendarContent(
 @Composable
 fun NewCalendarPagerContent(
     page: Int,
-    onClickNext: () -> Unit,
-    onClickCreate: () -> Unit
 ) {
     when (page) {
-        0 -> NewCalendarDate(onClickNext = onClickNext)
-        1 -> NewCalendarRecipient(onClickCreate = onClickCreate)
+        0 -> NewCalendarDate()
+        1 -> NewCalendarRecipient()
+        2 -> NewCalendarPersonalize()
     }
 }
 

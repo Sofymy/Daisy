@@ -69,6 +69,7 @@ fun CalendarsList(
         ) { calendar ->
             CreatedCalendarItem(
                 calendarUi = calendar,
+                modifier = Modifier.animateItem()
             )
         }
     }
@@ -76,10 +77,11 @@ fun CalendarsList(
 
 @Composable
 fun CreatedCalendarItem(
-    calendarUi: CalendarUi
+    calendarUi: CalendarUi,
+    modifier: Modifier
 ) {
     Box(
-        Modifier
+        modifier
             .fillMaxSize()
             .padding(15.dp)
     ) {

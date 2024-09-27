@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Button
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.daisy.feature.new_calendar.pages.LargeIcon
 import com.example.daisy.ui.common.elements.pluralize
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.Blue
@@ -170,15 +172,7 @@ fun CalendarItemContentSender(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Icons.Rounded.Favorite,
-                contentDescription = null,
-                Modifier
-                    .border(1.dp, Color.White.copy(.3f), CircleShape)
-                    .size(50.dp)
-                    .background(Color.White.copy(.2f), CircleShape)
-                    .padding(13.dp)
-            )
+            LargeIcon(imageVector = calendarUi.icon.icon)
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(

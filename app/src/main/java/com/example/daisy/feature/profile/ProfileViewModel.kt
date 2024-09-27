@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.model.toUi
 import com.example.daisy.domain.usecases.auth.AuthUseCases
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
-import com.example.daisy.feature.home.HomeUserEvent
 import com.example.daisy.ui.model.CalendarUi
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
