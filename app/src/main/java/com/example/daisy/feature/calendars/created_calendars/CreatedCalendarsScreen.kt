@@ -87,7 +87,8 @@ fun CreatedCalendarItem(
     ) {
         CalendarItemBackground(
             borderColor = Color.White.copy(0.1f),
-            backgroundColor = MediumGrey
+            backgroundColor = MediumGrey,
+            modifier = Modifier.height(220.dp)
         )
         CalendarItemContent(
             calendarUi = calendarUi,

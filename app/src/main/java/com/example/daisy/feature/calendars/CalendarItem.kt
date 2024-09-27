@@ -12,10 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,9 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -58,15 +53,15 @@ import java.time.LocalDate
 @Composable
 fun CalendarItemBackground(
     borderColor: Color,
-    backgroundColor: Color
+    backgroundColor: Color,
+    modifier: Modifier
 ) {
     Box(
-        Modifier
+        modifier
             .clip(RoundedCornerShape(20.dp))
             .border(1.dp, borderColor, RoundedCornerShape(20.dp))
             .background(backgroundColor)
             .fillMaxWidth()
-            .height(220.dp)
             .blur(20.dp)
             .drawBehind {
                 drawCircle(Color.Black.copy(.2f), center = Offset(150f, 150f), radius = 450f)
@@ -139,7 +134,7 @@ fun CalendarItemRecipients(
                             .size(50.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = recipient[0].toString())
+                        Text(text = if(recipient.isBlank()) " " else recipient[0].toString())
                     }
                 } else {
                     Box(

@@ -172,7 +172,7 @@ fun HomeCreatedCalendarContentRecipients(
                             .size(40.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = recipient[0].toString())
+                        Text(text = if(recipient.isBlank()) "?" else recipient[0].toString())
                     }
                 } else {
                     Box(

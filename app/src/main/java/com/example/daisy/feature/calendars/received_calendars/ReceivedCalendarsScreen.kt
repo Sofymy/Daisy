@@ -131,6 +131,7 @@ fun ReceivedCalendarItem(
             .padding(15.dp)
     ) {
         CalendarItemBackground(
+            modifier = Modifier.height(220.dp),
             borderColor = Color.White.copy(0.3f),
             backgroundColor = Purple
         )

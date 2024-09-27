@@ -3,9 +3,12 @@ package com.example.daisy.feature.new_calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -16,16 +19,23 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.text.util.LocalePreferences.CalendarType
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.feature.calendars.CalendarItemContent
+import com.example.daisy.feature.calendars.Type
 import com.example.daisy.feature.new_calendar.pages.NewCalendarDate
 import com.example.daisy.feature.new_calendar.pages.NewCalendarPersonalize
+import com.example.daisy.feature.new_calendar.pages.NewCalendarPreview
 import com.example.daisy.feature.new_calendar.pages.NewCalendarRecipient
+import com.example.daisy.ui.common.elements.PrimaryButton
 import com.example.daisy.ui.common.elements.SecondaryButton
 import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.util.UiEvent
@@ -45,7 +55,8 @@ fun NewCalendarContent(
     viewModel: NewCalendarViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
@@ -74,14 +85,36 @@ fun NewCalendarContent(
                 )
             }
         }
-        Box(
+        Row(
             Modifier
                 .background(Brush.verticalGradient(listOf(Color.Transparent, DarkGrey, DarkGrey)))
                 .padding(bottom = 55.dp, start = 20.dp, end = 20.dp, top = 20.dp)
                 .fillMaxWidth()
         ) {
-            when (pagerState.currentPage) {
-                2 -> {
+            val isFirstPage = pagerState.currentPage == 0
+            val isLastPage = pagerState.currentPage == 3
+
+            if (!isFirstPage) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    PrimaryButton(
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        },
+                    ) {
+                        Text("Back", color = Color.Black)
+                    }
+                }
+                Spacer(modifier = Modifier.weight(0.1f))
+            }
+
+            if (isLastPage) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
                     SecondaryButton(
                         onClick = {
                             viewModel.onEvent(NewCalendarUserEvent.CreateCalendar)
@@ -90,7 +123,10 @@ fun NewCalendarContent(
                         Text("Create calendar")
                     }
                 }
-                else -> {
+            } else {
+                Column(
+                    Modifier.weight(1f)
+                ) {
                     SecondaryButton(
                         onClick = {
                             scope.launch {
@@ -102,6 +138,7 @@ fun NewCalendarContent(
                     }
                 }
             }
+
         }
     }
 }
@@ -114,6 +151,7 @@ fun NewCalendarPagerContent(
         0 -> NewCalendarDate()
         1 -> NewCalendarRecipient()
         2 -> NewCalendarPersonalize()
+        3 -> NewCalendarPreview()
     }
 }
 

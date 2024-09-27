@@ -125,7 +125,8 @@ dependencies {
     // Shimmer
     implementation(libs.compose.shimmer)
 
-
+    // Drawing
+    implementation(libs.sketchbook)
 }
 
 kapt {

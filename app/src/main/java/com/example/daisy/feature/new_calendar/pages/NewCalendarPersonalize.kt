@@ -3,6 +3,7 @@ package com.example.daisy.feature.new_calendar.pages
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,20 +29,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.feature.calendars.CalendarItemBackground
+import com.example.daisy.feature.calendars.CalendarItemContent
+import com.example.daisy.feature.calendars.Type
 import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
 import com.example.daisy.feature.new_calendar.NewCalendarViewModel
 import com.example.daisy.ui.common.elements.PrimaryTextField
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.model.IconOptionUi
 import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.MediumPurple
 import com.example.daisy.ui.theme.Purple
+import io.getstream.sketchbook.Sketchbook
+import io.getstream.sketchbook.rememberSketchbookController
 
 @Composable
 fun NewCalendarPersonalize() {
@@ -68,13 +77,26 @@ fun NewCalendarPersonalizeForm(
     val options = IconOptionUi.entries.toTypedArray()
     val selectedValue = remember { mutableStateOf(IconOptionUi.LOVE) }
 
+
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(bottom = 50.dp)
+        ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             NewCalendarPersonalizeHeader()
+        }
+        item {
+            NewCalendarPersonalizeCard(
+                calendarUi = state,
+                allowSketch = false,
+                modifier = Modifier.graphicsLayer {
+                    scaleY = .7f
+                    scaleX = .7f
+                }
+            )
         }
         item {
             NewCalendarPersonalizeTitle(
@@ -105,11 +127,15 @@ fun NewCalendarPersonalizeIconOptionsList(
 ) {
     Column(
         Modifier
+            .padding(bottom = 50.dp, top = 30.dp)
             .fillMaxSize()
-            .padding(20.dp)
     ) {
+
+        Text(text = "Select an icon", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         LazyRow(
         ) {
+            item { Spacer(modifier = Modifier.width(20.dp)) }
             items(options){option ->
                 NewCalendarPersonalizeIconOptionItem(
                     option = option,
@@ -120,6 +146,7 @@ fun NewCalendarPersonalizeIconOptionsList(
                 Spacer(modifier = Modifier.width(20.dp))
             }
         }
+        Spacer(modifier = Modifier.height(60.dp))
     }
 }
 
@@ -154,7 +181,9 @@ fun NewCalendarPersonalizeIconOptionItem(
             )
     ) {
         Column(
-            Modifier.padding(20.dp).fillMaxWidth(),
+            Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             LargeIcon(imageVector = option.icon)
@@ -169,7 +198,7 @@ fun NewCalendarPersonalizeTitle(
     state: CalendarUi,
     onFieldChange: (NewCalendarUserEvent) -> Unit
 ) {
-    Column() {
+    Column {
         PrimaryTextField(
             value = state.title,
             onValueChange = { newValue ->
@@ -177,6 +206,32 @@ fun NewCalendarPersonalizeTitle(
             },
             icon = Icons.Default.Title,
             placeholderText = "Enter a title"
+        )
+    }
+}
+
+@Composable
+fun NewCalendarPersonalizeCard(
+    allowSketch: Boolean = false,
+    calendarUi: CalendarUi,
+    modifier: Modifier,
+) {
+    val sketchbookController = rememberSketchbookController()
+    sketchbookController.setPaintColor(MediumPurple)
+
+    Box(
+        modifier
+            .padding(15.dp)
+    ) {
+        CalendarItemBackground(
+            borderColor = Color.White.copy(0.3f),
+            backgroundColor = Purple,
+            modifier = Modifier.height(220.dp).fillMaxWidth()
+        )
+        CalendarItemContent(
+            calendarUi = calendarUi,
+            modifier = Modifier.matchParentSize(),
+            type = Type.RECEIVED
         )
     }
 }
@@ -196,22 +251,22 @@ private fun NewCalendarPersonalizeHeader() {
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "Select fancy title and icon for your calendar.",
+            text = "Customize your calendar: add a title and icon.",
             textAlign = TextAlign.Center,
             color = Color.White.copy(alpha = 0.5f)
         )
-        Spacer(modifier = Modifier.height(50.dp))
     }
 }
 
 @Composable
 fun LargeIcon(
-    imageVector: ImageVector
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier
 ){
     Icon(
         imageVector = imageVector,
         contentDescription = null,
-        Modifier
+        modifier
             .border(1.dp, Color.White.copy(.3f), CircleShape)
             .size(50.dp)
             .background(Color.White.copy(.2f), CircleShape)
