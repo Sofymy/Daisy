@@ -80,14 +80,27 @@ fun NewCalendarContent(
                 .padding(bottom = 55.dp, start = 20.dp, end = 20.dp, top = 20.dp)
                 .fillMaxWidth()
         ) {
-            SecondaryButton(
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            when (pagerState.currentPage) {
+                2 -> {
+                    SecondaryButton(
+                        onClick = {
+                            viewModel.onEvent(NewCalendarUserEvent.CreateCalendar)
+                        },
+                    ) {
+                        Text("Create calendar")
                     }
-                },
-            ) {
-                Text("Next")
+                }
+                else -> {
+                    SecondaryButton(
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        },
+                    ) {
+                        Text("Next")
+                    }
+                }
             }
         }
     }
