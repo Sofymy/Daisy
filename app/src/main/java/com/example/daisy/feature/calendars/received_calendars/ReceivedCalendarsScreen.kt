@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,6 +52,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -135,6 +137,7 @@ fun ReceivedCalendarItem(
             borderColor = Color.White.copy(0.3f),
             backgroundColor = Purple
         )
+        calendarUi.drawing?.let { Image(bitmap = it.asImageBitmap(), contentDescription = null) }
         CalendarItemContent(
             calendarUi = calendarUi,
             modifier = Modifier.matchParentSize(),

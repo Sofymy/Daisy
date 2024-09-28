@@ -1,5 +1,6 @@
 package com.example.daisy.feature.calendars.created_calendars
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -90,6 +92,7 @@ fun CreatedCalendarItem(
             backgroundColor = MediumGrey,
             modifier = Modifier.height(220.dp)
         )
+        calendarUi.drawing?.let { Image(bitmap = it.asImageBitmap(), contentDescription = null) }
         CalendarItemContent(
             calendarUi = calendarUi,
             modifier = Modifier.matchParentSize(),

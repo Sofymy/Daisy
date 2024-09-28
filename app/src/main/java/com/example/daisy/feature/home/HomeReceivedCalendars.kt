@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.draggable2D
@@ -36,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
@@ -193,6 +195,7 @@ fun HomeReceivedCalendarsBoxes(
         }
 
         receivedCalendars.getOrNull(activeCalendar)?.let { activeCalendarUi ->
+            activeCalendarUi.drawing?.let { Image(bitmap = it.asImageBitmap(), contentDescription = null) }
             CalendarItemContent(calendarUi = activeCalendarUi, type = Type.RECEIVED, modifier = Modifier.matchParentSize())
         }
     }

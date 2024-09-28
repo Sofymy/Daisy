@@ -1,5 +1,7 @@
 package com.example.daisy.feature.new_calendar
 
+import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.model.toDomain
@@ -28,6 +30,7 @@ sealed class NewCalendarUserEvent {
     data object RecipientOptionSelected: NewCalendarUserEvent()
     data object CodeOptionSelected: NewCalendarUserEvent()
     data class TitleChanged(val title: String): NewCalendarUserEvent()
+    data class DrawingChanged(val bitmap: Bitmap): NewCalendarUserEvent()
     data class IconChanged(val icon: IconOptionUi): NewCalendarUserEvent()
     data class RecipientEmailChanged(val recipientEmail: String): NewCalendarUserEvent()
     data object CreateCalendar : NewCalendarUserEvent()
@@ -81,13 +84,19 @@ class NewCalendarViewModel @Inject constructor(
             is NewCalendarUserEvent.IconChanged -> {
                 _state.update { it.copy(icon = event.icon) }
             }
+
+            is NewCalendarUserEvent.DrawingChanged -> {
+                _state.update { it.copy(drawing = event.bitmap) }
+            }
+
+            else -> {}
         }
     }
 
     private fun createCalendar() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                calendarUseCases.setCalendarUseCase(state.value.toDomain())
+                calendarUseCases.setCalendarUseCase(state.value.toDomain(), state.value.drawing)
                 _uiEvent.send(UiEvent.Success)
             } catch (e: Exception) {
                 _uiEvent.send(UiEvent.Error(e.message.toString()))

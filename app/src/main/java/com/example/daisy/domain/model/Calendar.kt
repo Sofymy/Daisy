@@ -1,5 +1,6 @@
 package com.example.daisy.domain.model
 
+import android.graphics.Bitmap
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.model.IconOptionUi
 

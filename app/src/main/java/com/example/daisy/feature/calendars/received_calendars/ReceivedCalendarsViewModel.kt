@@ -73,6 +73,10 @@ class ReceivedCalendarsViewModel @Inject constructor(
                 CoroutineScope(coroutineContext).launch(Dispatchers.IO) {
                     val calendars = calendarUseCases.getReceivedCalendarsUseCase().getOrThrow().map { it?.toUi() ?: CalendarUi() }
 
+                    calendars.forEach {
+                        it.drawing = calendarUseCases.getCalendarDrawingUseCase(it.id).getOrNull()
+                    }
+
                     _state.update { it.copy(
                         isLoading = false,
                         calendars = calendars

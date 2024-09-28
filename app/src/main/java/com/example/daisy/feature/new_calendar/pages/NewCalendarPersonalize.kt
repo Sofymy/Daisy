@@ -91,7 +91,6 @@ fun NewCalendarPersonalizeForm(
         item {
             NewCalendarPersonalizeCard(
                 calendarUi = state,
-                allowSketch = false,
                 modifier = Modifier.graphicsLayer {
                     scaleY = .7f
                     scaleX = .7f
@@ -212,12 +211,9 @@ fun NewCalendarPersonalizeTitle(
 
 @Composable
 fun NewCalendarPersonalizeCard(
-    allowSketch: Boolean = false,
     calendarUi: CalendarUi,
     modifier: Modifier,
 ) {
-    val sketchbookController = rememberSketchbookController()
-    sketchbookController.setPaintColor(MediumPurple)
 
     Box(
         modifier

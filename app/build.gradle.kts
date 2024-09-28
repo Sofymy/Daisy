@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -127,6 +128,7 @@ dependencies {
 
     // Drawing
     implementation(libs.sketchbook)
+
 }
 
 kapt {

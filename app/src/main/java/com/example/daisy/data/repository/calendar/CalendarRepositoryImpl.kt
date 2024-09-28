@@ -1,7 +1,8 @@
 package com.example.daisy.data.repository.calendar
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.compose.ui.platform.LocalFocusManager
 import com.example.daisy.domain.model.Calendar
 import com.example.daisy.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -11,27 +12,22 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.tasks.await
-import okhttp3.internal.notify
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class CalendarRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
+    private val storage: StorageReference,
     private val auth: FirebaseAuth
 ) : CalendarRepository {
 
-    override fun setCalendar(calendar: Calendar) {
+    override fun setCalendar(calendar: Calendar, drawing: Bitmap?) {
         val dbCalendars = firestore.collection("calendars")
         val currentUser = auth.currentUser
 
@@ -47,7 +43,9 @@ class CalendarRepositoryImpl @Inject constructor(
 
         sender?.let { user ->
             val updatedCalendar = calendar.copy(sender = user)
-            dbCalendars.add(updatedCalendar)
+            dbCalendars.add(updatedCalendar).addOnSuccessListener {id ->
+                drawing?.let { uploadBitmap(it, id.id) }
+            }
         }
     }
 
@@ -61,6 +59,17 @@ class CalendarRepositoryImpl @Inject constructor(
                     it.toObject<Calendar>().copy(id = it.id)
                 }
             }
+    }
+
+    override suspend fun getCalendarDrawing(filename: String): Bitmap? {
+        return try {
+            val imageRef = storage.child("calendarDrawings/$filename.png")
+            val bytes = imageRef.getBytes(Long.MAX_VALUE).await()
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        } catch (e: Exception) {
+            Log.e("CalendarRepository", "Failed to load bitmap: ${e.message}")
+            null
+        }
     }
 
     override fun getCreatedCalendar(id: String): Flow<Calendar?> {
@@ -86,6 +95,23 @@ class CalendarRepositoryImpl @Inject constructor(
                 .document(document.id)
                 .update("recipients", FieldValue.arrayUnion(auth.currentUser?.email!!))
                 .await()
+        }
+    }
+
+    private fun uploadBitmap(
+        bitmap: Bitmap,
+        fileName: String,
+    ) {
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        val data = baos.toByteArray()
+
+        val imageRef = storage.child("calendarDrawings/$fileName.png")
+
+        val uploadTask = imageRef.putBytes(data)
+        uploadTask.addOnSuccessListener {
+            imageRef.downloadUrl.addOnSuccessListener { uri ->
+            }
         }
     }
 
