@@ -1,9 +1,7 @@
 package com.example.daisy.feature.profile.account
 
-import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
-import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -60,11 +58,7 @@ import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.util.UiEvent
-import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 
 @Composable
 fun ProfileAccountScreen(

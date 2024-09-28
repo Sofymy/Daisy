@@ -78,13 +78,17 @@ import com.example.daisy.ui.util.Constants
 
 @Composable
 fun ReceivedCalendarsScreen(
-){
-    ReceivedCalendarsContent()
+    searchExpression: String
+) {
+    ReceivedCalendarsContent(
+        searchExpression = searchExpression
+    )
 }
 
 @Composable
 fun ReceivedCalendarsContent(
     viewModel: ReceivedCalendarsViewModel = hiltViewModel(),
+    searchExpression: String,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -105,7 +109,12 @@ fun ReceivedCalendarsContent(
                             Spacer(modifier = Modifier.height(25.dp))
                         }
                         items(
-                            items = state.calendars.sortedBy { it.dateRange.dateStart },
+                            items = state.calendars
+                                .filter {
+                                    it.toString().contains(searchExpression, ignoreCase = true)
+                                }
+                                .sortedBy { it.dateRange.dateStart }
+                            ,
                         ){calendar ->
                             ReceivedCalendarItem(
                                 calendarUi = calendar,

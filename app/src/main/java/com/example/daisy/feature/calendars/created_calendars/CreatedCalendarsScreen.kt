@@ -1,6 +1,7 @@
 package com.example.daisy.feature.calendars.created_calendars
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,10 +30,12 @@ import com.example.daisy.ui.util.Constants
 
 @Composable
 fun CreatedCalendarsScreen(
-    onNavigateToCreatedCalendar: (String) -> Unit
+    onNavigateToCreatedCalendar: (String) -> Unit,
+    searchExpression: String
 ) {
     CreatedCalendarsContent(
-        onNavigateToCreatedCalendar = onNavigateToCreatedCalendar
+        onNavigateToCreatedCalendar = onNavigateToCreatedCalendar,
+        searchExpression = searchExpression
     )
 }
 
@@ -40,6 +43,7 @@ fun CreatedCalendarsScreen(
 fun CreatedCalendarsContent(
     viewModel: CreatedCalendarsViewModel = hiltViewModel(),
     onNavigateToCreatedCalendar: (String) -> Unit,
+    searchExpression: String,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -52,7 +56,9 @@ fun CreatedCalendarsContent(
         state.isError -> ErrorContent()
         else -> {
             CalendarsList(
-                calendars = state.calendars,
+                calendars = state.calendars.filter {
+                    it.toString().contains(searchExpression, ignoreCase = true)
+                },
                 onNavigateToCreatedCalendar = onNavigateToCreatedCalendar
             )
         }
@@ -64,7 +70,9 @@ fun CalendarsList(
     calendars: List<CalendarUi>,
     onNavigateToCreatedCalendar: (String) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(
+        Modifier.fillMaxSize()
+    ) {
         item {
             Spacer(modifier = Modifier.height(25.dp))
         }

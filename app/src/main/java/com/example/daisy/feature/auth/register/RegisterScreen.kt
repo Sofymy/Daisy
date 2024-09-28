@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,7 +25,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
@@ -63,7 +61,6 @@ import com.example.daisy.ui.common.brushes.createHorizontalStripeBrush
 import com.example.daisy.ui.common.brushes.createVerticalStripeBrush
 import com.example.daisy.ui.common.elements.PrimaryButton
 import com.example.daisy.ui.common.elements.PrimaryTextField
-import com.example.daisy.ui.common.elements.RectangleWithCutCorners
 import com.example.daisy.ui.theme.Blue
 import com.example.daisy.ui.theme.DarkBlue
 import com.example.daisy.ui.theme.LightBlue

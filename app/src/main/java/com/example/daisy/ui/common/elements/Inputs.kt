@@ -49,6 +49,7 @@ fun PrimaryTextField(
     enabled: Boolean = true,
     value: String,
     onValueChange: (String) -> Unit,
+    onImeAction: (() -> Unit)? = null,
     placeholderText: String = "",
     label: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
@@ -67,6 +68,7 @@ fun PrimaryTextField(
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
             enabled = enabled,
+
             singleLine = true,
             leadingIcon = { Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground.copy(0.2f)) },
             trailingIcon = {
@@ -91,6 +93,7 @@ fun PrimaryTextField(
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
+                    onImeAction?.invoke()
                     focusManager.clearFocus()
                 }
             ),

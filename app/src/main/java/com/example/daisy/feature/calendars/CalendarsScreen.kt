@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,10 +20,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -52,7 +53,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.debugInspectorInfo
@@ -65,7 +65,6 @@ import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsScr
 import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsScreen
 import com.example.daisy.ui.common.elements.PrimaryTextField
 import com.example.daisy.ui.common.elements.fadingEdge
-import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.theme.MediumGrey
 import kotlinx.coroutines.launch
 
@@ -82,13 +81,13 @@ fun CalendarsScreen(
 fun CalendarsScreenContent(
     onNavigateToCreatedCalendar: (String) -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = {2})
+    val pagerState = rememberPagerState(pageCount = { 2 })
     val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.1f to Color.Black)
+    val searchExpression = remember { mutableStateOf("") }
+    val recentSearches = remember { mutableStateOf(listOf<String>()) }
 
     Column(
-        Modifier
-            .fillMaxSize()
-        ,
+        Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -96,10 +95,23 @@ fun CalendarsScreenContent(
                 .zIndex(1f)
                 .fillMaxWidth(),
             contentAlignment = Alignment.BottomCenter
-        ){
-            CalendarsTabViewBackGround()
-            TabView(pagerState)
-
+        ) {
+            CalendarsTabViewSearchBar(
+                searchExpression = searchExpression.value,
+                onSearchExpressionChange = {
+                    searchExpression.value = it
+                },
+                recentSearches = recentSearches.value,
+                onRecentSearchClick = {
+                    searchExpression.value = it
+                },
+                onSearchSubmit = {
+                    if (it.isNotEmpty() && !recentSearches.value.contains(it)) {
+                        recentSearches.value += it
+                    }
+                }
+            )
+            CalendarsTabView(pagerState)
         }
         HorizontalPager(
             state = pagerState,
@@ -110,22 +122,31 @@ fun CalendarsScreenContent(
                 .fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> ReceivedCalendarsScreen()
-                1 -> CreatedCalendarsScreen(onNavigateToCreatedCalendar)
+                0 -> ReceivedCalendarsScreen(
+                    searchExpression = searchExpression.value
+                )
+                1 -> CreatedCalendarsScreen(
+                    searchExpression = searchExpression.value,
+                    onNavigateToCreatedCalendar = onNavigateToCreatedCalendar
+                )
             }
         }
     }
 }
 
 @Composable
-fun CalendarsTabViewBackGround(
-    modifier: Modifier = Modifier
+fun CalendarsTabViewSearchBar(
+    modifier: Modifier = Modifier,
+    searchExpression: String,
+    onSearchExpressionChange: (String) -> Unit,
+    onSearchSubmit: (String) -> Unit,
+    recentSearches: List<String>,
+    onRecentSearchClick: (String) -> Unit
 ) {
     Box(
         modifier
             .fillMaxWidth()
-            .padding(bottom = 25.dp)
-        ,
+            .padding(bottom = 25.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         Box(
@@ -144,7 +165,46 @@ fun CalendarsTabViewBackGround(
                 }
         )
         Column {
-            PrimaryTextField(value = "", onValueChange = {}, icon = Icons.Default.Search, placeholderText = "Search Calendar")
+            PrimaryTextField(
+                value = searchExpression,
+                onValueChange = onSearchExpressionChange,
+                icon = Icons.Default.Search,
+                placeholderText = "Search in calendars",
+                onImeAction = {
+                    onSearchSubmit(searchExpression)
+                }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            if (recentSearches.isNotEmpty()) {
+                Row(
+                    Modifier.padding(horizontal = 30.dp)
+                ) {
+                    Text("Recent Searches", fontWeight = FontWeight.Bold, color = Color.Gray)
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    LazyRow(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                    ) {
+                        items(recentSearches){recentSearch ->
+                            Text(
+                                text = recentSearch,
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .background(Color.White.copy(.1f), RoundedCornerShape(3.dp))
+                                    .fillMaxWidth()
+                                    .clickable { onRecentSearchClick(recentSearch) }
+                                    .padding(horizontal = 8.dp),
+                                color = Color.White,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    }
+                }
+
+            }
+
             Spacer(modifier = Modifier.height(40.dp))
         }
     }
@@ -165,7 +225,7 @@ data class TabPosition(
 // SOURCE: https://medium.com/@gautier.louis/tab-row-made-easy-in-jetpack-compose-8eaa5a602744
 
 @Composable
-fun TabView(
+fun CalendarsTabView(
     pagerState: PagerState
 ) {
     var selectedTabPosition by remember { mutableIntStateOf(0) }

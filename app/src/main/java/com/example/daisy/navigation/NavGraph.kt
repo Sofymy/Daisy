@@ -127,27 +127,11 @@ fun NavGraph(
             CommunityScreen()
         }
 
-        composable<Screen.CreatedCalendars> {
-            onTopNavigationBarTitleChange("Created calendars")
-
-            CreatedCalendarsScreen(
-                onNavigateToCreatedCalendar = {
-                    navController.navigate(Screen.CreatedCalendarEditor(it))
-                }
-            )
-        }
-
         composable<Screen.CreatedCalendarEditor> { backStackEntry ->
             onTopNavigationBarTitleChange("Calendar preview")
 
             val id = backStackEntry.arguments?.getString("id")
             CreatedCalendarEditorScreen(id = id)
-        }
-
-        composable<Screen.ReceivedCalendars> {
-            onTopNavigationBarTitleChange("Received calendars")
-
-            ReceivedCalendarsScreen()
         }
 
     }
