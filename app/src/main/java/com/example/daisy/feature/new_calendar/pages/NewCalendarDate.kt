@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.feature.new_calendar.NewCalendarTypewriterText
 import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
 import com.example.daisy.feature.new_calendar.NewCalendarViewModel
 import com.example.daisy.ui.common.elements.pluralize
@@ -73,11 +74,9 @@ fun NewCalendarDateAnimatedContent(
 ) {
     val numberOfDays = calculateNumberOfDays(state.dateRange.dateStart, state.dateRange.dateEnd)
 
-    Text(
-        text = "I'm creating...",
-        fontWeight = FontWeight.Bold,
-        style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier.padding(top = 20.dp)
+    NewCalendarTypewriterText(
+        baseText = "I'm ",
+        underlinedText = "creating..."
     )
 
     AnimatedContent(

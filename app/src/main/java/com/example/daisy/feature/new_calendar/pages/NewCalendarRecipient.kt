@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.feature.new_calendar.NewCalendarTypewriterText
 import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
 import com.example.daisy.feature.new_calendar.NewCalendarViewModel
 import com.example.daisy.ui.common.elements.PrimaryTextField
@@ -81,10 +82,9 @@ fun NewCalendarRecipientForm(
 
 @Composable
 private fun NewCalendarRecipientHeader() {
-    Text(
-        text = "I'm sharing...",
-        fontWeight = FontWeight.Bold,
-        style = MaterialTheme.typography.titleLarge
+    NewCalendarTypewriterText(
+        baseText = "I'm ",
+        underlinedText = "sharing..."
     )
     Spacer(modifier = Modifier.height(20.dp))
     Text(

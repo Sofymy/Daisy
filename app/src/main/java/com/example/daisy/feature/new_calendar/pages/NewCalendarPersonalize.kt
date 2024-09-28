@@ -1,5 +1,6 @@
 package com.example.daisy.feature.new_calendar.pages
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,8 +30,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
+import com.example.daisy.feature.new_calendar.NewCalendarTypewriterText
 import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
 import com.example.daisy.feature.new_calendar.NewCalendarViewModel
 import com.example.daisy.ui.common.elements.PrimaryTextField
@@ -49,6 +53,7 @@ import com.example.daisy.ui.model.IconOptionUi
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.MediumPurple
 import com.example.daisy.ui.theme.Purple
+import com.example.daisy.ui.util.Constants
 import io.getstream.sketchbook.Sketchbook
 import io.getstream.sketchbook.rememberSketchbookController
 
@@ -224,6 +229,7 @@ fun NewCalendarPersonalizeCard(
             backgroundColor = Purple,
             modifier = Modifier.height(220.dp).fillMaxWidth()
         )
+
         CalendarItemContent(
             calendarUi = calendarUi,
             modifier = Modifier.matchParentSize(),
@@ -240,10 +246,9 @@ private fun NewCalendarPersonalizeHeader() {
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "I'm personalizing...",
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleLarge
+        NewCalendarTypewriterText(
+            baseText = "I'm ",
+            underlinedText = "personalizing..."
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(

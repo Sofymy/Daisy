@@ -20,7 +20,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.daisy.ui.common.animations.bounceClick
 import com.example.daisy.ui.common.brushes.createStripeBrush
+import com.example.daisy.ui.theme.Blue
 import com.example.daisy.ui.theme.DarkGrey
+import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.theme.gradient
 
@@ -60,7 +62,7 @@ fun PrimaryButton(
             modifier = modifier
                 .border(borderWidth, Purple, RoundedCornerShape(roundedCornerShapePercent))
                 .clip(RoundedCornerShape(roundedCornerShapePercent))
-                .background(Color.White)
+                .background(DarkGrey)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {

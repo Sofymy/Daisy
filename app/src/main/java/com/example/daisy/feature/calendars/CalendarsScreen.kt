@@ -87,7 +87,8 @@ fun CalendarsScreenContent(
 
     Column(
         Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+        ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -103,10 +104,8 @@ fun CalendarsScreenContent(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
+                .padding(bottom = 20.dp)
                 .zIndex(0f)
-                .graphicsLayer {
-                    translationY = -60f
-                }
                 .fadingEdge(topFade)
                 .fillMaxSize()
         ) { page ->

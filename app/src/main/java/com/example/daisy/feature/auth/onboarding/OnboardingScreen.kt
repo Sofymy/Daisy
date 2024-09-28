@@ -194,6 +194,7 @@ fun OnboardingTextAndButtons(
                     )
                 })
                 Spacer(modifier = Modifier.height(16.dp))
+
                 Text(stringResource(R.string.already_has_an_account_sign_in), Modifier.clickable { onNavigateToSignIn() })
             }
         }

@@ -66,7 +66,7 @@ fun CalendarsList(
 ) {
     LazyColumn {
         item {
-            Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(25.dp))
         }
         items(
             items = calendars.sortedBy { it.dateRange.dateStart }
