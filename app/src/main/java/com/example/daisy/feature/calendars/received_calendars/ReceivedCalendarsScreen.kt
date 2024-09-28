@@ -43,6 +43,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusRequester
@@ -73,6 +74,7 @@ import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.LightPurple
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
+import com.example.daisy.ui.util.Constants
 
 @Composable
 fun ReceivedCalendarsScreen(
@@ -137,7 +139,12 @@ fun ReceivedCalendarItem(
             borderColor = Color.White.copy(0.3f),
             backgroundColor = Purple
         )
-        calendarUi.drawing?.let { Image(bitmap = it.asImageBitmap(), contentDescription = null) }
+        calendarUi.drawing?.let {
+            Image(bitmap = it.asImageBitmap(),
+                modifier = Modifier
+                    .alpha(Constants.CALENDAR_DRAWING_ALPHA),
+                contentDescription = null)
+        }
         CalendarItemContent(
             calendarUi = calendarUi,
             modifier = Modifier.matchParentSize(),

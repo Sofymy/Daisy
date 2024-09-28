@@ -46,6 +46,7 @@ import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.Purple
+import com.example.daisy.ui.util.Constants
 import kotlinx.coroutines.delay
 
 
@@ -195,7 +196,12 @@ fun HomeReceivedCalendarsBoxes(
         }
 
         receivedCalendars.getOrNull(activeCalendar)?.let { activeCalendarUi ->
-            activeCalendarUi.drawing?.let { Image(bitmap = it.asImageBitmap(), contentDescription = null) }
+            activeCalendarUi.drawing?.let {
+                Image(bitmap = it.asImageBitmap(),
+                    modifier = Modifier
+                        .alpha(Constants.CALENDAR_DRAWING_ALPHA),
+                    contentDescription = null)
+            }
             CalendarItemContent(calendarUi = activeCalendarUi, type = Type.RECEIVED, modifier = Modifier.matchParentSize())
         }
     }

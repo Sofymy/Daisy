@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.util.Constants
 
 @Composable
 fun CreatedCalendarsScreen(
@@ -92,7 +94,12 @@ fun CreatedCalendarItem(
             backgroundColor = MediumGrey,
             modifier = Modifier.height(220.dp)
         )
-        calendarUi.drawing?.let { Image(bitmap = it.asImageBitmap(), contentDescription = null) }
+        calendarUi.drawing?.let {
+            Image(bitmap = it.asImageBitmap(),
+                modifier = Modifier
+                    .alpha(Constants.CALENDAR_DRAWING_ALPHA),
+                contentDescription = null)
+        }
         CalendarItemContent(
             calendarUi = calendarUi,
             modifier = Modifier.matchParentSize(),

@@ -54,6 +54,7 @@ import com.example.daisy.ui.theme.Blue
 import com.example.daisy.ui.theme.LightBlue
 import com.example.daisy.ui.theme.MediumPurple
 import com.example.daisy.ui.theme.Purple
+import com.example.daisy.ui.util.Constants
 import io.getstream.sketchbook.PaintColorPalette
 import io.getstream.sketchbook.Sketchbook
 import io.getstream.sketchbook.SketchbookController
@@ -129,7 +130,6 @@ fun NewCalendarPreviewCard(
     onDrawingChanged: (Bitmap) -> Unit
 ) {
     val sketchbookController = rememberSketchbookController()
-    sketchbookController.setPaintColor(MediumPurple)
 
     Column(
         Modifier.fillMaxWidth(),
@@ -169,6 +169,8 @@ fun NewCalendarPreviewCardBox(
     sketchbookController: SketchbookController,
     onDrawingChanged: (Bitmap) -> Unit
 ) {
+    sketchbookController.setPaintColor(Color.White)
+
     Box(
         modifier
             .fillMaxWidth()
@@ -182,6 +184,7 @@ fun NewCalendarPreviewCardBox(
         if (allowSketch) {
             Sketchbook(
                 modifier = Modifier
+                    .alpha(Constants.CALENDAR_DRAWING_ALPHA)
                     .matchParentSize()
                     .clip(RoundedCornerShape(20.dp)),
                 controller = sketchbookController,
