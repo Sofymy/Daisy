@@ -37,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,16 +56,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.zIndex
+import com.example.daisy.data.datasource.datastore.DataStoreManager
 import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsScreen
 import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsScreen
 import com.example.daisy.ui.common.elements.PrimaryTextField
 import com.example.daisy.ui.common.elements.fadingEdge
+import com.example.daisy.ui.theme.DarkGrey
 import com.example.daisy.ui.theme.MediumGrey
 import kotlinx.coroutines.launch
 
@@ -84,7 +89,11 @@ fun CalendarsScreenContent(
     val pagerState = rememberPagerState(pageCount = { 2 })
     val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.1f to Color.Black)
     val searchExpression = remember { mutableStateOf("") }
-    val recentSearches = remember { mutableStateOf(listOf<String>()) }
+    val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+    val dataStoreManager = remember { DataStoreManager(context) }
+    val recentSearches by dataStoreManager.recentSearches.collectAsState(initial = emptySet())
 
     Column(
         Modifier.fillMaxSize(),
@@ -93,7 +102,8 @@ fun CalendarsScreenContent(
         Box(
             modifier = Modifier
                 .zIndex(1f)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .background(DarkGrey),
             contentAlignment = Alignment.BottomCenter
         ) {
             CalendarsTabViewSearchBar(
@@ -101,13 +111,15 @@ fun CalendarsScreenContent(
                 onSearchExpressionChange = {
                     searchExpression.value = it
                 },
-                recentSearches = recentSearches.value,
+                recentSearches = recentSearches.toList(),
                 onRecentSearchClick = {
                     searchExpression.value = it
                 },
                 onSearchSubmit = {
-                    if (it.isNotEmpty() && !recentSearches.value.contains(it)) {
-                        recentSearches.value += it
+                    if (it.isNotEmpty() && !recentSearches.contains(it)) {
+                        scope.launch {
+                            dataStoreManager.saveSearch(it)
+                        }
                     }
                 }
             )
@@ -144,71 +156,125 @@ fun CalendarsTabViewSearchBar(
     onRecentSearchClick: (String) -> Unit
 ) {
     Box(
-        modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 25.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        Box(
-            Modifier
-                .clip(RoundedCornerShape(0.dp, 0.dp, 50.dp, 50.dp))
-                .background(MediumGrey)
-                .fillMaxWidth()
-                .matchParentSize()
-                .blur(20.dp)
-                .drawBehind {
-                    drawCircle(
-                        Color.Black.copy(.2f),
-                        center = Offset(size.width - 150f, size.height + 400),
-                        radius = 650f
-                    )
-                }
+        CalendarsTabViewSearchBarBackground(
+            modifier = Modifier.matchParentSize()
         )
+
         Column {
-            PrimaryTextField(
-                value = searchExpression,
-                onValueChange = onSearchExpressionChange,
-                icon = Icons.Default.Search,
-                placeholderText = "Search in calendars",
-                onImeAction = {
-                    onSearchSubmit(searchExpression)
-                }
+            CalendarsTabViewSearchBarField(
+                searchExpression = searchExpression,
+                onSearchExpressionChange = onSearchExpressionChange,
+                onSearchSubmit = onSearchSubmit
             )
+
             Spacer(modifier = Modifier.height(10.dp))
 
-            if (recentSearches.isNotEmpty()) {
-                Row(
-                    Modifier.padding(horizontal = 30.dp)
-                ) {
-                    Text("Recent Searches", fontWeight = FontWeight.Bold, color = Color.Gray)
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    LazyRow(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                    ) {
-                        items(recentSearches){recentSearch ->
-                            Text(
-                                text = recentSearch,
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .background(Color.White.copy(.1f), RoundedCornerShape(3.dp))
-                                    .fillMaxWidth()
-                                    .clickable { onRecentSearchClick(recentSearch) }
-                                    .padding(horizontal = 8.dp),
-                                color = Color.White,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                    }
-                }
-
-            }
+            CalendarsTabViewSearchBarRecentSearches(
+                recentSearches = recentSearches,
+                onRecentSearchClick = onRecentSearchClick
+            )
 
             Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
+
+@Composable
+private fun CalendarsTabViewSearchBarBackground(
+    modifier: Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(0.dp, 0.dp, 50.dp, 50.dp))
+            .background(MediumGrey)
+            .fillMaxWidth()
+            .blur(20.dp)
+            .drawBehind {
+                drawCircle(
+                    Color.Black.copy(alpha = 0.2f),
+                    center = Offset(size.width - 150f, size.height + 400),
+                    radius = 650f
+                )
+            }
+    )
+}
+
+@Composable
+private fun CalendarsTabViewSearchBarField(
+    searchExpression: String,
+    onSearchExpressionChange: (String) -> Unit,
+    onSearchSubmit: (String) -> Unit
+) {
+    PrimaryTextField(
+        value = searchExpression,
+        onValueChange = onSearchExpressionChange,
+        icon = Icons.Default.Search,
+        placeholderText = "Search in calendars",
+        onImeAction = {
+            onSearchSubmit(searchExpression)
+        }
+    )
+}
+
+@Composable
+private fun CalendarsTabViewSearchBarRecentSearches(
+    recentSearches: List<String>,
+    onRecentSearchClick: (String) -> Unit
+) {
+
+    Row(
+        modifier = Modifier.padding(horizontal = 30.dp)
+    ) {
+
+        if (recentSearches.isNotEmpty()){
+            Text("Recent searches",
+                color = Color.Gray,
+                style = MaterialTheme.typography.labelLarge
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            LazyRow(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                items(recentSearches.reversed()) { recentSearch ->
+                    CalendarsTabViewSearchBarRecentSearchItem(recentSearch, onRecentSearchClick)
+                }
+            }
+        }
+
+        else{
+            Text(
+                "No recent searches",
+                color = Color.Gray.copy(.2f),
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
+    }
+}
+
+@Composable
+private fun CalendarsTabViewSearchBarRecentSearchItem(
+    recentSearch: String,
+    onRecentSearchClick: (String) -> Unit
+) {
+    Text(
+        text = recentSearch,
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(7.dp))
+            .clickable { onRecentSearchClick(recentSearch) }
+            .padding(horizontal = 8.dp),
+        color = Color.White,
+        style = MaterialTheme.typography.labelLarge
+    )
+}
+
 
 
 enum class SubComposeID {

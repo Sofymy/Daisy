@@ -54,7 +54,13 @@ fun NewCalendarRecipientForm(
     onFieldChange: (NewCalendarUserEvent) -> Unit,
 ) {
     val options = RecipientOption.entries.toTypedArray()
-    val selectedValue = remember { mutableStateOf(RecipientOption.EMAIL) }
+    val selectedValue = remember {
+        if(state.recipients.isNotEmpty()){
+            mutableStateOf(RecipientOption.EMAIL)
+        }
+        else
+            mutableStateOf(RecipientOption.CODE)
+    }
 
     LazyColumn(
         modifier = Modifier

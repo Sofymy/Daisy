@@ -190,7 +190,7 @@ fun CalendarItemContentDayCounter(
     calendarUi: CalendarUi,
     modifier: Modifier
 ) {
-    val daysBetweenStartAndEnd = between(calendarUi.dateRange.dateStart.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays().toInt()
+    val daysBetweenStartAndEnd = between(calendarUi.dateRange.dateStart.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays().toInt() + 1
 
     Box(
         modifier

@@ -129,6 +129,9 @@ dependencies {
     // Drawing
     implementation(libs.sketchbook)
 
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
+
 }
 
 kapt {
