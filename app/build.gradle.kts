@@ -129,8 +129,13 @@ dependencies {
     // Drawing
     implementation(libs.sketchbook)
 
-    //DataStore
+    // DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Pull-to-refresh
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.material)
+
 
 }
 

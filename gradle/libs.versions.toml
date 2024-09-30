@@ -24,6 +24,8 @@ appcompat = "1.7.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.0.0"
 lifecycleRuntimeKtxVersion = "2.8.3"
+lifecycleViewmodelCompose = "2.8.6"
+material = "1.7.2"
 materialIconsExtended = "1.7.0"
 navigation = "2.8.0-beta04"
 navigationCompose = "2.7.7"
@@ -48,6 +50,8 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "graphicsShapes" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-runtime-ktx-v283 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation = { module = "androidx.navigation:navigation", version.ref = "navigation" }
 androidx-navigation-dynamic-features-fragment = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navigationDynamicFeaturesFragment" }

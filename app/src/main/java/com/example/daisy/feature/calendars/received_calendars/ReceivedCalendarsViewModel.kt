@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.model.toUi
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
+import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsUserEvent
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,12 +20,14 @@ import javax.inject.Inject
 
 data class ReceivedCalendarsUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val error: Throwable? = null,
     val isError: Boolean = error != null,
     val calendars: List<CalendarUi> = emptyList()
 )
 
 sealed class ReceivedCalendarsUserEvent {
+    data object RefreshReceivedCalendars: ReceivedCalendarsUserEvent()
     data object GetReceivedCalendars : ReceivedCalendarsUserEvent()
     data class AddReceivedCalendarByCode(val code: String) : ReceivedCalendarsUserEvent()
 }
@@ -49,6 +52,10 @@ class ReceivedCalendarsViewModel @Inject constructor(
 
             is ReceivedCalendarsUserEvent.AddReceivedCalendarByCode -> {
                 addReceivedCalendarByCode(event.code)
+            }
+
+            is ReceivedCalendarsUserEvent.RefreshReceivedCalendars -> {
+                refreshReceivedCalendars()
             }
         }
     }
@@ -82,6 +89,29 @@ class ReceivedCalendarsViewModel @Inject constructor(
                         calendars = calendars
                     ) }
                 }
+            } catch (e: Exception) {
+                _state.update {  it.copy(
+                    isLoading = false,
+                    error = e
+                ) }
+            }
+        }
+    }
+
+    private fun refreshReceivedCalendars() {
+        viewModelScope.launch {
+            try {
+                _state.update { it.copy(
+                    isRefreshing = true,
+                ) }
+                val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() ?: CalendarUi() }
+                calendars.forEach {
+                    it.drawing = calendarUseCases.getCalendarDrawingUseCase(it.id).getOrNull()
+                }
+                _state.update { it.copy(
+                    isRefreshing = false,
+                    calendars = calendars
+                ) }
             } catch (e: Exception) {
                 _state.update {  it.copy(
                     isLoading = false,

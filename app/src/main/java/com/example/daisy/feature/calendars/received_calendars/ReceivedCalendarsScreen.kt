@@ -32,6 +32,10 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -67,6 +71,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
+import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarItem
+import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsUserEvent
 import com.example.daisy.ui.common.state.ErrorContent
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
@@ -85,12 +91,17 @@ fun ReceivedCalendarsScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ReceivedCalendarsContent(
     viewModel: ReceivedCalendarsViewModel = hiltViewModel(),
     searchExpression: String,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isRefreshing,
+        onRefresh = { viewModel.onEvent(ReceivedCalendarsUserEvent.RefreshReceivedCalendars) }
+    )
 
     HandleLifecycleEvents {
         viewModel.onEvent(ReceivedCalendarsUserEvent.GetReceivedCalendars)
@@ -103,34 +114,54 @@ fun ReceivedCalendarsContent(
             state.isError -> ErrorContent()
             state.isLoading -> LoadingContent()
             else -> {
-                if(state.calendars.isNotEmpty())
-                    LazyColumn {
-                        item {
-                            Spacer(modifier = Modifier.height(25.dp))
-                        }
-                        items(
-                            items = state.calendars
-                                .filter {
-                                    it.toString().contains(searchExpression, ignoreCase = true)
-                                }
-                                .sortedBy { it.dateRange.dateStart }
-                            ,
-                        ){calendar ->
-                            ReceivedCalendarItem(
-                                calendarUi = calendar,
-                                modifier = Modifier.animateItem()
-                            )
-                        }
-                    }
-                else ReceivedCalendarsEmpty(
-                    send = {
-                        viewModel.onEvent(ReceivedCalendarsUserEvent.AddReceivedCalendarByCode(it))
-                    },
-                )
+                Box(
+                    Modifier.pullRefresh(pullRefreshState)
+                ) {
+                    if(state.calendars.isNotEmpty()) {
+                        ReceivedCalendarsList(
+                            calendars = state.calendars.filter {
+                                it.toString().contains(searchExpression, ignoreCase = true)
+                            },
+                            onNavigateToReceivedCalendar = { }
+                        )
+                    } else ReceivedCalendarsEmpty(
+                        send = {
+                            viewModel.onEvent(ReceivedCalendarsUserEvent.AddReceivedCalendarByCode(it))
+                        },
+                    )
+                    PullRefreshIndicator(
+                        refreshing = state.isRefreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        backgroundColor = if (state.isRefreshing) Purple else MediumGrey,
+                        contentColor = Color.White
+                    )
+                }
             }
         }
     }
 
+}
+
+@Composable
+fun ReceivedCalendarsList(
+    calendars: List<CalendarUi>,
+    onNavigateToReceivedCalendar: (String) -> Unit
+) {
+    LazyColumn {
+        item {
+            Spacer(modifier = Modifier.height(25.dp))
+        }
+        items(
+            items = calendars
+                .sortedBy { it.dateRange.dateStart },
+        ){calendar ->
+            ReceivedCalendarItem(
+                calendarUi = calendar,
+                modifier = Modifier.animateItem()
+            )
+        }
+    }
 }
 
 @Composable

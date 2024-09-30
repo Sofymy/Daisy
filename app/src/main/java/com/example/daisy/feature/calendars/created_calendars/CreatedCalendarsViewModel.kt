@@ -14,12 +14,14 @@ import javax.inject.Inject
 
 data class CreatedCalendarsUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val error: Throwable? = null,
     val isError: Boolean = error != null,
     val calendars: List<CalendarUi> = emptyList()
 )
 
 sealed class CreatedCalendarsUserEvent {
+    data object RefreshCreatedCalendars: CreatedCalendarsUserEvent()
     data object GetCreatedCalendars : CreatedCalendarsUserEvent()
 }
 
@@ -37,6 +39,10 @@ class CreatedCalendarsViewModel @Inject constructor(
             CreatedCalendarsUserEvent.GetCreatedCalendars -> {
                 getCreatedCalendars()
             }
+
+            CreatedCalendarsUserEvent.RefreshCreatedCalendars -> {
+                refreshCreatedCalendars()
+            }
         }
     }
 
@@ -49,6 +55,29 @@ class CreatedCalendarsViewModel @Inject constructor(
                 }
                 _state.update { it.copy(
                     isLoading = false,
+                    calendars = calendars
+                ) }
+            } catch (e: Exception) {
+                _state.update {  it.copy(
+                    isLoading = false,
+                    error = e
+                ) }
+            }
+        }
+    }
+
+    private fun refreshCreatedCalendars() {
+        viewModelScope.launch {
+            try {
+                _state.update { it.copy(
+                    isRefreshing = true,
+                ) }
+                val calendars = calendarUseCases.getCreatedCalendarsUseCase().getOrThrow().map { it?.toUi() ?: CalendarUi() }
+                calendars.forEach {
+                    it.drawing = calendarUseCases.getCalendarDrawingUseCase(it.id).getOrNull()
+                }
+                _state.update { it.copy(
+                    isRefreshing = false,
                     calendars = calendars
                 ) }
             } catch (e: Exception) {
