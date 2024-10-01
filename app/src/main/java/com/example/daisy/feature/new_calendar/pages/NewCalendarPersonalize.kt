@@ -1,5 +1,6 @@
 package com.example.daisy.feature.new_calendar.pages
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -62,14 +63,20 @@ fun NewCalendarPersonalizeContent(
 
     NewCalendarPersonalizeForm(
         state = state,
-        onFieldChange = { viewModel.onEvent(it) },
+        onIconChange = {
+            viewModel.onEvent(NewCalendarUserEvent.IconChanged(it))
+        },
+        onTitleChange = {
+            viewModel.onEvent(NewCalendarUserEvent.TitleChanged(it))
+        }
     )
 }
 
 @Composable
 fun NewCalendarPersonalizeForm(
     state: CalendarUi,
-    onFieldChange: (NewCalendarUserEvent) -> Unit,
+    onTitleChange: (String) -> Unit,
+    onIconChange: (IconOptionUi) -> Unit
 ) {
     val options = IconOptionUi.entries.toTypedArray()
     val selectedValue = remember { mutableStateOf(IconOptionUi.LOVE) }
@@ -97,7 +104,7 @@ fun NewCalendarPersonalizeForm(
         item {
             NewCalendarPersonalizeTitle(
                 state = state,
-                onFieldChange = onFieldChange
+                onTitleChange = onTitleChange
             )
         }
         item {
@@ -107,7 +114,7 @@ fun NewCalendarPersonalizeForm(
                 selectedValue = selectedValue.value,
                 onOptionSelected = { option ->
                     selectedValue.value = option
-                    onFieldChange(NewCalendarUserEvent.IconChanged(option))
+                    onIconChange(option)
                 },
             )
         }
@@ -192,13 +199,13 @@ fun NewCalendarPersonalizeIconOptionItem(
 @Composable
 fun NewCalendarPersonalizeTitle(
     state: CalendarUi,
-    onFieldChange: (NewCalendarUserEvent) -> Unit
+    onTitleChange: (String) -> Unit
 ) {
     Column {
         PrimaryTextField(
             value = state.title,
             onValueChange = { newValue ->
-                onFieldChange(NewCalendarUserEvent.TitleChanged(newValue))
+                onTitleChange(newValue)
             },
             icon = Icons.Default.Title,
             placeholderText = "Enter a title"

@@ -57,10 +57,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.R
-import com.example.daisy.ui.common.brushes.createHorizontalStripeBrush
-import com.example.daisy.ui.common.brushes.createVerticalStripeBrush
 import com.example.daisy.ui.common.elements.PrimaryButton
 import com.example.daisy.ui.common.elements.PrimaryTextField
+import com.example.daisy.ui.common.elements.createHorizontalStripeBrush
+import com.example.daisy.ui.common.elements.createVerticalStripeBrush
 import com.example.daisy.ui.theme.Blue
 import com.example.daisy.ui.theme.DarkBlue
 import com.example.daisy.ui.theme.LightBlue

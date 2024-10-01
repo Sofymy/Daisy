@@ -9,5 +9,6 @@ class CalendarUseCases(
     val getReceivedCalendarsUseCase: GetReceivedCalendarsUseCase,
     val getCreatedCalendarUseCase: GetCreatedCalendarUseCase,
     val addReceivedCalendarByCodeUseCase: AddReceivedCalendarByCodeUseCase,
-    val getCalendarDrawingUseCase: GetCalendarDrawingUseCase
+    val getCalendarDrawingUseCase: GetCalendarDrawingUseCase,
+    val saveModificationsUseCase: SaveModificationsUseCase
 )

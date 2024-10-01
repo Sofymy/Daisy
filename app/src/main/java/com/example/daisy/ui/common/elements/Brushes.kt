@@ -1,12 +1,10 @@
-package com.example.daisy.ui.common.brushes
+package com.example.daisy.ui.common.elements
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.unit.Dp
-import com.example.daisy.ui.theme.Blue
-import com.example.daisy.ui.theme.Purple
 
 fun createStripeBrush(
     stripeColor: Color,

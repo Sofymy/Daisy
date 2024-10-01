@@ -11,4 +11,5 @@ interface CalendarRepository{
     fun getCreatedCalendar(id: String): Flow<Calendar?>
     suspend fun addReceivedCalendarByCode(code: String)
     suspend fun getCalendarDrawing(filename: String): Bitmap?
+    fun saveModifications(calendar: Calendar)
 }

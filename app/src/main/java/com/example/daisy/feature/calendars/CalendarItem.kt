@@ -7,6 +7,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,10 +38,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.daisy.feature.new_calendar.pages.LargeIcon
+import com.example.daisy.ui.common.elements.conditional
 import com.example.daisy.ui.common.elements.pluralize
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.Blue
@@ -49,6 +53,10 @@ import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
 import java.time.Duration.between
 import java.time.LocalDate
+
+val stroke = Stroke(width = 10f,
+    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+)
 
 @Composable
 fun CalendarItemBackground(
@@ -80,7 +88,11 @@ enum class Type {
 fun CalendarItemContent(
     type: Type,
     calendarUi: CalendarUi,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEditableOnLongClick: Boolean = false,
+    onClickEditRecipient: (() -> Unit)? = null,
+    onClickEditTitleOrIcon: (() -> Unit)? = null,
+    onClickEditDates: (() -> Unit)? = null,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val rotateLock = infiniteTransition.animateFloat(
@@ -93,17 +105,37 @@ fun CalendarItemContent(
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
-        CalendarItemContentSender(calendarUi, Modifier.align(Alignment.TopStart))
-        CalendarItemContentDayCounter(calendarUi, Modifier.align(Alignment.TopEnd))
+        CalendarItemContentSenderOrRecipient(
+            type = type,
+            calendarUi = calendarUi,
+            modifier = Modifier.align(Alignment.TopStart),
+            isEditableOnLongClick = isEditableOnLongClick,
+            onClickEditRecipient = onClickEditRecipient,
+            onClickEditTitleOrIcon = onClickEditTitleOrIcon
+        )
+        CalendarItemContentDayCounter(
+            calendarUi = calendarUi,
+            modifier = Modifier.align(Alignment.TopEnd),
+            isEditableOnLongClick = isEditableOnLongClick,
+            onClickEditDates = onClickEditDates
+        )
         when(type){
             Type.CREATED -> {
-                CalendarItemRecipients(calendarUi = calendarUi, colors = listOf(Purple, DarkPurple, Blue), modifier = Modifier.align(Alignment.BottomEnd))
+                CalendarItemRecipients(calendarUi = calendarUi, colors = listOf(Purple, DarkPurple, Blue), modifier = Modifier.align(Alignment.BottomEnd), isEditableOnLongClick = isEditableOnLongClick)
             }
             Type.RECEIVED -> {
-                CalendarItemContentLockButton(rotateLock.value, Modifier.align(Alignment.BottomEnd))
+                CalendarItemContentLockButton(
+                    rotateLock = rotateLock.value,
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                )
             }
         }
-        CalendarItemContentOpenText(calendarUi, Modifier.align(Alignment.BottomStart))
+        CalendarItemContentOpenText(
+            calendarUi = calendarUi,
+            modifier = Modifier.align(Alignment.BottomStart),
+            isEditableOnLongClick = isEditableOnLongClick,
+            onClickEditDates = onClickEditDates
+        )
     }
 }
 
@@ -111,7 +143,8 @@ fun CalendarItemContent(
 fun CalendarItemRecipients(
     calendarUi: CalendarUi,
     colors: List<Color>,
-    modifier: Modifier
+    modifier: Modifier,
+    isEditableOnLongClick: Boolean = false
 ) {
     val numberOfCreatedCalendarRecipients = remember {
         mutableIntStateOf(calendarUi.recipients.size)
@@ -156,9 +189,13 @@ fun CalendarItemRecipients(
 }
 
 @Composable
-fun CalendarItemContentSender(
+fun CalendarItemContentSenderOrRecipient(
     calendarUi: CalendarUi,
-    modifier: Modifier
+    modifier: Modifier,
+    isEditableOnLongClick: Boolean = false,
+    type: Type,
+    onClickEditRecipient: (() -> Unit)?,
+    onClickEditTitleOrIcon: (() -> Unit)?
 ) {
     Box(
         modifier
@@ -167,18 +204,58 @@ fun CalendarItemContentSender(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            LargeIcon(imageVector = calendarUi.icon.icon)
+            LargeIcon(
+                imageVector = calendarUi.icon.icon,
+                modifier = Modifier
+                    .conditional(isEditableOnLongClick) {
+                        Modifier
+                            .clickable {
+                                if (onClickEditRecipient != null) {
+                                    onClickEditRecipient()
+                                }
+                            }
+                            .drawBehind {
+                                drawRoundRect(color = Purple, style = stroke)
+                            }
+                            .padding(5.dp)
+                    }
+            )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
                     text = calendarUi.title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
+                    modifier = Modifier.conditional(isEditableOnLongClick) {
+                        Modifier
+                            .clickable {
+                                if (onClickEditTitleOrIcon != null) {
+                                    onClickEditTitleOrIcon()
+                                }
+                            }
+                            .drawBehind {
+                                drawRoundRect(color = Purple, style = stroke)
+                            }
+                            .padding(5.dp)
+                    }
                 )
                 Text(
-                    text = "From ${calendarUi.sender.name}",
+                    text = if(type == Type.RECEIVED) "From ${calendarUi.sender.name}" else "To ${if(calendarUi.recipients.isEmpty()) "xy" else calendarUi.recipients[0]}",
                     color = Color.White,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier
+                        .conditional(isEditableOnLongClick) {
+                            Modifier
+                                .clickable {
+                                    if (onClickEditRecipient != null) {
+                                        onClickEditRecipient()
+                                    }
+                                }
+                                .drawBehind {
+                                    drawRoundRect(color = Purple, style = stroke)
+                                }
+                                .padding(5.dp)
+                        }
                 )
             }
         }
@@ -188,13 +265,27 @@ fun CalendarItemContentSender(
 @Composable
 fun CalendarItemContentDayCounter(
     calendarUi: CalendarUi,
-    modifier: Modifier
+    modifier: Modifier,
+    isEditableOnLongClick: Boolean = false,
+    onClickEditDates: (() -> Unit)?
 ) {
     val daysBetweenStartAndEnd = between(calendarUi.dateRange.dateStart.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays().toInt() + 1
 
     Box(
         modifier
             .padding(20.dp)
+            .conditional(isEditableOnLongClick) {
+                Modifier
+                    .clickable {
+                        if (onClickEditDates != null) {
+                            onClickEditDates()
+                        }
+                    }
+                    .drawBehind {
+                        drawRoundRect(color = Purple, style = stroke)
+                    }
+                    .padding(5.dp)
+            }
             .border(1.dp, Color.White.copy(.3f), CutCornerShape(10.dp))
             .clip(CutCornerShape(10.dp))
             .background(Color.White.copy(.2f))
@@ -219,7 +310,7 @@ fun CalendarItemContentDayCounter(
 @Composable
 fun CalendarItemContentLockButton(
     rotateLock: Float,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Box(
         modifier
@@ -249,13 +340,30 @@ fun CalendarItemContentLockButton(
 @Composable
 fun CalendarItemContentOpenText(
     calendarUi: CalendarUi,
-    modifier: Modifier
+    modifier: Modifier,
+    isEditableOnLongClick: Boolean = false,
+    onClickEditDates: (() -> Unit)?
 ) {
     val daysBetween = between(LocalDate.now().atStartOfDay(), calendarUi.dateRange.dateStart.atStartOfDay()).toDays().toInt()
+    val stroke = Stroke(width = 10f,
+        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+    )
 
     Box(
         modifier
-            .padding(start = 20.dp, bottom = 30.dp),
+            .padding(start = 20.dp, bottom = 30.dp)
+            .conditional(isEditableOnLongClick) {
+                Modifier
+                    .clickable {
+                        if (onClickEditDates != null) {
+                            onClickEditDates()
+                        }
+                    }
+                    .drawBehind {
+                        drawRoundRect(color = Purple, style = stroke)
+                    }
+                    .padding(5.dp)
+            },
         contentAlignment = Alignment.TopStart
     ) {
         Column() {

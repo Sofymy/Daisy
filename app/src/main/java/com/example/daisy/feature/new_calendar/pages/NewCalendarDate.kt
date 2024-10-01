@@ -13,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,7 +24,6 @@ import com.example.daisy.feature.new_calendar.NewCalendarViewModel
 import com.example.daisy.ui.common.elements.pluralize
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.MediumGrey
-import com.example.daisy.ui.theme.gradient
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -42,13 +40,22 @@ fun NewCalendarDateContent(
     viewModel: NewCalendarViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    NewCalendarDateForm(state = state, onFieldChange = viewModel::onEvent)
+    NewCalendarDateForm(
+        state = state,
+        onDateStartChange = {
+            viewModel.onEvent(NewCalendarUserEvent.StartChanged(it))
+        },
+        onDateEndChange = {
+            viewModel.onEvent(NewCalendarUserEvent.EndChanged(it))
+        }
+    )
 }
 
 @Composable
 fun NewCalendarDateForm(
     state: CalendarUi,
-    onFieldChange: (NewCalendarUserEvent) -> Unit,
+    onDateEndChange: (LocalDate) -> Unit,
+    onDateStartChange: (LocalDate) -> Unit,
 ) {
     val dateRangeState = rememberDateRangePickerState(
         initialDisplayMode = DisplayMode.Picker,
@@ -58,7 +65,11 @@ fun NewCalendarDateForm(
         mutableStateOf(dateRangeState.selectedStartDateMillis != null && dateRangeState.selectedEndDateMillis != null)
     }
 
-    UpdateCalendarDateRange(dateRangeState, onFieldChange)
+    UpdateCalendarDateRange(
+        dateRangeState = dateRangeState,
+        onDateStartChange = onDateStartChange,
+        onDateEndChange = onDateEndChange
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -125,11 +136,12 @@ fun NewCalendarDatePromptSelection() {
 @Composable
 fun UpdateCalendarDateRange(
     dateRangeState: DateRangePickerState,
-    onFieldChange: (NewCalendarUserEvent) -> Unit,
+    onDateStartChange: (LocalDate) -> Unit,
+    onDateEndChange: (LocalDate) -> Unit
 ) {
     LaunchedEffect(dateRangeState.selectedEndDateMillis, dateRangeState.selectedStartDateMillis) {
-        onFieldChange(NewCalendarUserEvent.StartChanged(convertMillisToLocalDate(dateRangeState.selectedStartDateMillis ?: 0)))
-        onFieldChange(NewCalendarUserEvent.EndChanged(convertMillisToLocalDate(dateRangeState.selectedEndDateMillis ?: 0)))
+        onDateStartChange(convertMillisToLocalDate(dateRangeState.selectedStartDateMillis ?: 0))
+        onDateEndChange(convertMillisToLocalDate(dateRangeState.selectedEndDateMillis ?: 0))
     }
 }
 

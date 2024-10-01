@@ -30,8 +30,7 @@ fun NavGraph(
 
             OnboardingScreen(
                 onNavigateToSignIn = {
-                    navController.navigate(Screen.SignIn)
-                },
+                    navController.navigate(Screen.SignIn) },
                 onNavigateToRegister = {
                     navController.navigate(Screen.Register) },
                 onNavigateToHome = {
@@ -128,10 +127,12 @@ fun NavGraph(
         }
 
         composable<Screen.CreatedCalendarEditor> { backStackEntry ->
-            onTopNavigationBarTitleChange("Calendar preview")
+            onTopNavigationBarTitleChange("Calendar editor")
 
             val id = backStackEntry.arguments?.getString("id")
-            CreatedCalendarEditorScreen(id = id)
+            CreatedCalendarEditorScreen(
+                id = id,
+            )
         }
 
     }

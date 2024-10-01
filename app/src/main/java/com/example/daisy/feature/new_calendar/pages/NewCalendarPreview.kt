@@ -69,7 +69,9 @@ fun NewCalendarPreview() {
 }
 
 @Composable
-fun NewCalendarPreviewContent(viewModel: NewCalendarViewModel = hiltViewModel()) {
+fun NewCalendarPreviewContent(
+    viewModel: NewCalendarViewModel = hiltViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
 

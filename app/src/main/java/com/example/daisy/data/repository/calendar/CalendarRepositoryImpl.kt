@@ -72,6 +72,18 @@ class CalendarRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun saveModifications(calendar: Calendar) {
+        val dbCalendarRef = firestore.collection("calendars").document(calendar.id)
+
+        dbCalendarRef.update(mapOf(
+            "title" to calendar.title,
+            "icon" to calendar.icon,
+            "recipients" to calendar.recipients,
+            "dateRange" to calendar.dateRange
+        ))
+
+    }
+
     override fun getCreatedCalendar(id: String): Flow<Calendar?> {
 
         return firestore.collection("calendars")

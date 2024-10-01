@@ -44,14 +44,23 @@ fun NewCalendarRecipientContent(
 
     NewCalendarRecipientForm(
         state = state,
-        onFieldChange = { viewModel.onEvent(it) },
+        onRecipientChange = {
+            viewModel.onEvent(NewCalendarUserEvent.RecipientEmailChanged(it)) },
+        onCodeOptionSelected = {
+            viewModel.onEvent(NewCalendarUserEvent.CodeOptionSelected)
+        },
+        onRecipientOptionSelected = {
+            viewModel.onEvent(NewCalendarUserEvent.RecipientOptionSelected)
+        }
     )
 }
 
 @Composable
 fun NewCalendarRecipientForm(
     state: CalendarUi,
-    onFieldChange: (NewCalendarUserEvent) -> Unit,
+    onRecipientChange: (String) -> Unit,
+    onRecipientOptionSelected: () -> Unit,
+    onCodeOptionSelected: () -> Unit
 ) {
     val options = RecipientOption.entries.toTypedArray()
     val selectedValue = remember {
@@ -77,10 +86,10 @@ fun NewCalendarRecipientForm(
                 selectedValue = selectedValue.value,
                 onOptionSelected = { option ->
                     selectedValue.value = option
-                    handleOptionChange(option, onFieldChange)
+                    handleOptionChange(option, onRecipientOptionSelected, onCodeOptionSelected)
                 },
                 state = state,
-                onFieldChange = onFieldChange
+                onRecipientChange = onRecipientChange
             )
         }
     }
@@ -107,7 +116,7 @@ fun NewCalendarRecipientOptionsList(
     selectedValue: RecipientOption,
     onOptionSelected: (RecipientOption) -> Unit,
     state: CalendarUi,
-    onFieldChange: (NewCalendarUserEvent) -> Unit,
+    onRecipientChange: (String) -> Unit
 ) {
     options.forEach { option ->
         NewCalendarRecipientOptionItem(
@@ -115,7 +124,7 @@ fun NewCalendarRecipientOptionsList(
             isSelected = option == selectedValue,
             onOptionSelected = onOptionSelected,
             state = state,
-            onFieldChange = onFieldChange
+            onRecipientChange = onRecipientChange
         )
         Spacer(modifier = Modifier.height(20.dp))
     }
@@ -127,7 +136,7 @@ fun NewCalendarRecipientOptionItem(
     isSelected: Boolean,
     onOptionSelected: (RecipientOption) -> Unit,
     state: CalendarUi,
-    onFieldChange: (NewCalendarUserEvent) -> Unit,
+    onRecipientChange: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -152,7 +161,7 @@ fun NewCalendarRecipientOptionItem(
     ) {
         NewCalendarRecipientOptionContent(option, isSelected)
         AnimatedVisibility (isSelected && option == RecipientOption.EMAIL) {
-            NewCalendarRecipientEmailField(state, onFieldChange)
+            NewCalendarRecipientEmailField(state, onRecipientChange)
         }
     }
 }
@@ -195,13 +204,13 @@ fun NewCalendarRecipientOptionContent(
 @Composable
 fun NewCalendarRecipientEmailField(
     state: CalendarUi,
-    onFieldChange: (NewCalendarUserEvent) -> Unit
+    onRecipientChange: (String) -> Unit
 ) {
     Column {
         PrimaryTextField(
-            value = state.recipients.first(),
+            value = if(state.recipients.isNotEmpty()) state.recipients.first() else "",
             onValueChange = { newValue ->
-                onFieldChange(NewCalendarUserEvent.RecipientEmailChanged(newValue))
+                onRecipientChange(newValue)
             },
             icon = Icons.Default.AlternateEmail,
             placeholderText = "Your recipient's email"
@@ -210,9 +219,13 @@ fun NewCalendarRecipientEmailField(
     }
 }
 
-private fun handleOptionChange(option: RecipientOption, onFieldChange: (NewCalendarUserEvent) -> Unit) {
+private fun handleOptionChange(
+    option: RecipientOption,
+    onRecipientOptionSelected: () -> Unit,
+    onCodeOptionSelected: () -> Unit
+) {
     when (option) {
-        RecipientOption.EMAIL -> onFieldChange(NewCalendarUserEvent.RecipientOptionSelected)
-        RecipientOption.CODE -> onFieldChange(NewCalendarUserEvent.CodeOptionSelected)
+        RecipientOption.EMAIL -> onRecipientOptionSelected()
+        RecipientOption.CODE -> onCodeOptionSelected()
     }
 }

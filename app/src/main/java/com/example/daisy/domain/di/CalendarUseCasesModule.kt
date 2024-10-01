@@ -7,6 +7,7 @@ import com.example.daisy.domain.usecases.calendar.GetCalendarDrawingUseCase
 import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarUseCase
 import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarsUseCase
 import com.example.daisy.domain.usecases.calendar.GetReceivedCalendarsUseCase
+import com.example.daisy.domain.usecases.calendar.SaveModificationsUseCase
 import com.example.daisy.domain.usecases.calendar.SetCalendarUseCase
 import dagger.Module
 import dagger.Provides
@@ -27,7 +28,8 @@ object CalendarUseCasesModule {
         getCreatedCalendarUseCase: GetCreatedCalendarUseCase,
         getReceivedCalendarsUseCase: GetReceivedCalendarsUseCase,
         getCalendarDrawingUseCase: GetCalendarDrawingUseCase,
-        addReceivedCalendarByCodeUseCase: AddReceivedCalendarByCodeUseCase
+        addReceivedCalendarByCodeUseCase: AddReceivedCalendarByCodeUseCase,
+        saveModificationsUseCase: SaveModificationsUseCase
     ): CalendarUseCases {
         return CalendarUseCases(
             repository = calendarRepository,
@@ -36,7 +38,8 @@ object CalendarUseCasesModule {
             getCreatedCalendarUseCase = getCreatedCalendarUseCase,
             getReceivedCalendarsUseCase = getReceivedCalendarsUseCase,
             addReceivedCalendarByCodeUseCase = addReceivedCalendarByCodeUseCase,
-            getCalendarDrawingUseCase = getCalendarDrawingUseCase
+            getCalendarDrawingUseCase = getCalendarDrawingUseCase,
+            saveModificationsUseCase = saveModificationsUseCase
         )
     }
 
@@ -46,6 +49,14 @@ object CalendarUseCasesModule {
         calendarRepository: CalendarRepository
     ): SetCalendarUseCase {
         return SetCalendarUseCase(calendarRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveModificationsUseCase(
+        calendarRepository: CalendarRepository
+    ): SaveModificationsUseCase {
+        return SaveModificationsUseCase(calendarRepository)
     }
 
     @Provides
