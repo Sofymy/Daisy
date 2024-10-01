@@ -8,6 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,14 +56,23 @@ import com.google.firebase.auth.FirebaseUser
 @Composable
 fun HomeScreen(
     onNavigateToNewCalendar: () -> Unit,
-    onNavigateToCreatedCalendars: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    onNavigateToCreatedCalendars: () -> Unit,
+    onNavigateToReceivedCalendars: () -> Unit
 ) {
-    HomeScreenContent()
+    HomeScreenContent(
+        onNavigateToProfile = onNavigateToProfile,
+        onNavigateToCreatedCalendars = onNavigateToCreatedCalendars,
+        onNavigateToReceivedCalendars = onNavigateToReceivedCalendars
+    )
 }
 
 @Composable
 fun HomeScreenContent(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onNavigateToProfile: () -> Unit,
+    onNavigateToCreatedCalendars: () -> Unit,
+    onNavigateToReceivedCalendars: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -91,16 +101,20 @@ fun HomeScreenContent(
                         contentAlignment = Alignment.TopCenter
                     ) {
                         HomeAuroraAnimation()
-                        HomeHeader(state.currentUser)
+                        HomeHeader(currentUser = state.currentUser, onNavigateToProfile = onNavigateToProfile)
                     }
                 }
                 item {
                     HomeReceivedCalendars(
                         receivedCalendars = state.receivedCalendars.ifEmpty { mockedReceivedCalendars },
+                        navigateToReceivedCalendars = onNavigateToReceivedCalendars
                     )
                 }
                 item {
-                    HomeCreatedCalendars(state.createdCalendars.ifEmpty { mockedCreatedCalendars })
+                    HomeCreatedCalendars(
+                        createdCalendars = state.createdCalendars.ifEmpty { mockedCreatedCalendars },
+                        navigateToCreatedCalendars = onNavigateToCreatedCalendars
+                    )
                 }
             }
         }
@@ -136,7 +150,10 @@ fun HomeAuroraAnimation() {
 }
 
 @Composable
-fun HomeHeader(currentUser: FirebaseUser?) {
+fun HomeHeader(
+    currentUser: FirebaseUser?,
+    onNavigateToProfile: () -> Unit
+) {
 
     if (currentUser != null) {
         Row(
@@ -158,7 +175,11 @@ fun HomeHeader(currentUser: FirebaseUser?) {
                         .border(1.dp, Color.White.copy(.1f), CircleShape)
                         .padding(4.dp)
                         .size(50.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
+                        .clickable {
+                            onNavigateToProfile()
+                        }
+                    ,
                     contentScale = ContentScale.Crop,
                 )
 

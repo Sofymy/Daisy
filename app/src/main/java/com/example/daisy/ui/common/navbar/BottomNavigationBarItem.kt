@@ -29,7 +29,7 @@ sealed class BottomNavigationBarItem(
     )
 
     data object Calendars : BottomNavigationBarItem(
-        screen = Screen.Calendars,
+        screen = Screen.Calendars(0),
         icon = Icons.Outlined.CalendarToday
     )
 

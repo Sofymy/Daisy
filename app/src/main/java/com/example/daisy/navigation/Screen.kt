@@ -41,7 +41,7 @@ sealed class Screen(
     data object ProfileAccount: Screen("Account", "Account")
 
     @Serializable
-    data object Calendars: Screen("Calendars", "Calendars")
+    data class Calendars(val initialPage: Int): Screen("Calendars", "Calendars")
 
     @Serializable
     data object Community: Screen("Community", "Community")

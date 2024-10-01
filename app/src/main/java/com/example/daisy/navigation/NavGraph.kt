@@ -68,7 +68,13 @@ fun NavGraph(
                     navController.navigate(Screen.NewCalendar)
                 },
                 onNavigateToCreatedCalendars = {
-                    navController.navigate(Screen.CreatedCalendars)
+                    navController.navigate(Screen.Calendars(initialPage = 1))
+                },
+                onNavigateToReceivedCalendars = {
+                    navController.navigate(Screen.Calendars(initialPage = 0))
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile)
                 }
             )
         }
@@ -85,13 +91,16 @@ fun NavGraph(
             )
         }
 
-        composable<Screen.Calendars> {
+        composable<Screen.Calendars> {backStackEntry ->
             onTopNavigationBarTitleChange("Calendars")
+
+            val initialPage = backStackEntry.arguments?.getInt("initialPage")
 
             CalendarsScreen(
                 onNavigateToCreatedCalendar = {
                     navController.navigate(Screen.CreatedCalendarEditor(it))
-                }
+                },
+                initialPage = initialPage ?: 0
             )
         }
 

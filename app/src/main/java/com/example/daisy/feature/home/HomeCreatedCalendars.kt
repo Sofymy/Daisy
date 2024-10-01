@@ -28,9 +28,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.rounded.Cake
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,7 +61,8 @@ import java.time.LocalDate
 
 @Composable
 fun HomeCreatedCalendars(
-    createdCalendars: List<CalendarUi>
+    createdCalendars: List<CalendarUi>,
+    navigateToCreatedCalendars: () -> Unit
 ) {
     val numberOfReceivedCalendars = remember { mutableIntStateOf(createdCalendars.size) }
     val activeCalendar = remember { mutableIntStateOf(0) }
@@ -71,23 +75,33 @@ fun HomeCreatedCalendars(
     }
 
     Spacer(modifier = Modifier.height(30.dp))
-    HomeCreatedCalendarContentHeader()
+    HomeCreatedCalendarContentHeader(
+        navigateToCreatedCalendars = navigateToCreatedCalendars
+    )
     Spacer(modifier = Modifier.height(20.dp))
     HomeCreatedCalendarContentLazyRow(state, createdCalendars.sortedBy { it.dateRange.dateStart }, colors)
     Spacer(modifier = Modifier.height(40.dp))
 }
 
 @Composable
-fun HomeCreatedCalendarContentHeader() {
+fun HomeCreatedCalendarContentHeader(
+    navigateToCreatedCalendars: () -> Unit
+) {
     Row(
         Modifier
             .padding(start = 20.dp, end = 20.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = "My calendars", fontWeight = FontWeight.Bold)
-        Text(text = "View all")
+        IconButton(onClick = {
+            navigateToCreatedCalendars()
+        }) {
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForwardIos, null,
+                modifier = Modifier.size(20.dp))
+        }
     }
 }
 

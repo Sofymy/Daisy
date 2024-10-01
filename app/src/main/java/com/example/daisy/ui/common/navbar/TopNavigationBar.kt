@@ -1,5 +1,6 @@
 package com.example.daisy.ui.common.navbar
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -45,8 +46,9 @@ fun TopNavigationBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val show = remember { mutableStateOf(false) }
+
     val backgroundColor = animateColorAsState(
-        targetValue = if((currentDestination?.route?.substringAfterLast(".") in listOf("Calendars")) || currentDestination?.route == null) MediumGrey else DarkGrey,
+        targetValue = if((currentDestination?.route?.substringAfterLast(".") in listOf("Calendars/{resourceId}/{label}/{initialPage}")) || currentDestination?.route == null) MediumGrey else DarkGrey,
         label = "",
         animationSpec = tween(10)
     )

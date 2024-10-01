@@ -19,9 +19,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +58,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun HomeReceivedCalendars(
-    receivedCalendars: List<CalendarUi>
+    receivedCalendars: List<CalendarUi>,
+    navigateToReceivedCalendars: () -> Unit
 ) {
     val activeCalendar = remember {
         mutableIntStateOf(0)
@@ -94,11 +101,16 @@ fun HomeReceivedCalendars(
     }
 
     Row(
-        Modifier
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
             .padding(start = 20.dp, end = 20.dp)
-            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
+            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(text = "Received calendars", fontWeight = FontWeight.Bold)
-        Text(text = "View all")
+        IconButton(onClick = {
+            navigateToReceivedCalendars()
+        }) {
+            Icon(Icons.AutoMirrored.Filled.ArrowForwardIos, null, modifier = Modifier.size(20.dp))
+        }
     }
     Spacer(modifier = Modifier.height(30.dp))
 

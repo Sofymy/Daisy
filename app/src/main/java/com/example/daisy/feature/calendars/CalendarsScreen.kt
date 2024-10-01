@@ -75,18 +75,21 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CalendarsScreen(
-    onNavigateToCreatedCalendar: (String) -> Unit
+    onNavigateToCreatedCalendar: (String) -> Unit,
+    initialPage: Int = 0,
 ){
     CalendarsScreenContent(
-        onNavigateToCreatedCalendar
+        onNavigateToCreatedCalendar,
+        initialPage = initialPage
     )
 }
 
 @Composable
 fun CalendarsScreenContent(
-    onNavigateToCreatedCalendar: (String) -> Unit
+    onNavigateToCreatedCalendar: (String) -> Unit,
+    initialPage: Int
 ) {
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage = initialPage)
     val topFade = Brush.verticalGradient(0f to Color.Transparent, 0.1f to Color.Black)
     val searchExpression = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
