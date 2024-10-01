@@ -54,6 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.R
 import com.example.daisy.ui.common.elements.PrimaryButton
+import com.example.daisy.ui.common.elements.SecondaryButton
 import com.example.daisy.ui.common.for_later_use.toPx
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
@@ -189,7 +190,7 @@ fun OnboardingTextAndButtons(
                 PrimaryButton(onClick = onNavigateToRegister, content = {
                     Text(
                         stringResource(R.string.register),
-                        color = Purple,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                 })
