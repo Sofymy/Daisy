@@ -1,12 +1,13 @@
 package com.example.daisy.feature.new_calendar
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.model.toDomain
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.ui.model.CalendarUi
+import com.example.daisy.ui.model.DateRangeUi
+import com.example.daisy.ui.model.DaysUi
 import com.example.daisy.ui.model.IconOptionUi
 import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,16 +26,15 @@ data class NewCalendarUiState(
 )
 
 sealed class NewCalendarUserEvent {
-    data class StartChanged(val dateStart: LocalDate): NewCalendarUserEvent()
-    data class EndChanged(val dateEnd: LocalDate): NewCalendarUserEvent()
-    data object RecipientOptionSelected: NewCalendarUserEvent()
-    data object CodeOptionSelected: NewCalendarUserEvent()
-    data class TitleChanged(val title: String): NewCalendarUserEvent()
-    data class DrawingChanged(val bitmap: Bitmap): NewCalendarUserEvent()
-    data class IconChanged(val icon: IconOptionUi): NewCalendarUserEvent()
-    data class RecipientEmailChanged(val recipientEmail: String): NewCalendarUserEvent()
+    data class StartChanged(val dateStart: LocalDate) : NewCalendarUserEvent()
+    data class EndChanged(val dateEnd: LocalDate) : NewCalendarUserEvent()
+    data object RecipientOptionSelected : NewCalendarUserEvent()
+    data object CodeOptionSelected : NewCalendarUserEvent()
+    data class TitleChanged(val title: String) : NewCalendarUserEvent()
+    data class DrawingChanged(val bitmap: Bitmap) : NewCalendarUserEvent()
+    data class IconChanged(val icon: IconOptionUi) : NewCalendarUserEvent()
+    data class RecipientEmailChanged(val recipientEmail: String) : NewCalendarUserEvent()
     data object CreateCalendar : NewCalendarUserEvent()
-
 }
 
 @HiltViewModel
@@ -49,22 +49,33 @@ class NewCalendarViewModel @Inject constructor(
     var state = _state
 
     fun onEvent(event: NewCalendarUserEvent) {
-
         when (event) {
             is NewCalendarUserEvent.StartChanged -> {
-                _state.update { it.copy(dateRange = it.dateRange.copy(dateStart = event.dateStart)) }
+                _state.update { currentState ->
+                    val updatedDateRange = DateRangeUi(event.dateStart, currentState.days.dateRange.dateEnd)
+                    val updatedDays = DaysUi(dateRange = updatedDateRange)
+                    currentState.copy(days = updatedDays)
+                }
             }
 
             is NewCalendarUserEvent.EndChanged -> {
-                _state.update { it.copy(dateRange = it.dateRange.copy(dateEnd = event.dateEnd)) }
+                _state.update { currentState ->
+                    val updatedDateRange = DateRangeUi(currentState.days.dateRange.dateStart, event.dateEnd)
+                    val updatedDays = DaysUi(dateRange = updatedDateRange)
+                    currentState.copy(days = updatedDays)
+                }
             }
 
             is NewCalendarUserEvent.RecipientEmailChanged -> {
-                _state.update { it.copy(recipients = listOf(event.recipientEmail)) }
+                _state.update { currentState ->
+                    currentState.copy(recipients = listOf(event.recipientEmail))
+                }
             }
 
             is NewCalendarUserEvent.TitleChanged -> {
-                _state.update { it.copy(title = event.title) }
+                _state.update { currentState ->
+                    currentState.copy(title = event.title)
+                }
             }
 
             is NewCalendarUserEvent.CreateCalendar -> {
@@ -72,21 +83,30 @@ class NewCalendarViewModel @Inject constructor(
             }
 
             is NewCalendarUserEvent.CodeOptionSelected -> {
-                _state.update { it.copy(recipients = listOf("")) }
-                _state.update { it.copy(code = Random.nextInt(100000,999999).toString()) }
+                _state.update { currentState ->
+                    currentState.copy(recipients = listOf(""))
+                }
+                _state.update { currentState ->
+                    currentState.copy(code = Random.nextInt(100000, 999999).toString())
+                }
             }
 
             is NewCalendarUserEvent.RecipientOptionSelected -> {
-                _state.update { it.copy(code = null) }
-                _state.update { it.copy(recipients = listOf("")) }
+                _state.update { currentState ->
+                    currentState.copy(code = null, recipients = listOf(""))
+                }
             }
 
             is NewCalendarUserEvent.IconChanged -> {
-                _state.update { it.copy(icon = event.icon) }
+                _state.update { currentState ->
+                    currentState.copy(icon = event.icon)
+                }
             }
 
             is NewCalendarUserEvent.DrawingChanged -> {
-                _state.update { it.copy(drawing = event.bitmap) }
+                _state.update { currentState ->
+                    currentState.copy(drawing = event.bitmap)
+                }
             }
 
             else -> {}
@@ -103,5 +123,4 @@ class NewCalendarViewModel @Inject constructor(
             }
         }
     }
-
 }

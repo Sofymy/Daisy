@@ -8,7 +8,7 @@ data class CalendarUi(
     val title: String = "",
     var drawing: Bitmap? = null,
     val icon: IconOptionUi = IconOptionUi.LOVE,
-    val dateRange: DateRangeUi = DateRangeUi(),
+    val days: DaysUi = DaysUi(),
     val recipients: List<String> = listOf(""),
     val sender: UserUi = UserUi(),
     val code: String? = null

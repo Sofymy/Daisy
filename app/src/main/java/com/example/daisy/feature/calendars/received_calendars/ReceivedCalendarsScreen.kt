@@ -154,7 +154,7 @@ fun ReceivedCalendarsList(
         }
         items(
             items = calendars
-                .sortedBy { it.dateRange.dateStart },
+                .sortedBy { it.days.dateRange.dateStart },
         ){calendar ->
             ReceivedCalendarItem(
                 calendarUi = calendar,

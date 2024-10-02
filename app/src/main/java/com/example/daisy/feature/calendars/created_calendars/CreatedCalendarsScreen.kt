@@ -105,7 +105,7 @@ fun CreatedCalendarsList(
             Spacer(modifier = Modifier.height(25.dp))
         }
         items(
-            items = calendars.sortedBy { it.dateRange.dateStart }
+            items = calendars.sortedBy { it.days.dateRange.dateStart }
         ) { calendar ->
             CreatedCalendarItem(
                 calendarUi = calendar,

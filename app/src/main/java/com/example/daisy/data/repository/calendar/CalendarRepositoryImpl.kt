@@ -79,7 +79,6 @@ class CalendarRepositoryImpl @Inject constructor(
             "title" to calendar.title,
             "icon" to calendar.icon,
             "recipients" to calendar.recipients,
-            "dateRange" to calendar.dateRange
         ))
 
     }

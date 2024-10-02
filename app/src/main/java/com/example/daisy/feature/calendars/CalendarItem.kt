@@ -269,7 +269,7 @@ fun CalendarItemContentDayCounter(
     isEditableOnLongClick: Boolean = false,
     onClickEditDates: (() -> Unit)?
 ) {
-    val daysBetweenStartAndEnd = between(calendarUi.dateRange.dateStart.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays().toInt() + 1
+    val daysBetweenStartAndEnd = between(calendarUi.days.dateRange.dateStart.atStartOfDay(), calendarUi.days.dateRange.dateEnd.atStartOfDay()).toDays().toInt() + 1
 
     Box(
         modifier
@@ -344,7 +344,7 @@ fun CalendarItemContentOpenText(
     isEditableOnLongClick: Boolean = false,
     onClickEditDates: (() -> Unit)?
 ) {
-    val daysBetween = between(LocalDate.now().atStartOfDay(), calendarUi.dateRange.dateStart.atStartOfDay()).toDays().toInt()
+    val daysBetween = between(LocalDate.now().atStartOfDay(), calendarUi.days.dateRange.dateStart.atStartOfDay()).toDays().toInt()
     val stroke = Stroke(width = 10f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
     )

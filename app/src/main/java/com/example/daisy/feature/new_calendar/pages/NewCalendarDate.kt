@@ -83,7 +83,7 @@ fun NewCalendarDateAnimatedContent(
     isCalendarValueSet: Boolean,
     state: CalendarUi
 ) {
-    val numberOfDays = calculateNumberOfDays(state.dateRange.dateStart, state.dateRange.dateEnd)
+    val numberOfDays = calculateNumberOfDays(state.days.dateRange.dateStart, state.days.dateRange.dateEnd)
 
     NewCalendarTypewriterText(
         baseText = "I'm ",

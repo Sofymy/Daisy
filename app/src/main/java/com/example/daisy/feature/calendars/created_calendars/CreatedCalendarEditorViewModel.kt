@@ -9,6 +9,7 @@ import com.example.daisy.domain.model.toUi
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.model.DateRangeUi
+import com.example.daisy.ui.model.DaysUi
 import com.example.daisy.ui.model.IconOptionUi
 import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -92,14 +93,28 @@ class CreatedCalendarViewModel @Inject constructor(
             }
         }
     }
-
     private fun updateStartDate(dateStart: LocalDate) {
-        _state.update { it.copy(calendar = it.calendar?.copy(dateRange = DateRangeUi(dateStart, it.calendar.dateRange.dateEnd))) }
+        _state.update { currentState ->
+            val updatedDateRange = DateRangeUi(dateStart, currentState.calendar?.days?.dateRange?.dateEnd ?: dateStart)
+            val updatedDays = DaysUi(dateRange = updatedDateRange)
+
+            currentState.copy(calendar = currentState.calendar?.copy(
+                days = updatedDays
+            ))
+        }
     }
 
     private fun updateEndDate(dateEnd: LocalDate) {
-        _state.update { it.copy(calendar = it.calendar?.copy(dateRange = DateRangeUi(it.calendar.dateRange.dateStart, dateEnd))) }
+        _state.update { currentState ->
+            val updatedDateRange = DateRangeUi(currentState.calendar?.days?.dateRange?.dateStart ?: dateEnd, dateEnd)
+            val updatedDays = DaysUi(dateRange = updatedDateRange)
+
+            currentState.copy(calendar = currentState.calendar?.copy(
+                days = updatedDays
+            ))
+        }
     }
+
 
     private fun updateRecipientEmail(email: String) {
         _state.update { it.copy(calendar = it.calendar?.copy(recipients = listOf(email))) }

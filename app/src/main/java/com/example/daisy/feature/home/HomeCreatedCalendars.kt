@@ -29,8 +29,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.rounded.Cake
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,12 +72,12 @@ fun HomeCreatedCalendars(
         activeCalendar.intValue = 0
     }
 
-    Spacer(modifier = Modifier.height(30.dp))
+    Spacer(modifier = Modifier.height(20.dp))
     HomeCreatedCalendarContentHeader(
         navigateToCreatedCalendars = navigateToCreatedCalendars
     )
-    Spacer(modifier = Modifier.height(20.dp))
-    HomeCreatedCalendarContentLazyRow(state, createdCalendars.sortedBy { it.dateRange.dateStart }, colors)
+    Spacer(modifier = Modifier.height(10.dp))
+    HomeCreatedCalendarContentLazyRow(state, createdCalendars.sortedBy { it.days.dateRange.dateStart }, colors)
     Spacer(modifier = Modifier.height(40.dp))
 }
 
@@ -260,8 +258,8 @@ fun HomeCreatedCalendarContentDateRow(calendarUi: CalendarUi) {
         verticalAlignment = Alignment.Bottom,
     ) {
         HomeCreatedCalendarContentDottedLine(
-            startDate = calendarUi.dateRange.dateStart,
-            endDate = calendarUi.dateRange.dateEnd
+            startDate = calendarUi.days.dateRange.dateStart,
+            endDate = calendarUi.days.dateRange.dateEnd
         )
         Column(
             modifier = Modifier
@@ -271,13 +269,13 @@ fun HomeCreatedCalendarContentDateRow(calendarUi: CalendarUi) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = calendarUi.dateRange.dateStart.toString().replace("-", ".") + ".",
+                text = calendarUi.days.dateRange.dateStart.toString().replace("-", ".") + ".",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = calendarUi.dateRange.dateEnd.toString().replace("-", ".") + ".",
+                text = calendarUi.days.dateRange.dateEnd.toString().replace("-", ".") + ".",
                 color = Color.White.copy(.5f),
                 style = MaterialTheme.typography.bodySmall
             )
@@ -311,9 +309,9 @@ fun HomeCreatedCalendarContentAnimatedVisibility(
 @Composable
 fun HomeCreatedCalendarContentDateCountdown(calendarUi: CalendarUi) {
     val now = LocalDate.now()
-    if (calendarUi.dateRange.dateStart.isBefore(now.plusDays(1))) {
+    if (calendarUi.days.dateRange.dateStart.isBefore(now.plusDays(1))) {
 
-        val daysBetween = between(now.atStartOfDay(), calendarUi.dateRange.dateEnd.atStartOfDay()).toDays().toInt()
+        val daysBetween = between(now.atStartOfDay(), calendarUi.days.dateRange.dateEnd.atStartOfDay()).toDays().toInt()
 
         Text(
             text = "Ends in $daysBetween day".pluralize(daysBetween),
@@ -323,7 +321,7 @@ fun HomeCreatedCalendarContentDateCountdown(calendarUi: CalendarUi) {
         )
     } else {
 
-        val daysBetween = between(now.atStartOfDay(), calendarUi.dateRange.dateStart.atStartOfDay()).toDays().toInt()
+        val daysBetween = between(now.atStartOfDay(), calendarUi.days.dateRange.dateStart.atStartOfDay()).toDays().toInt()
 
         Text(
             text = "Opens in $daysBetween day".pluralize(daysBetween),

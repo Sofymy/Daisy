@@ -172,7 +172,16 @@ fun CreatedCalendarEditor(
             calendarUi = calendarUi,
             interactionSource = interactionSource,
         )
+        CreatedCalendarEditorDays(
+            calendarUi = calendarUi
+        )
     }
+}
+
+@Composable
+fun CreatedCalendarEditorDays(
+    calendarUi: CalendarUi?
+) {
 }
 
 @Composable
@@ -180,8 +189,8 @@ fun CreatedCalendarEditorCard(
     calendarUi: CalendarUi?,
     interactionSource: MutableInteractionSource,
 ) {
-    var isFlipped by remember { mutableStateOf(true) }
-    var isEditable by remember { mutableStateOf(true) }
+    var isFlipped by remember { mutableStateOf(false) }
+    var isEditable by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     val rotation by animateFloatAsState(
