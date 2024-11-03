@@ -71,8 +71,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
-import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarItem
-import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsUserEvent
 import com.example.daisy.ui.common.state.ErrorContent
 import com.example.daisy.ui.common.state.HandleLifecycleEvents
 import com.example.daisy.ui.common.state.LoadingContent
@@ -84,10 +82,12 @@ import com.example.daisy.ui.util.Constants
 
 @Composable
 fun ReceivedCalendarsScreen(
-    searchExpression: String
+    searchExpression: String,
+    onNavigateToReceivedCalendar: (String) -> Unit
 ) {
     ReceivedCalendarsContent(
-        searchExpression = searchExpression
+        searchExpression = searchExpression,
+        onNavigateToReceivedCalendar = onNavigateToReceivedCalendar
     )
 }
 
@@ -96,6 +96,7 @@ fun ReceivedCalendarsScreen(
 fun ReceivedCalendarsContent(
     viewModel: ReceivedCalendarsViewModel = hiltViewModel(),
     searchExpression: String,
+    onNavigateToReceivedCalendar: (String) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(
@@ -122,7 +123,7 @@ fun ReceivedCalendarsContent(
                             calendars = state.calendars.filter {
                                 it.toString().contains(searchExpression, ignoreCase = true)
                             },
-                            onNavigateToReceivedCalendar = { }
+                            onNavigateToReceivedCalendar = onNavigateToReceivedCalendar
                         )
                     } else ReceivedCalendarsEmpty(
                         send = {
@@ -158,7 +159,8 @@ fun ReceivedCalendarsList(
         ){calendar ->
             ReceivedCalendarItem(
                 calendarUi = calendar,
-                modifier = Modifier.animateItem()
+                modifier = Modifier.animateItem(),
+                onNavigateToReceivedCalendar = onNavigateToReceivedCalendar
             )
         }
     }
@@ -167,7 +169,8 @@ fun ReceivedCalendarsList(
 @Composable
 fun ReceivedCalendarItem(
     calendarUi: CalendarUi,
-    modifier: Modifier
+    modifier: Modifier,
+    onNavigateToReceivedCalendar: (String) -> Unit
 ) {
     Box(
         modifier
@@ -187,9 +190,10 @@ fun ReceivedCalendarItem(
         }
         CalendarItemContent(
             calendarUi = calendarUi,
-            modifier = Modifier.matchParentSize(),
-            type = Type.RECEIVED
-            //onClickItem = {  }
+            modifier = Modifier.matchParentSize().clickable {
+                onNavigateToReceivedCalendar(calendarUi.id)
+            },
+            type = Type.RECEIVED,
         )
     }
 }

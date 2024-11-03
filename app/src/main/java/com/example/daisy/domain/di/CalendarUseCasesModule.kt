@@ -4,9 +4,12 @@ import com.example.daisy.data.repository.calendar.CalendarRepository
 import com.example.daisy.domain.usecases.calendar.AddReceivedCalendarByCodeUseCase
 import com.example.daisy.domain.usecases.calendar.CalendarUseCases
 import com.example.daisy.domain.usecases.calendar.GetCalendarDrawingUseCase
+import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarDayUseCase
 import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarUseCase
 import com.example.daisy.domain.usecases.calendar.GetCreatedCalendarsUseCase
+import com.example.daisy.domain.usecases.calendar.GetReceivedCalendarDayUseCase
 import com.example.daisy.domain.usecases.calendar.GetReceivedCalendarsUseCase
+import com.example.daisy.domain.usecases.calendar.SaveDayModificationsUseCase
 import com.example.daisy.domain.usecases.calendar.SaveModificationsUseCase
 import com.example.daisy.domain.usecases.calendar.SetCalendarUseCase
 import dagger.Module
@@ -26,20 +29,26 @@ object CalendarUseCasesModule {
         setCalendarUseCase: SetCalendarUseCase,
         getCreatedCalendarsUseCase: GetCreatedCalendarsUseCase,
         getCreatedCalendarUseCase: GetCreatedCalendarUseCase,
+        getCreatedCalendarDayUseCase: GetCreatedCalendarDayUseCase,
         getReceivedCalendarsUseCase: GetReceivedCalendarsUseCase,
+        getReceivedCalendarDayUseCase: GetReceivedCalendarDayUseCase,
         getCalendarDrawingUseCase: GetCalendarDrawingUseCase,
         addReceivedCalendarByCodeUseCase: AddReceivedCalendarByCodeUseCase,
-        saveModificationsUseCase: SaveModificationsUseCase
+        saveModificationsUseCase: SaveModificationsUseCase,
+        saveDayModificationsUseCase: SaveDayModificationsUseCase
     ): CalendarUseCases {
         return CalendarUseCases(
             repository = calendarRepository,
             setCalendarUseCase = setCalendarUseCase,
             getCreatedCalendarsUseCase = getCreatedCalendarsUseCase,
             getCreatedCalendarUseCase = getCreatedCalendarUseCase,
+            getCreatedCalendarDayUseCase = getCreatedCalendarDayUseCase,
+            getReceivedCalendarDayUseCase = getReceivedCalendarDayUseCase,
             getReceivedCalendarsUseCase = getReceivedCalendarsUseCase,
             addReceivedCalendarByCodeUseCase = addReceivedCalendarByCodeUseCase,
             getCalendarDrawingUseCase = getCalendarDrawingUseCase,
-            saveModificationsUseCase = saveModificationsUseCase
+            saveModificationsUseCase = saveModificationsUseCase,
+            saveDayModificationsUseCase = saveDayModificationsUseCase,
         )
     }
 
@@ -57,6 +66,14 @@ object CalendarUseCasesModule {
         calendarRepository: CalendarRepository
     ): SaveModificationsUseCase {
         return SaveModificationsUseCase(calendarRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveDayModificationsUseCase(
+        calendarRepository: CalendarRepository
+    ): SaveDayModificationsUseCase {
+        return SaveDayModificationsUseCase(calendarRepository)
     }
 
     @Provides
@@ -91,6 +108,23 @@ object CalendarUseCasesModule {
         calendarRepository: CalendarRepository
     ): GetCreatedCalendarUseCase {
         return GetCreatedCalendarUseCase(calendarRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCreatedCalendarDayUseCase(
+        calendarRepository: CalendarRepository
+    ): GetCreatedCalendarDayUseCase {
+        return GetCreatedCalendarDayUseCase(calendarRepository)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideGetReceivedCalendarDayUseCase(
+        calendarRepository: CalendarRepository
+    ): GetReceivedCalendarDayUseCase {
+        return GetReceivedCalendarDayUseCase(calendarRepository)
     }
 
 

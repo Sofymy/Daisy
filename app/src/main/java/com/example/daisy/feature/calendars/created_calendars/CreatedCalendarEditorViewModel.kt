@@ -1,7 +1,6 @@
 package com.example.daisy.feature.calendars.created_calendars
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daisy.domain.model.toDomain
@@ -11,7 +10,6 @@ import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.model.DateRangeUi
 import com.example.daisy.ui.model.DaysUi
 import com.example.daisy.ui.model.IconOptionUi
-import com.example.daisy.ui.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

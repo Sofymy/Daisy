@@ -1,4 +1,5 @@
-package com.example.daisy.feature.calendars.created_calendars
+package com.example.daisy.feature.calendars.received_calendars
+
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -66,37 +67,35 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
-
 @Composable
-fun CreatedCalendarEditorScreen(
+fun ReceivedCalendarScreen(
     id: String?,
-    onNavigateToCreatedCalendarEditorDay: (Int) -> Unit,
-    viewModel: CreatedCalendarViewModel = hiltViewModel(),
+    onNavigateToReceivedCalendarDay: (Int) -> Unit,
+    viewModel: ReceivedCalendarViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     HandleLifecycleEvents(
-        onResume = { id?.let { CreatedCalendarEditorUserEvent.GetCreatedCalendar(it) }
+        onResume = { id?.let { ReceivedCalendarUserEvent.GetReceivedCalendar(it) }
             ?.let { viewModel.onEvent(it) } },
     )
 
-    CreatedCalendarEditorContent(
+    ReceivedCalendarContent(
         state = state,
-        onClickDay = { onNavigateToCreatedCalendarEditorDay(it) }
+        onClickDay = { onNavigateToReceivedCalendarDay(it) }
     )
 }
 
 @Composable
-fun CreatedCalendarEditorContent(
-    state: CreatedCalendarEditorUiState,
+fun ReceivedCalendarContent(
+    state: ReceivedCalendarUiState,
     onClickDay: (Int) -> Unit
 ) {
-
     when {
         state.isError -> ErrorContent()
         state.isLoading -> LoadingContent()
         state.calendar != null -> {
-            CreatedCalendarEditor(
+            ReceivedCalendar(
                 calendarUi = state.calendar,
                 onClickDay = onClickDay
             )
@@ -105,7 +104,7 @@ fun CreatedCalendarEditorContent(
 }
 
 @Composable
-fun CreatedCalendarEditor(
+fun ReceivedCalendar(
     calendarUi: CalendarUi,
     onClickDay: (Int) -> Unit,
 ) {
@@ -113,30 +112,29 @@ fun CreatedCalendarEditor(
         MutableInteractionSource()
     }
 
-
     LazyColumn(
         Modifier.fillMaxSize()
     ) {
         item {
-            CreatedCalendarEditorCard(
+            ReceivedCalendarCard(
                 calendarUi = calendarUi,
                 interactionSource = interactionSource,
             )
         }
-        item{
-            CreatedCalendarEditorDays(
+        item {
+            ReceivedCalendarDays(
                 calendarUi = calendarUi,
                 onClickDay = onClickDay
             )
         }
-        item{
+        item {
             Spacer(modifier = Modifier.height(30.dp))
         }
     }
 }
 
 @Composable
-fun CreatedCalendarEditorDays(
+fun ReceivedCalendarDays(
     calendarUi: CalendarUi,
     onClickDay: (Int) -> Unit
 ) {
@@ -151,15 +149,15 @@ fun CreatedCalendarEditorDays(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 it.forEach {
-                    CreatedCalendarEditorDayItem(
+                    ReceivedCalendarDayItem(
                         day = it,
                         modifier = Modifier.weight(1f),
                         onClickDay = onClickDay
                     )
                 }
-                if(it.size < 3){
+                if (it.size < 3) {
                     Spacer(modifier = Modifier.weight(1f))
-                    if(it.size < 2){
+                    if (it.size < 2) {
                         Spacer(modifier = Modifier.weight(1f))
                     }
                 }
@@ -169,7 +167,7 @@ fun CreatedCalendarEditorDays(
 }
 
 @Composable
-fun CreatedCalendarEditorDayItem(
+fun ReceivedCalendarDayItem(
     day: DayUi,
     modifier: Modifier,
     onClickDay: (Int) -> Unit
@@ -210,10 +208,8 @@ fun CreatedCalendarEditorDayItem(
     }
 }
 
-
-
 @Composable
-fun CreatedCalendarEditorCard(
+fun ReceivedCalendarCard(
     calendarUi: CalendarUi,
     interactionSource: MutableInteractionSource,
 ) {
@@ -225,7 +221,7 @@ fun CreatedCalendarEditorCard(
         targetValue = if (isFlipped) 0f else 360f,
         animationSpec = tween(durationMillis = 2000), label = "",
         finishedListener = {
-            //isEditable = !isEditable
+            // isEditable = !isEditable
         }
     )
 
@@ -271,47 +267,8 @@ fun CreatedCalendarEditorCard(
             modifier = Modifier
                 .matchParentSize()
                 .clip(RoundedCornerShape(20.dp)),
-            type = Type.CREATED,
+            type = Type.RECEIVED,
             isEditableOnLongClick = isEditable,
         )
     }
-}
-
-
-
-@Composable
-fun CreatedCalendarEditorItem(
-    modifier: Modifier,
-    item: CreatedCalendarEditorSteps
-) {
-    Row(
-        modifier
-            .padding(20.dp)
-            .background(MediumGrey, RoundedCornerShape(20))
-            .padding(10.dp)
-    ) {
-        Icon(imageVector = item.icon, contentDescription = null)
-        Spacer(modifier = Modifier.width(15.dp))
-        Text(text = item.title)
-    }
-}
-
-@Composable
-fun createdCalendarEditorSteps(): List<CreatedCalendarEditorSteps> = listOf(
-    CreatedCalendarEditorSteps.Setup,
-    CreatedCalendarEditorSteps.Content,
-    CreatedCalendarEditorSteps.Dates,
-    CreatedCalendarEditorSteps.Recipients,
-    CreatedCalendarEditorSteps.Design,
-)
-
-sealed class CreatedCalendarEditorSteps(
-    val title: String,
-    val icon: ImageVector
-) {
-    data object Setup : CreatedCalendarEditorSteps("Setup", Icons.Default.NewReleases)
-    data object Dates : CreatedCalendarEditorSteps("Dates", Icons.Default.DateRange)
-    data object Content : CreatedCalendarEditorSteps("Content", Icons.Default.ContentCopy)
-    data object Recipients : CreatedCalendarEditorSteps("Recipients", Icons.Default.SupervisorAccount)
-    data object Design : CreatedCalendarEditorSteps("Design", Icons.Default.Draw)
 }

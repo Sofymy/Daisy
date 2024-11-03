@@ -62,7 +62,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.zIndex
 import com.example.daisy.data.datasource.datastore.DataStoreManager
 import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsScreen
@@ -76,10 +75,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun CalendarsScreen(
     onNavigateToCreatedCalendar: (String) -> Unit,
+    onNavigateToReceivedCalendar: (String) -> Unit,
     initialPage: Int = 0,
 ){
     CalendarsScreenContent(
         onNavigateToCreatedCalendar,
+        onNavigateToReceivedCalendar,
         initialPage = initialPage
     )
 }
@@ -87,6 +88,7 @@ fun CalendarsScreen(
 @Composable
 fun CalendarsScreenContent(
     onNavigateToCreatedCalendar: (String) -> Unit,
+    onNavigateToReceivedCalendar: (String) -> Unit,
     initialPage: Int
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 }, initialPage = initialPage)
@@ -138,7 +140,8 @@ fun CalendarsScreenContent(
         ) { page ->
             when (page) {
                 0 -> ReceivedCalendarsScreen(
-                    searchExpression = searchExpression.value
+                    searchExpression = searchExpression.value,
+                    onNavigateToReceivedCalendar = onNavigateToReceivedCalendar
                 )
                 1 -> CreatedCalendarsScreen(
                     searchExpression = searchExpression.value,

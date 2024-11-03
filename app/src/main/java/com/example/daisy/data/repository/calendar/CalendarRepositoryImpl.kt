@@ -4,18 +4,21 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import com.example.daisy.domain.model.Calendar
+import com.example.daisy.domain.model.Day
 import com.example.daisy.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
@@ -49,17 +52,17 @@ class CalendarRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getCreatedCalendars(): Flow<List<Calendar?>> {
-
-        return firestore.collection("calendars")
+    override fun getCreatedCalendars(): Flow<List<Calendar?>> = flow {
+        val querySnapshot = firestore.collection("calendars")
             .whereEqualTo("sender.uid", auth.currentUser?.uid!!)
-            .snapshotFlow()
-            .map { querySnapshot ->
-                querySnapshot.map {
-                    it.toObject<Calendar>().copy(id = it.id)
-                }
-            }
+            .get(Source.SERVER)
+            .await()
+
+        emit(querySnapshot.documents.map {
+            it.toObject<Calendar>()?.copy(id = it.id)
+        })
     }
+
 
     override suspend fun getCalendarDrawing(filename: String): Bitmap? {
         return try {
@@ -83,14 +86,49 @@ class CalendarRepositoryImpl @Inject constructor(
 
     }
 
-    override fun getCreatedCalendar(id: String): Flow<Calendar?> {
+    override fun saveDayModifications(id: String?, day: Day) {
 
-        return firestore.collection("calendars")
+        val dbDayRef = id?.let { firestore.collection("calendars").document(it) }
+
+        dbDayRef?.update(
+            "days.days",
+            FieldValue.arrayUnion(
+                mapOf(
+                    "number" to day.number,
+                    "date" to day.date,
+                    "message" to day.message
+                )
+            )
+        )
+    }
+
+    override fun getCreatedCalendar(id: String): Flow<Calendar?> = flow {
+        val querySnapshot = firestore.collection("calendars")
             .document(id)
-            .snapshots()
-            .map { querySnapshot ->
-                querySnapshot.toObject<Calendar>()?.copy(id = querySnapshot.id)
-            }
+            .get(Source.SERVER)
+            .await()
+
+        emit(querySnapshot.toObject<Calendar>()?.copy(id = querySnapshot.id))
+    }
+
+
+
+    override fun getCreatedCalendarDay(id: String, number: Int): Flow<Calendar?> = flow {
+        val querySnapshot = firestore.collection("calendars")
+            .document(id)
+            .get(Source.SERVER)
+            .await()
+
+        emit(querySnapshot.toObject<Calendar>()?.copy(id = querySnapshot.id))
+    }
+
+    override fun getReceivedCalendarDay(id: String, number: Int): Flow<Calendar?> = flow {
+        val querySnapshot = firestore.collection("calendars")
+            .document(id)
+            .get(Source.SERVER)
+            .await()
+
+        emit(querySnapshot.toObject<Calendar>()?.copy(id = querySnapshot.id))
     }
 
     override suspend fun addReceivedCalendarByCode(code: String) {

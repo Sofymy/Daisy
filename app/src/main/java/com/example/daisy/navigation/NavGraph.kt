@@ -9,11 +9,12 @@ import com.example.daisy.feature.auth.onboarding.OnboardingScreen
 import com.example.daisy.feature.auth.register.RegisterScreen
 import com.example.daisy.feature.auth.sign_in.SignInScreen
 import com.example.daisy.feature.calendars.CalendarsScreen
+import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarEditorDayScreen
 import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarEditorScreen
-import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsScreen
+import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarDayScreen
+import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarScreen
 import com.example.daisy.feature.new_calendar.NewCalendarScreen
 import com.example.daisy.feature.home.HomeScreen
-import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsScreen
 import com.example.daisy.feature.community.CommunityScreen
 import com.example.daisy.feature.profile.ProfileScreen
 import com.example.daisy.feature.profile.account.ProfileAccountScreen
@@ -100,6 +101,9 @@ fun NavGraph(
                 onNavigateToCreatedCalendar = {
                     navController.navigate(Screen.CreatedCalendarEditor(it))
                 },
+                onNavigateToReceivedCalendar = {
+                    navController.navigate(Screen.ReceivedCalendar(it))
+                },
                 initialPage = initialPage ?: 0
             )
         }
@@ -135,12 +139,54 @@ fun NavGraph(
             CommunityScreen()
         }
 
+        composable<Screen.ReceivedCalendar> { backStackEntry ->
+            onTopNavigationBarTitleChange("Calendar")
+
+            val id = backStackEntry.arguments?.getString("id")
+            ReceivedCalendarScreen(
+                id = id,
+                onNavigateToReceivedCalendarDay = { number ->
+                    if (id != null) {
+                        navController.navigate(Screen.ReceivedCalendarDay(id, number))
+                    }
+                }
+            )
+        }
+
+        composable<Screen.ReceivedCalendarDay> { backStackEntry ->
+            onTopNavigationBarTitleChange("Calendar")
+
+            val id = backStackEntry.arguments?.getString("id")
+            val number = backStackEntry.arguments?.getInt("number")
+
+            ReceivedCalendarDayScreen(
+                id = id,
+                number = number
+            )
+        }
+
         composable<Screen.CreatedCalendarEditor> { backStackEntry ->
             onTopNavigationBarTitleChange("Calendar editor")
 
             val id = backStackEntry.arguments?.getString("id")
             CreatedCalendarEditorScreen(
                 id = id,
+                onNavigateToCreatedCalendarEditorDay = { number ->
+                    if (id != null) {
+                        navController.navigate(Screen.CreatedCalendarEditorDay(id, number))
+                    }
+                }
+            )
+        }
+
+        composable<Screen.CreatedCalendarEditorDay> { backStackEntry ->
+            onTopNavigationBarTitleChange("Calendar editor")
+
+            val id = backStackEntry.arguments?.getString("id")
+            val number = backStackEntry.arguments?.getInt("number")
+            CreatedCalendarEditorDayScreen(
+                id = id,
+                number = number
             )
         }
 
