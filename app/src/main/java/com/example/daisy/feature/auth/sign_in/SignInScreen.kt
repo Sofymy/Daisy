@@ -135,8 +135,8 @@ fun SignInWithFingerprintButton(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             fingerprintAuthenticate(context){ result, message ->
                 when(result){
-                    true -> { Log.d("eeeeee", "true") }
-                    false -> { Log.d("eeeeee", "false") }
+                    true -> {  }
+                    false -> {  }
                 }
             }
         }

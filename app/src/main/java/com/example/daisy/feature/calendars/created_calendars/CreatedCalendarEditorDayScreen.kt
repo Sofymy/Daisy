@@ -147,7 +147,7 @@ private fun ImagePicker(
                 onImagePicked(url)
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Failed to load image: $fileName", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "Failed to load image: $fileName", Toast.LENGTH_SHORT).show()
             }
     }
 
