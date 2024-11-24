@@ -2,9 +2,11 @@ package com.example.daisy.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.daisy.R
 import com.example.daisy.feature.auth.onboarding.OnboardingScreen
 import com.example.daisy.feature.auth.register.RegisterScreen
 import com.example.daisy.feature.auth.sign_in.SignInScreen
@@ -62,7 +64,7 @@ fun NavGraph(
         }
 
         composable<Screen.Home> {
-            onTopNavigationBarTitleChange("Home")
+            onTopNavigationBarTitleChange(stringResource(R.string.home))
 
             HomeScreen(
                 onNavigateToNewCalendar = {
@@ -93,7 +95,7 @@ fun NavGraph(
         }
 
         composable<Screen.Calendars> {backStackEntry ->
-            onTopNavigationBarTitleChange("Calendars")
+            onTopNavigationBarTitleChange("")
 
             val initialPage = backStackEntry.arguments?.getInt("initialPage")
 
@@ -109,7 +111,7 @@ fun NavGraph(
         }
 
         composable<Screen.Profile> {
-            onTopNavigationBarTitleChange("Profile")
+            onTopNavigationBarTitleChange(stringResource(R.string.profile))
 
             ProfileScreen(
                 onNavigateToProfileAccount = {
@@ -124,7 +126,7 @@ fun NavGraph(
         }
 
         composable<Screen.ProfileAccount> {
-            onTopNavigationBarTitleChange("Account settings")
+            onTopNavigationBarTitleChange(stringResource(R.string.account_settings))
 
             ProfileAccountScreen(
                 onNavigateToProfile = {
@@ -134,13 +136,13 @@ fun NavGraph(
         }
 
         composable<Screen.Community> {
-            onTopNavigationBarTitleChange("Community")
+            onTopNavigationBarTitleChange(stringResource(R.string.community))
 
             CommunityScreen()
         }
 
         composable<Screen.ReceivedCalendar> { backStackEntry ->
-            onTopNavigationBarTitleChange("Calendar")
+            onTopNavigationBarTitleChange(stringResource(R.string.calendar))
 
             val id = backStackEntry.arguments?.getString("id")
             ReceivedCalendarScreen(
@@ -154,7 +156,7 @@ fun NavGraph(
         }
 
         composable<Screen.ReceivedCalendarDay> { backStackEntry ->
-            onTopNavigationBarTitleChange("Calendar")
+            onTopNavigationBarTitleChange(stringResource(R.string.calendar))
 
             val id = backStackEntry.arguments?.getString("id")
             val number = backStackEntry.arguments?.getInt("number")
@@ -166,7 +168,7 @@ fun NavGraph(
         }
 
         composable<Screen.CreatedCalendarEditor> { backStackEntry ->
-            onTopNavigationBarTitleChange("Calendar editor")
+            onTopNavigationBarTitleChange(stringResource(R.string.calendar))
 
             val id = backStackEntry.arguments?.getString("id")
             CreatedCalendarEditorScreen(
@@ -180,7 +182,7 @@ fun NavGraph(
         }
 
         composable<Screen.CreatedCalendarEditorDay> { backStackEntry ->
-            onTopNavigationBarTitleChange("Calendar editor")
+            onTopNavigationBarTitleChange(stringResource(R.string.calendar))
 
             val id = backStackEntry.arguments?.getString("id")
             val number = backStackEntry.arguments?.getInt("number")

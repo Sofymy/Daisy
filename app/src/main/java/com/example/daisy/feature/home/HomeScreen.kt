@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.EmojiSupportMatch
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -76,9 +77,9 @@ fun HomeScreenContent(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val mockedReceivedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2"), sender = UserUi(name = "Sender1")), CalendarUi(
-        title = "Mocked1", recipients = listOf("MockUser2")))
-    val mockedCreatedCalendars = listOf(CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2")), CalendarUi(
+    val mockedReceivedCalendars = listOf(CalendarUi(title = "Minta naptár", recipients = listOf("MockUser1", "MockUser2"), sender = UserUi(name = "Sender1")))
+    val mockedCreatedCalendars = listOf(
+        CalendarUi(title = "Mocked1", recipients = listOf("MockUser1", "MockUser2")), CalendarUi(
         title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(title = "Mocked1", recipients = listOf("MockUser2")), CalendarUi(
         title = "Mocked1", recipients = listOf("MockUser2")))
 
@@ -107,13 +108,13 @@ fun HomeScreenContent(
                 item {
                     HomeReceivedCalendars(
                         receivedCalendars = state.receivedCalendars.ifEmpty { mockedReceivedCalendars },
-                        navigateToReceivedCalendars = onNavigateToReceivedCalendars
+                        navigateToReceivedCalendars = onNavigateToReceivedCalendars,
                     )
                 }
                 item {
                     HomeCreatedCalendars(
-                        createdCalendars = state.createdCalendars.ifEmpty { mockedCreatedCalendars },
-                        navigateToCreatedCalendars = onNavigateToCreatedCalendars
+                        createdCalendars = state.createdCalendars,
+                        navigateToCreatedCalendars = onNavigateToCreatedCalendars,
                     )
                 }
             }
@@ -140,7 +141,7 @@ fun HomeAuroraAnimation() {
     Box(Modifier
         .height(130.dp)
         .fillMaxWidth()
-        .clip(WavyShape(2.dp,10.dp*animatedProgress))
+        .clip(WavyShape(2.dp, 10.dp * animatedProgress))
         .graphicsLayer {
             alpha = animatedProgress
         }
@@ -186,11 +187,11 @@ fun HomeHeader(
             }
             Spacer(modifier = Modifier.width(20.dp))
             Column {
-                Text(text = "Hi " + currentUser.displayName.toString() + " 👋🏻 ", style = MaterialTheme.typography.bodySmall.copy(platformStyle = PlatformTextStyle(
+                Text(text = stringResource(R.string.hi) + " " + currentUser.displayName.toString() + "! 👋🏻 ", style = MaterialTheme.typography.bodySmall.copy(platformStyle = PlatformTextStyle(
                     emojiSupportMatch = EmojiSupportMatch.All
                 )), color = Color.LightGray)
 
-                Text(text = "Welcome Back!", fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.welcome_back), fontWeight = FontWeight.Bold)
             }
         }
     }

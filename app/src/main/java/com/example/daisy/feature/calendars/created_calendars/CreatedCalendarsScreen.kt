@@ -1,7 +1,6 @@
 package com.example.daisy.feature.calendars.created_calendars
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -144,16 +143,16 @@ fun CreatedCalendarItem(
             )
         }
         CalendarItemContent(
-            calendarUi = calendarUi,
+            type = Type.CREATED,
+            calendarUi = calendarUi
+            ,
             modifier = Modifier
                 .matchParentSize()
                 .clip(RoundedCornerShape(20.dp))
                 .clickable(
                 ) {
                     onNavigateToCreatedCalendar(calendarUi.id)
-                }
-            ,
-            type = Type.CREATED,
+                },
         )
     }
 }

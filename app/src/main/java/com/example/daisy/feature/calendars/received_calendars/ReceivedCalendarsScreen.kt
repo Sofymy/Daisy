@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.R
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
@@ -79,6 +81,7 @@ import com.example.daisy.ui.theme.LightPurple
 import com.example.daisy.ui.theme.MediumGrey
 import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.util.Constants
+import java.time.LocalDate
 
 @Composable
 fun ReceivedCalendarsScreen(
@@ -189,11 +192,21 @@ fun ReceivedCalendarItem(
                 contentDescription = null)
         }
         CalendarItemContent(
-            calendarUi = calendarUi,
-            modifier = Modifier.matchParentSize().clickable {
-                onNavigateToReceivedCalendar(calendarUi.id)
-            },
             type = Type.RECEIVED,
+            calendarUi = calendarUi,
+            modifier = Modifier
+                .matchParentSize()
+                .clip(RoundedCornerShape(20.dp))
+                .clickable {
+                    if (calendarUi.days.dateRange.dateStart.isBefore(
+                            LocalDate
+                                .now()
+                                .plusDays(1)
+                        )
+                    ) {
+                        onNavigateToReceivedCalendar(calendarUi.id)
+                    }
+                },
         )
     }
 }
@@ -249,9 +262,9 @@ fun ReceivedCalendarsEmpty(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.fillMaxHeight(0.4f))
             Spacer(modifier = Modifier.height(40.dp))
-            Text(text = "This space is empty.", fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.this_space_is_empty), fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Add a calendar by code", color = Purple)
+            Text(text = stringResource(R.string.add_a_calendar_by_code), color = Purple)
             Spacer(modifier = Modifier.height(20.dp))
             ReceivedCalendarsCodeInput(send, focusRequester)
         }

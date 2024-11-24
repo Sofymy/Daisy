@@ -62,7 +62,7 @@ fun MainScreen() {
                 topBarState.value = false
             }
             else -> {
-                topBarState.value = navBackStackEntry?.destination?.route != Screen.Home::class.qualifiedName.toString()
+                topBarState.value = navBackStackEntry?.destination?.route != Screen.Home::class.qualifiedName.toString() && !navBackStackEntry?.destination?.route!!.contains("Calendars")
                 bottomBarState.value = true
             }
         }

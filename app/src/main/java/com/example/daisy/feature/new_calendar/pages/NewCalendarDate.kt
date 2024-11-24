@@ -14,10 +14,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.R
 import com.example.daisy.feature.new_calendar.NewCalendarTypewriterText
 import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
 import com.example.daisy.feature.new_calendar.NewCalendarViewModel
@@ -86,8 +89,8 @@ fun NewCalendarDateAnimatedContent(
     val numberOfDays = calculateNumberOfDays(state.days.dateRange.dateStart, state.days.dateRange.dateEnd)
 
     NewCalendarTypewriterText(
-        baseText = "I'm ",
-        underlinedText = "creating..."
+        baseText = stringResource(R.string.i_m),
+        underlinedText = stringResource(R.string.creating)
     )
 
     AnimatedContent(
@@ -110,7 +113,10 @@ fun NewCalendarDateSelectedDays(
     numberOfDays: Long
 ) {
     Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = "Calendar for ", color = Color.White.copy(.5f))
+        Text(
+            text = stringResource(R.string.calendar_for),
+            color = Color.White.copy(.5f)
+        )
         Text(
             text = "$numberOfDays",
             fontWeight = FontWeight.Bold,
@@ -119,7 +125,7 @@ fun NewCalendarDateSelectedDays(
                 .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(4.dp))
                 .padding(vertical = 4.dp, horizontal = 8.dp),
         )
-        Text(text = " day".pluralize(numberOfDays.toInt())+".", color = Color.White.copy(.5f))
+        Text(text = stringResource(R.string.day).pluralize(numberOfDays.toInt())+".", color = Color.White.copy(.5f))
     }
 }
 
@@ -127,9 +133,10 @@ fun NewCalendarDateSelectedDays(
 fun NewCalendarDatePromptSelection() {
     Row(modifier = Modifier
         .padding(horizontal = 20.dp, vertical = 24.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Text(text = "Select a date range to assign calendar", color = Color.White.copy(.5f))
+        Text(text = stringResource(R.string.select_a_date_range_to_assign_calendar), color = Color.White.copy(.5f), textAlign = TextAlign.Center)
     }
 }
 
@@ -169,12 +176,18 @@ fun NewCalendarDateDateRangePicker(
 
 @Composable
 fun NewCalendarDateRangeDisplay(state: DateRangePickerState) {
-    Row(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(20.dp)) {
         Box(Modifier.weight(1f)) {
-            Text(text = state.selectedStartDateMillis?.let { getFormattedDate(it) } ?: "Start Date")
+            Text(text = state.selectedStartDateMillis?.let { getFormattedDate(it) } ?: stringResource(
+                R.string.start_date
+            ))
         }
         Box(Modifier.weight(1f)) {
-            Text(text = state.selectedEndDateMillis?.let { getFormattedDate(it) } ?: "End Date")
+            Text(text = state.selectedEndDateMillis?.let { getFormattedDate(it) } ?: stringResource(
+                R.string.end_date
+            ))
         }
     }
 }
@@ -196,12 +209,14 @@ fun convertMillisToLocalDate(millis: Long, zoneId: ZoneId = ZoneId.systemDefault
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-object FutureSelectableDates: SelectableDates {
+object FutureSelectableDates : SelectableDates {
     override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-        return utcTimeMillis >= System.currentTimeMillis()
+        val todayStartMillis = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        return utcTimeMillis >= todayStartMillis
     }
 
     override fun isSelectableYear(year: Int): Boolean {
         return year >= LocalDate.now().year
     }
 }
+

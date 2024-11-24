@@ -1,5 +1,6 @@
 package com.example.daisy.feature.calendars
 
+import android.util.Log
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -22,7 +23,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -41,8 +44,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.daisy.R
 import com.example.daisy.feature.new_calendar.pages.LargeIcon
 import com.example.daisy.ui.common.elements.conditional
 import com.example.daisy.ui.common.elements.pluralize
@@ -93,6 +98,7 @@ fun CalendarItemContent(
     onClickEditRecipient: (() -> Unit)? = null,
     onClickEditTitleOrIcon: (() -> Unit)? = null,
     onClickEditDates: (() -> Unit)? = null,
+    onClickToCard: (() -> Unit?)? = null,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val rotateLock = infiniteTransition.animateFloat(
@@ -103,7 +109,8 @@ fun CalendarItemContent(
     )
 
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
     ) {
         CalendarItemContentSenderOrRecipient(
             type = type,
@@ -121,12 +128,18 @@ fun CalendarItemContent(
         )
         when(type){
             Type.CREATED -> {
-                CalendarItemRecipients(calendarUi = calendarUi, colors = listOf(Purple, DarkPurple, Blue), modifier = Modifier.align(Alignment.BottomEnd), isEditableOnLongClick = isEditableOnLongClick)
+                CalendarItemRecipients(
+                    calendarUi = calendarUi,
+                    colors = listOf(Purple, DarkPurple, Blue),
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    isEditableOnLongClick = isEditableOnLongClick
+                )
             }
             Type.RECEIVED -> {
                 CalendarItemContentLockButton(
                     rotateLock = rotateLock.value,
-                    modifier = Modifier.align(Alignment.BottomEnd)
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    isLocked = calendarUi.days.dateRange.dateStart.atStartOfDay() >= LocalDate.now().plusDays(1).atStartOfDay()
                 )
             }
         }
@@ -167,7 +180,8 @@ fun CalendarItemRecipients(
                             .size(50.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = if(recipient.isBlank()) " " else recipient[0].toString())
+                        if(recipient.isBlank()) Icon(imageVector = Icons.Default.Key, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                        else Text(recipient[0].toString())
                     }
                 } else {
                     Box(
@@ -239,24 +253,34 @@ fun CalendarItemContentSenderOrRecipient(
                             .padding(5.dp)
                     }
                 )
-                Text(
-                    text = if(type == Type.RECEIVED) "From ${calendarUi.sender.name}" else "To ${if(calendarUi.recipients.isEmpty()) "xy" else calendarUi.recipients[0]}",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier
-                        .conditional(isEditableOnLongClick) {
-                            Modifier
-                                .clickable {
-                                    if (onClickEditRecipient != null) {
-                                        onClickEditRecipient()
+                (if(type == Type.RECEIVED) calendarUi.sender.name?.let {
+                    stringResource(
+                        R.string.from,
+                        it
+                    )
+                } else stringResource(
+                    R.string.to,
+                    if (calendarUi.recipients.isEmpty()) "xy" else calendarUi.recipients[0]
+                ))?.let {
+                    Text(
+                        text = it,
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier
+                            .conditional(isEditableOnLongClick) {
+                                Modifier
+                                    .clickable {
+                                        if (onClickEditRecipient != null) {
+                                            onClickEditRecipient()
+                                        }
                                     }
-                                }
-                                .drawBehind {
-                                    drawRoundRect(color = Purple, style = stroke)
-                                }
-                                .padding(5.dp)
-                        }
-                )
+                                    .drawBehind {
+                                        drawRoundRect(color = Purple, style = stroke)
+                                    }
+                                    .padding(5.dp)
+                            }
+                    )
+                }
             }
         }
     }
@@ -302,7 +326,7 @@ fun CalendarItemContentDayCounter(
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall
             )
-            Text(text = "days", color = Color.White)
+            Text(text = stringResource(R.string.days), color = Color.White)
         }
     }
 }
@@ -311,6 +335,7 @@ fun CalendarItemContentDayCounter(
 fun CalendarItemContentLockButton(
     rotateLock: Float,
     modifier: Modifier,
+    isLocked: Boolean
 ) {
     Box(
         modifier
@@ -323,10 +348,10 @@ fun CalendarItemContentLockButton(
             onClick = { /*TODO*/ },
             colors = ButtonDefaults.buttonColors(containerColor = MediumGrey)
         ) {
-            Text(text = "Closed", color = Color.White.copy(0.3f))
+            Text(text = if(isLocked) stringResource(R.string.closed) else stringResource(R.string.open), color = Color.White.copy(0.3f))
             Spacer(modifier = Modifier.width(10.dp))
             Icon(
-                imageVector = Icons.Default.Lock,
+                imageVector = if(isLocked)Icons.Default.Lock else Icons.Default.LockOpen,
                 contentDescription = null,
                 modifier = Modifier.graphicsLayer {
                     rotationZ = rotateLock
@@ -344,7 +369,10 @@ fun CalendarItemContentOpenText(
     isEditableOnLongClick: Boolean = false,
     onClickEditDates: (() -> Unit)?
 ) {
-    val daysBetween = between(LocalDate.now().atStartOfDay(), calendarUi.days.dateRange.dateStart.atStartOfDay()).toDays().toInt()
+    val daysBetweenStartAndToday = between(LocalDate.now().atStartOfDay(), calendarUi.days.dateRange.dateStart.atStartOfDay()).toDays().toInt()
+    val daysBetweenEndAndToday = between(LocalDate.now().atStartOfDay(), calendarUi.days.dateRange.dateEnd.atStartOfDay()).toDays().toInt()
+
+
     val stroke = Stroke(width = 10f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
     )
@@ -367,10 +395,31 @@ fun CalendarItemContentOpenText(
         contentAlignment = Alignment.TopStart
     ) {
         Column() {
-            Text(
-                text = "Opens in $daysBetween day".pluralize(daysBetween),
-                fontWeight = FontWeight.Bold
-            )
+
+            if (calendarUi.days.dateRange.dateStart.isBefore(LocalDate.now().plusDays(1))) {
+
+                if(daysBetweenEndAndToday < 0)
+                    Text(
+                        text = stringResource(R.string.ended_day, daysBetweenEndAndToday * (-1)).pluralize(daysBetweenEndAndToday*(-1)) + stringResource(
+                            R.string.ago
+                        ),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                else
+                    Text(
+                        text = stringResource(R.string.ends_in_day, daysBetweenEndAndToday).pluralize(daysBetweenEndAndToday),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+            } else {
+
+                Text(
+                    text = stringResource(R.string.opens_in_day, daysBetweenStartAndToday).pluralize(daysBetweenStartAndToday),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }

@@ -1,29 +1,34 @@
 package com.example.daisy.feature.calendars.received_calendars
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import com.example.daisy.ui.common.for_later_use.FallingObjects
 import com.example.daisy.ui.common.state.ErrorContent
 import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.model.DayUi
+import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.Purple
 import com.google.firebase.storage.FirebaseStorage
 
 @Composable
@@ -77,11 +82,27 @@ private fun ReceivedCalendarDay(
 ) {
     val imageUri = remember { mutableStateOf<Uri?>(null) }
 
-    Column(modifier = Modifier.padding(bottom = 50.dp)) {
+    Column(modifier = Modifier
+        .padding(bottom = 50.dp)
+        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = dayUi.message,
-            modifier = Modifier.padding(16.dp)
+            text = dayUi.date.toString().replace("-", ".") + ".",
+            modifier = Modifier.padding(vertical = 5.dp),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = Purple
         )
+        Column(
+            Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+                .background(MediumGrey, RoundedCornerShape(10.dp))
+                .padding(end = 10.dp)) {
+            Text(
+                text = dayUi.message,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
         ImageViewer(
             fileName = fileName,
             imageUri = imageUri.value,
@@ -124,7 +145,10 @@ private fun ImageViewer(
             model = imageUri,
             contentDescription = null,
             modifier = Modifier
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 20.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .border(3.dp, MediumGrey, RoundedCornerShape(20.dp))
+            ,
             contentScale = ContentScale.FillWidth
         )
     }

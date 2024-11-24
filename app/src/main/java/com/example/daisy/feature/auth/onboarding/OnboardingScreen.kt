@@ -165,10 +165,12 @@ fun OnboardingTextAndButtons(
         ) {
             Spacer(modifier = Modifier.fillMaxHeight(0.4f))
             OnboardingTypewriterText(
-                baseText = "Create ",
-                highlightedText = "calendars\n",
-                remainingText = "for ",
-                parts = listOf("christmas.", "birthday.", "anniversary."),
+                baseText = stringResource(R.string.create),
+                highlightedText = stringResource(R.string.calendars_),
+                remainingText = stringResource(R.string.for_),
+                parts = listOf(stringResource(R.string.christmas),
+                    stringResource(R.string.birthday), stringResource(R.string.anniversary)
+                ),
                 gradient = gradient
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.4f))
@@ -196,7 +198,10 @@ fun OnboardingTextAndButtons(
                 })
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(stringResource(R.string.already_has_an_account_sign_in), Modifier.clickable { onNavigateToSignIn() })
+                Text(
+                    text = stringResource(R.string.already_has_an_account_sign_in),
+                    color = Color.White,
+                    modifier = Modifier.clickable { onNavigateToSignIn() })
             }
         }
     }
@@ -244,6 +249,7 @@ fun OnboardingTypewriterText(
     Text(
         text = buildAnnotatedString {
             append(baseText)
+            append(" ")
 
             withStyle(SpanStyle(brush = Brush.linearGradient(gradient))) {
                 append(highlightedText)
@@ -253,6 +259,7 @@ fun OnboardingTypewriterText(
             append(partText)
         },
         style = TextStyle(
+            color = Color.White,
             fontWeight = FontWeight.SemiBold,
             fontSize = 40.sp,
             letterSpacing = -(1.6).sp,

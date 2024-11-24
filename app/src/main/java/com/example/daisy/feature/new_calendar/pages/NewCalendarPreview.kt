@@ -1,9 +1,6 @@
 package com.example.daisy.feature.new_calendar.pages
 
 import android.graphics.Bitmap
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -21,9 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Redo
-import androidx.compose.material.icons.filled.Undo
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,17 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.R
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
@@ -52,7 +44,6 @@ import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
 import com.example.daisy.feature.new_calendar.NewCalendarViewModel
 import com.example.daisy.ui.common.elements.grayScale
 import com.example.daisy.ui.model.CalendarUi
-import com.example.daisy.ui.theme.Blue
 import com.example.daisy.ui.theme.LightBlue
 import com.example.daisy.ui.theme.MediumPurple
 import com.example.daisy.ui.theme.Purple
@@ -199,9 +190,9 @@ fun NewCalendarPreviewCardBox(
             )
         }
         CalendarItemContent(
+            type = Type.RECEIVED,
             calendarUi = calendarUi,
             modifier = Modifier.matchParentSize(),
-            type = Type.RECEIVED
         )
     }
 }
@@ -255,12 +246,12 @@ fun NewCalendarPreviewHeader() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NewCalendarTypewriterText(
-            baseText = "I'm ",
-            underlinedText = "drawing..."
+            baseText = stringResource(R.string.i_m),
+            underlinedText = stringResource(R.string.drawing)
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "Now you can see what your calendar will look like for your recipient. Paint something on it!",
+            text = stringResource(R.string.now_you_can_see_what_your_calendar_will_look_like_for_your_recipient_paint_something_on_it),
             textAlign = TextAlign.Center,
             color = Color.White.copy(alpha = 0.5f)
         )

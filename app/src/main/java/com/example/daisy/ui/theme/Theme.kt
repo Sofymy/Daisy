@@ -56,15 +56,8 @@ fun DaisyTheme(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colorScheme = DarkColorScheme
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
 
     val systemUiController = rememberSystemUiController()
     systemUiController.setSystemBarsColor(

@@ -120,12 +120,21 @@ fun RegisterContent(
             AuthChecklistAnimation{
                 Text(text = buildAnnotatedString {
                     withStyle(SpanStyle(brush = Brush.linearGradient(gradient), fontWeight = FontWeight.Black)) {
-                        append("SIGN UP TO-DO")
+                        append(stringResource(R.string.sign_up_to_do))
                     }
                 }, Modifier.padding(start = 20.dp))
-                AuthFormChecklistItem("Valid email", state.registerValidation.isEmailValid)
-                AuthFormChecklistItem("Password length", state.registerValidation.hasPasswordLength)
-                AuthFormChecklistItem("Passwords matching", state.registerValidation.isPasswordsMatching)
+                AuthFormChecklistItem(
+                    text = stringResource(R.string.valid_email_),
+                    isValid = state.registerValidation.isEmailValid
+                )
+                AuthFormChecklistItem(
+                    text = stringResource(R.string.password_length),
+                    isValid = state.registerValidation.hasPasswordLength
+                )
+                AuthFormChecklistItem(
+                    text = stringResource(R.string.passwords_matching),
+                    isValid = state.registerValidation.isPasswordsMatching
+                )
             }
         }
         item {
@@ -348,7 +357,7 @@ fun RegisterForm(
     ) {
         PrimaryTextField(
             icon = Icons.Default.AlternateEmail,
-            placeholderText = "Enter your email",
+            placeholderText = stringResource(R.string.enter_your_email),
             value = state.email,
             keyboardType = KeyboardType.Email,
             onValueChange = { onValueChange(RegisterUserEvent.EmailChanged(it)) },
@@ -357,7 +366,7 @@ fun RegisterForm(
         PrimaryTextField(
             value = state.password,
             onValueChange = { onValueChange(RegisterUserEvent.PasswordChanged(it)) },
-            placeholderText = "Enter a password",
+            placeholderText = stringResource(R.string.enter_a_password),
             label = stringResource(id = R.string.password),
             keyboardType = KeyboardType.Password,
             icon = Icons.Default.Password
@@ -365,7 +374,7 @@ fun RegisterForm(
         PrimaryTextField(
             value = state.confirmPassword,
             onValueChange = { onValueChange(RegisterUserEvent.ConfirmPasswordChanged(it)) },
-            placeholderText = "Re-enter your password",
+            placeholderText = stringResource(R.string.re_enter_your_password),
             label = stringResource(R.string.confirm_password),
             keyboardType = KeyboardType.Password,
             icon = Icons.Default.Password

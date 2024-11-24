@@ -58,11 +58,13 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.daisy.R
 import com.example.daisy.data.datasource.datastore.DataStoreManager
 import com.example.daisy.feature.calendars.created_calendars.CreatedCalendarsScreen
 import com.example.daisy.feature.calendars.received_calendars.ReceivedCalendarsScreen
@@ -172,6 +174,9 @@ fun CalendarsTabViewSearchBar(
         )
 
         Column {
+
+            Spacer(modifier = Modifier.height(20.dp))
+
             CalendarsTabViewSearchBarField(
                 searchExpression = searchExpression,
                 onSearchExpressionChange = onSearchExpressionChange,
@@ -220,7 +225,7 @@ private fun CalendarsTabViewSearchBarField(
         value = searchExpression,
         onValueChange = onSearchExpressionChange,
         icon = Icons.Default.Search,
-        placeholderText = "Search in calendars",
+        placeholderText = stringResource(R.string.search_in_calendars),
         onImeAction = {
             onSearchSubmit(searchExpression)
         }
@@ -238,7 +243,8 @@ private fun CalendarsTabViewSearchBarRecentSearches(
     ) {
 
         if (recentSearches.isNotEmpty()){
-            Text("Recent searches",
+            Text(
+                stringResource(R.string.recent_searches),
                 color = Color.Gray,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -256,7 +262,7 @@ private fun CalendarsTabViewSearchBarRecentSearches(
 
         else{
             Text(
-                "No recent searches",
+                stringResource(R.string.no_recent_searches),
                 color = Color.Gray.copy(.2f),
                 style = MaterialTheme.typography.labelLarge
             )
@@ -303,7 +309,7 @@ fun CalendarsTabView(
     var selectedTabPosition by remember { mutableIntStateOf(0) }
     val scope = rememberCoroutineScope()
     val items = listOf(
-        "Received", "Created"
+        stringResource(R.string.received), stringResource(R.string.created)
     )
 
     LaunchedEffect(pagerState.currentPage) {

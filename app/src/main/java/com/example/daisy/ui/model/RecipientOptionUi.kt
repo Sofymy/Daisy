@@ -1,16 +1,26 @@
 package com.example.daisy.ui.model
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.daisy.R
 
 enum class RecipientOption(
-    val label: String,
+    @StringRes val labelRes: Int,
     val icon: ImageVector,
-    val description: String
+    @StringRes val descriptionRes: Int
 ) {
-    CODE("By code", Icons.Default.Numbers, "We'll automatically generate a six-digit code for you, which you can share with one or more recipients in several ways."),
-    EMAIL("Via email", Icons.Default.Email, "Enter the email address of a contact and your calendar will be assigned to them directly."),
+    CODE(
+        R.string.recipient_option_code_label,
+        Icons.Default.Numbers,
+        R.string.recipient_option_code_description
+    ),
+    EMAIL(
+        R.string.recipient_option_email_label,
+        Icons.Default.Email,
+        R.string.recipient_option_email_description
+    )
 }

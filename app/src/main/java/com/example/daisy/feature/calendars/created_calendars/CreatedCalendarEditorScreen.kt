@@ -48,10 +48,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.R
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
@@ -61,9 +63,11 @@ import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.model.DayUi
 import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.util.Constants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
@@ -117,6 +121,22 @@ fun CreatedCalendarEditor(
     LazyColumn(
         Modifier.fillMaxSize()
     ) {
+        if(calendarUi.code?.isNotEmpty() == true){
+            item {
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.code, calendarUi.code),
+                        modifier = Modifier.padding(vertical = 5.dp),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
         item {
             CreatedCalendarEditorCard(
                 calendarUi = calendarUi,
@@ -174,6 +194,8 @@ fun CreatedCalendarEditorDayItem(
     modifier: Modifier,
     onClickDay: (Int) -> Unit
 ) {
+    val isLocked = day.date.atStartOfDay() >= LocalDate.now().plusDays(1).atStartOfDay()
+
     Box(
         modifier = modifier
             .aspectRatio(1f),
@@ -187,7 +209,7 @@ fun CreatedCalendarEditorDayItem(
                 }
                 .fillMaxSize()
                 .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(10.dp))
-                .background(MediumGrey, RoundedCornerShape(10.dp))
+                .background(if (isLocked) MediumGrey else Purple, RoundedCornerShape(10.dp))
         ) {
             Icon(imageVector = Icons.Filled.Window, contentDescription = null, Modifier.fillMaxSize(), tint = Color.White.copy(.03f))
             Text(
@@ -267,11 +289,11 @@ fun CreatedCalendarEditorCard(
         }
 
         CalendarItemContent(
+            type = Type.CREATED,
             calendarUi = calendarUi,
             modifier = Modifier
                 .matchParentSize()
                 .clip(RoundedCornerShape(20.dp)),
-            type = Type.CREATED,
             isEditableOnLongClick = isEditable,
         )
     }

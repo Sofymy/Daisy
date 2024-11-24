@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.CornerRounding
@@ -102,14 +103,14 @@ fun ProfileScreenContent(
                 item {
                     ProfileItem(
                         modifier = Modifier.padding(top = 20.dp),
-                        title = "Badges",
+                        title = stringResource(R.string.badges),
                         content = { ProfileBadges() }
                     )
                 }
                 item {
                     ProfileItem(
                         modifier = Modifier.padding(top = 20.dp),
-                        title = "Settings",
+                        title = stringResource(R.string.settings),
                         content = { ProfileSettings(
                             onNavigateToProfileAccount = onNavigateToProfileAccount
                         ) }
@@ -140,7 +141,7 @@ fun ProfileSignOut(
             .fillMaxWidth()
             .padding(15.dp)
     ){
-        Text(text = "Sign out", color = Alert, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black)
+        Text(text = stringResource(R.string.sign_out), color = Alert, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black)
     }
     HorizontalDivider(color = Alert.copy(.4f))
     Spacer(modifier = Modifier.height(40.dp))
@@ -231,8 +232,8 @@ fun ProfileBadges() {
 fun ProfileSettings(
     onNavigateToProfileAccount: () -> Unit
 ) {
-    ProfileSettingItem(label = { Text("Account") }, onClick = onNavigateToProfileAccount)
-    ProfileSettingItem(label = { Text("Notifications") }, onClick = {  })
+    ProfileSettingItem(label = { Text(stringResource(R.string.account)) }, onClick = onNavigateToProfileAccount)
+    ProfileSettingItem(label = { Text(stringResource(R.string.notifications)) }, onClick = {  })
 }
 
 @Composable
@@ -284,17 +285,17 @@ fun ProfileStatistics(
     ) {
         ProfileStatisticsItem(
             modifier = Modifier.weight(1f),
-            title = "Created",
+            title = stringResource(R.string.created_),
             data = createdCalendarsSize
         )
         ProfileStatisticsItem(
             modifier = Modifier.weight(1f),
-            title = "Received",
+            title = stringResource(R.string.received_),
             data = receivedCalendarsSize
         )
         ProfileStatisticsItem(
             modifier = Modifier.weight(1f),
-            title = "Friends",
+            title = stringResource(R.string.friends),
             data = friendsSize
         )
     }
@@ -331,7 +332,6 @@ fun ProfileHeader(
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(currentUser.photoUrl)
-                    .placeholder(R.drawable.gift)
                     .build(),
                 contentDescription = "",
                 modifier = Modifier

@@ -17,11 +17,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.R
 import com.example.daisy.feature.new_calendar.NewCalendarTypewriterText
 import com.example.daisy.feature.new_calendar.NewCalendarUserEvent
 import com.example.daisy.feature.new_calendar.NewCalendarViewModel
@@ -98,12 +100,12 @@ fun NewCalendarRecipientForm(
 @Composable
 private fun NewCalendarRecipientHeader() {
     NewCalendarTypewriterText(
-        baseText = "I'm ",
-        underlinedText = "sharing..."
+        baseText = stringResource(R.string.i_m),
+        underlinedText = stringResource(R.string.sharing)
     )
     Spacer(modifier = Modifier.height(20.dp))
     Text(
-        text = "Select a delivery option to guide you through the process",
+        text = stringResource(R.string.select_a_delivery_option_to_guide_you_through_the_process),
         textAlign = TextAlign.Center,
         color = Color.White.copy(alpha = 0.5f)
     )
@@ -171,6 +173,9 @@ fun NewCalendarRecipientOptionContent(
     option: RecipientOption,
     isSelected: Boolean
 ) {
+    val label = stringResource(option.labelRes)
+    val description = stringResource(option.descriptionRes)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -181,12 +186,12 @@ fun NewCalendarRecipientOptionContent(
         Spacer(modifier = Modifier.width(20.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = option.label,
+                text = label,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = option.description,
+                text = description,
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.White.copy(.5f)
             )
@@ -213,7 +218,7 @@ fun NewCalendarRecipientEmailField(
                 onRecipientChange(newValue)
             },
             icon = Icons.Default.AlternateEmail,
-            placeholderText = "Your recipient's email"
+            placeholderText = stringResource(R.string.your_recipient_s_email)
         )
         Spacer(modifier = Modifier.height(20.dp))
     }

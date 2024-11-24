@@ -20,16 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Draw
-import androidx.compose.material.icons.filled.NewReleases
-import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.material.icons.filled.Window
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,9 +55,11 @@ import com.example.daisy.ui.common.state.LoadingContent
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.model.DayUi
 import com.example.daisy.ui.theme.MediumGrey
+import com.example.daisy.ui.theme.Purple
 import com.example.daisy.ui.util.Constants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -172,6 +167,8 @@ fun ReceivedCalendarDayItem(
     modifier: Modifier,
     onClickDay: (Int) -> Unit
 ) {
+    val isLocked = day.date.atStartOfDay() >= LocalDate.now().plusDays(1).atStartOfDay()
+
     Box(
         modifier = modifier
             .aspectRatio(1f),
@@ -181,11 +178,11 @@ fun ReceivedCalendarDayItem(
             modifier = Modifier
                 .clip(RoundedCornerShape(10.dp))
                 .clickable {
-                    onClickDay(day.number)
+                    if (!isLocked) onClickDay(day.number)
                 }
                 .fillMaxSize()
                 .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(10.dp))
-                .background(MediumGrey, RoundedCornerShape(10.dp))
+                .background(if(isLocked)MediumGrey else Purple, RoundedCornerShape(10.dp))
         ) {
             Icon(imageVector = Icons.Filled.Window, contentDescription = null, Modifier.fillMaxSize(), tint = Color.White.copy(.03f))
             Text(
@@ -263,11 +260,11 @@ fun ReceivedCalendarCard(
         }
 
         CalendarItemContent(
+            type = Type.RECEIVED,
             calendarUi = calendarUi,
             modifier = Modifier
                 .matchParentSize()
                 .clip(RoundedCornerShape(20.dp)),
-            type = Type.RECEIVED,
             isEditableOnLongClick = isEditable,
         )
     }

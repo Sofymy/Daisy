@@ -1,11 +1,14 @@
 package com.example.daisy.navigation
 
+import androidx.annotation.StringRes
+import com.example.daisy.R
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Screen(
     val resourceId: String,
     val label: String,
+    @StringRes val bottomNavigationLabelResourceId: Int = 0,
 ){
     @Serializable
     data object Onboarding: Screen("Onboarding", "Onboarding")
@@ -17,10 +20,10 @@ sealed class Screen(
     data object Register: Screen("Register", "Register")
 
     @Serializable
-    data object Home: Screen("Home", "Home")
+    data object Home: Screen("Home", "Home", R.string.home_)
 
     @Serializable
-    data object NewCalendar: Screen("NewCalendar", "New")
+    data object NewCalendar: Screen("NewCalendar", "New", R.string.new_)
 
     @Serializable
     data object CreatedCalendars: Screen("CreatedCalendars", "Created")
@@ -44,15 +47,15 @@ sealed class Screen(
     data object More: Screen("More", "More")
 
     @Serializable
-    data object Profile: Screen("Profile", "Profile")
+    data object Profile: Screen("Profile", "Profile", R.string.profile_)
 
     @Serializable
     data object ProfileAccount: Screen("Account", "Account")
 
     @Serializable
-    data class Calendars(val initialPage: Int): Screen("Calendars", "Calendars")
+    data class Calendars(val initialPage: Int): Screen("Calendars", "Calendars", R.string.calendars)
 
     @Serializable
-    data object Community: Screen("Community", "Community")
+    data object Community: Screen("Community", "Community", R.string.community)
 
 }

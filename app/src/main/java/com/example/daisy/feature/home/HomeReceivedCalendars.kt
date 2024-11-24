@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.draggable2D
 import androidx.compose.foundation.gestures.rememberDraggable2DState
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,7 +26,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -45,9 +45,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.example.daisy.R
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
 import com.example.daisy.ui.model.CalendarUi
@@ -105,7 +107,7 @@ fun HomeReceivedCalendars(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp)
             .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = "Received calendars", fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.received_calendars), fontWeight = FontWeight.Bold)
         IconButton(onClick = {
             navigateToReceivedCalendars()
         }) {
@@ -120,7 +122,8 @@ fun HomeReceivedCalendars(
         activeCalendar = activeCalendar.intValue,
         isDragged = isDragged,
         onChangeDragDirection = { dragDirection.value = it },
-        numberOfReceivedCalendars = numberOfReceivedCalendars.intValue
+        numberOfReceivedCalendars = numberOfReceivedCalendars.intValue,
+        navigateToReceivedCalendars = navigateToReceivedCalendars
     )
 
     HomeReceivedCalendarsDots(
@@ -185,7 +188,8 @@ fun HomeReceivedCalendarsBoxes(
     activeCalendar: Int,
     numberOfReceivedCalendars: Int,
     onChangeDragDirection: (Direction) -> Unit,
-    receivedCalendars: List<CalendarUi>
+    receivedCalendars: List<CalendarUi>,
+    navigateToReceivedCalendars: () -> Unit
 ) {
     val dragState = rememberDraggable2DState(onDelta = { delta ->
         onChangeDragDirection(if (delta.x <= 0) Direction.LEFT else Direction.RIGHT)
@@ -214,7 +218,11 @@ fun HomeReceivedCalendarsBoxes(
                         .alpha(Constants.CALENDAR_DRAWING_ALPHA),
                     contentDescription = null)
             }
-            CalendarItemContent(calendarUi = activeCalendarUi, type = Type.RECEIVED, modifier = Modifier.matchParentSize())
+            CalendarItemContent(calendarUi = activeCalendarUi, type = Type.RECEIVED, modifier = Modifier
+                .matchParentSize()
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { navigateToReceivedCalendars() }
+            )
         }
     }
 }

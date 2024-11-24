@@ -15,7 +15,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -49,7 +51,7 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 @Composable
-fun Content(){
+fun FallingObjects(){
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val showContent = remember { mutableStateOf(false) }
@@ -76,7 +78,7 @@ fun Content(){
             color = Purple,
             startX = Random.nextInt(balloonSize, screenWidth.value.toInt()).dp-balloonSize.dp,
             initialY = (-100).dp,
-            finalY = screenHeight - giftSize.dp,
+            finalY = screenHeight - (giftSize.dp * 2),
             size = balloonSize.dp
         )
     }
@@ -84,20 +86,14 @@ fun Content(){
     var balloonIsClicked by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(100)
+        delay(1000)
         showContent.value = true
     }
 
+    if(showContent.value)
     Box(modifier = Modifier
-        .fillMaxSize()) {
-        OnboardingFallingGift(
-            gift = gift,
-            isOpenGift = giftIsOpen,
-            onChangeGiftState = { giftIsOpen = giftIsOpen.not() },
-            rotatedGiftTop = giftTop,
-            translatedX = giftTranslatedX,
-            translatedY = giftTranslatedY,
-        )
+        .fillMaxWidth().fillMaxHeight(.7f)) {
+
 
         OnboardingFallingBalloon(
             balloon = balloon,

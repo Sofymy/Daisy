@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,8 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.daisy.R
 import com.example.daisy.ui.common.elements.pluralize
 import com.example.daisy.ui.model.CalendarUi
 import com.example.daisy.ui.theme.DarkBlue
@@ -77,7 +81,7 @@ fun HomeCreatedCalendars(
         navigateToCreatedCalendars = navigateToCreatedCalendars
     )
     Spacer(modifier = Modifier.height(10.dp))
-    HomeCreatedCalendarContentLazyRow(state, createdCalendars.sortedBy { it.days.dateRange.dateStart }, colors)
+    HomeCreatedCalendarContentLazyRow(state, createdCalendars.sortedBy { it.days.dateRange.dateStart }, colors, navigateToCreatedCalendars = navigateToCreatedCalendars)
     Spacer(modifier = Modifier.height(40.dp))
 }
 
@@ -92,7 +96,7 @@ fun HomeCreatedCalendarContentHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "My calendars", fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.my_calendars), fontWeight = FontWeight.Bold)
         IconButton(onClick = {
             navigateToCreatedCalendars()
         }) {
@@ -107,20 +111,40 @@ fun HomeCreatedCalendarContentHeader(
 fun HomeCreatedCalendarContentLazyRow(
     state: LazyListState,
     createdCalendars: List<CalendarUi>,
-    colors: List<Color>
+    colors: List<Color>,
+    navigateToCreatedCalendars: () -> Unit
 ) {
-    LazyRow(
-        state = state,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        item { Spacer(modifier = Modifier.width(20.dp)) }
-        itemsIndexed(
-            items = createdCalendars,
-            key = {_, item ->  item.id}
-        ) { index, calendarUi ->
-            HomeCreatedCalendarContentItem(index, state, calendarUi, colors)
+
+    if(createdCalendars.isEmpty()){
+        Row(
+            modifier = Modifier
+                .padding(20.dp)
+                .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(10))
+                .clip(RoundedCornerShape(10))
+                .background(MediumGrey)
+                .padding(20.dp)
+        ) {
+            Text(text = stringResource(R.string.k_sz_ts_napt_rakat_melyek_majd_itt_megjelennek), color = Color.Gray, fontWeight = FontWeight.Bold)
         }
     }
+
+    else{
+        LazyRow(
+            state = state,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+
+            item { Spacer(modifier = Modifier.width(20.dp)) }
+            itemsIndexed(
+                items = createdCalendars,
+                key = {_, item ->  item.id}
+            ) { index, calendarUi ->
+                HomeCreatedCalendarContentItem(index, state, calendarUi, colors, navigateToCreatedCalendars)
+            }
+
+        }
+    }
+
 }
 
 @Composable
@@ -128,7 +152,8 @@ fun HomeCreatedCalendarContentItem(
     index: Int,
     state: LazyListState,
     calendarUi: CalendarUi,
-    colors: List<Color>
+    colors: List<Color>,
+    navigateToCreatedCalendars: () -> Unit
 ) {
     val firstIndex = remember { derivedStateOf { state.firstVisibleItemIndex == index } }
 
@@ -146,6 +171,7 @@ fun HomeCreatedCalendarContentItem(
                 .border(1.dp, Color.White.copy(.1f), RoundedCornerShape(10))
                 .clip(RoundedCornerShape(10))
                 .background(MediumGrey)
+                .clickable { navigateToCreatedCalendars() }
                 .size(size = (size * 100).dp),
         ) {
             HomeCreatedCalendarContentTitleAndInfos(calendarUi, Modifier, firstIndex.value)
@@ -184,7 +210,8 @@ fun HomeCreatedCalendarContentRecipients(
                             .size(40.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = if(recipient.isBlank()) "?" else recipient[0].toString())
+                        if(recipient.isBlank()) Icon(imageVector = Icons.Default.Key, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                        else Text(recipient[0].toString())
                     }
                 } else {
                     Box(
@@ -313,18 +340,29 @@ fun HomeCreatedCalendarContentDateCountdown(calendarUi: CalendarUi) {
 
         val daysBetween = between(now.atStartOfDay(), calendarUi.days.dateRange.dateEnd.atStartOfDay()).toDays().toInt()
 
-        Text(
-            text = "Ends in $daysBetween day".pluralize(daysBetween),
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(.5f),
-            fontWeight = FontWeight.Bold
-        )
+        if(daysBetween < 0) {
+            Text(
+                text = stringResource(R.string.ended_day_2, daysBetween * -1).pluralize(daysBetween*-1) + stringResource(
+                    id = R.string.ago
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(.5f),
+                fontWeight = FontWeight.Bold
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.ends_in_day_, daysBetween).pluralize(daysBetween),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(.5f),
+                fontWeight = FontWeight.Bold
+            )
+        }
     } else {
 
         val daysBetween = between(now.atStartOfDay(), calendarUi.days.dateRange.dateStart.atStartOfDay()).toDays().toInt()
 
         Text(
-            text = "Opens in $daysBetween day".pluralize(daysBetween),
+            text = stringResource(R.string.opens_in_day_2, daysBetween).pluralize(daysBetween),
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(.5f),
             fontWeight = FontWeight.Bold

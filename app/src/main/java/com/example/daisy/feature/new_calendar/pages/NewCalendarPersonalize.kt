@@ -1,6 +1,5 @@
 package com.example.daisy.feature.new_calendar.pages
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,11 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.R
 import com.example.daisy.feature.calendars.CalendarItemBackground
 import com.example.daisy.feature.calendars.CalendarItemContent
 import com.example.daisy.feature.calendars.Type
@@ -134,7 +135,7 @@ fun NewCalendarPersonalizeIconOptionsList(
             .fillMaxSize()
     ) {
 
-        Text(text = "Select an icon", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 20.dp))
+        Text(text = stringResource(R.string.select_an_icon), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 20.dp))
         Spacer(modifier = Modifier.height(20.dp))
         LazyRow(
         ) {
@@ -208,7 +209,7 @@ fun NewCalendarPersonalizeTitle(
                 onTitleChange(newValue)
             },
             icon = Icons.Default.Title,
-            placeholderText = "Enter a title"
+            placeholderText = stringResource(R.string.enter_a_title)
         )
     }
 }
@@ -226,13 +227,15 @@ fun NewCalendarPersonalizeCard(
         CalendarItemBackground(
             borderColor = Color.White.copy(0.3f),
             backgroundColor = Purple,
-            modifier = Modifier.height(220.dp).fillMaxWidth()
+            modifier = Modifier
+                .height(220.dp)
+                .fillMaxWidth()
         )
 
         CalendarItemContent(
+            type = Type.RECEIVED,
             calendarUi = calendarUi,
             modifier = Modifier.matchParentSize(),
-            type = Type.RECEIVED
         )
     }
 }
@@ -246,12 +249,12 @@ private fun NewCalendarPersonalizeHeader() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NewCalendarTypewriterText(
-            baseText = "I'm ",
-            underlinedText = "personalizing..."
+            baseText = stringResource(R.string.i_m),
+            underlinedText = stringResource(R.string.personalizing)
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "Customize your calendar: add a title and icon.",
+            text = stringResource(R.string.customize_your_calendar_add_a_title_and_icon),
             textAlign = TextAlign.Center,
             color = Color.White.copy(alpha = 0.5f)
         )

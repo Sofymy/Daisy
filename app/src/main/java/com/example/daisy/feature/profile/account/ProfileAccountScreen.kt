@@ -168,7 +168,6 @@ fun ProfileAccountHeader(
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUri)
-                    .placeholder(R.drawable.gift)
                     .build(),
                 contentDescription = "",
                 modifier = Modifier
@@ -209,7 +208,7 @@ fun ProfileAccountForm(
         horizontalAlignment = Alignment.End,
     ) {
         ProfileItem(
-            title = "Account details",
+            title = stringResource(R.string.account_details),
         ) {
             Column(
                 Modifier.background(MediumGrey)
@@ -235,7 +234,7 @@ fun ProfileAccountForm(
                         .fillMaxWidth(.6f)
                         .align(Alignment.End), horizontalArrangement = Arrangement.End) {
                     TertiaryButton(onClick = { /*TODO*/ }) {
-                        Text(text = "Change password")
+                        Text(text = stringResource(R.string.change_password))
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -245,7 +244,7 @@ fun ProfileAccountForm(
 
 
         ProfileItem(
-            title = "Personal details",
+            title = stringResource(R.string.personal_details),
         ) {
 
             Column(
@@ -254,7 +253,7 @@ fun ProfileAccountForm(
                 PrimaryTextField(
                     value = state.newName,
                     onValueChange = { onNameValueChange(it) },
-                    placeholderText = "Name",
+                    placeholderText = stringResource(R.string.name_),
                     label = stringResource(id = R.string.name),
                     icon = Icons.Outlined.AccountCircle
                 )
@@ -263,7 +262,7 @@ fun ProfileAccountForm(
                         .padding(start = 20.dp, top = 20.dp, end = 30.dp)
                         .align(Alignment.End), horizontalArrangement = Arrangement.End) {
                     SecondaryButton(onClick = onClickSave) {
-                        Text(text = "Save")
+                        Text(text = stringResource(R.string.save_))
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))

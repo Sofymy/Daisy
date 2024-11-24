@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import com.example.daisy.R
 import com.example.daisy.ui.common.elements.PrimaryButton
 import com.example.daisy.ui.common.elements.PrimaryTextField
 import com.example.daisy.ui.common.elements.SecondaryButton
@@ -120,7 +122,7 @@ private fun CreatedCalendarEditorDay(
             },
             modifier = Modifier.padding(horizontal = 10.dp)
         ) {
-            Text(text = "Save")
+            Text(text = stringResource(R.string.save))
         }
     }
 }
@@ -173,7 +175,7 @@ private fun ImagePicker(
             onClick = { launcher.launch(arrayOf("image/*")) },
             modifier = Modifier.padding(10.dp)
         ) {
-            Text(text = "Pick Image")
+            Text(text = stringResource(R.string.pick_image))
         }
     }
 }

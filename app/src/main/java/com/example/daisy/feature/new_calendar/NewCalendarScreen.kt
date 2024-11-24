@@ -30,6 +30,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.daisy.R
 import com.example.daisy.feature.new_calendar.pages.NewCalendarDate
 import com.example.daisy.feature.new_calendar.pages.NewCalendarPersonalize
 import com.example.daisy.feature.new_calendar.pages.NewCalendarPreview
@@ -114,7 +116,7 @@ fun NewCalendarContent(
                             }
                         },
                     ) {
-                        Text("Back", color = Purple)
+                        Text(text = stringResource(R.string.back), color = Purple)
                     }
                 }
                 Spacer(modifier = Modifier.weight(0.1f))
@@ -129,7 +131,7 @@ fun NewCalendarContent(
                             viewModel.onEvent(NewCalendarUserEvent.CreateCalendar)
                         },
                     ) {
-                        Text("Create calendar")
+                        Text(stringResource(R.string.create_calendar))
                     }
                 }
             } else {
@@ -143,7 +145,7 @@ fun NewCalendarContent(
                             }
                         },
                     ) {
-                        Text("Next")
+                        Text(stringResource(R.string.next))
                     }
                 }
             }
@@ -226,13 +228,15 @@ fun NewCalendarTypewriterText(
     Text(
         text = buildAnnotatedString {
             append(baseText)
+            append(" ")
             append(underlinedText)
         },
         style = TextStyle(
             fontWeight = FontWeight.SemiBold,
             fontSize = 30.sp,
             letterSpacing = -(1.6).sp,
-            lineHeight = 60.sp
+            lineHeight = 60.sp,
+            color = Color.White
         ),
         modifier = Modifier
             .drawBehind {

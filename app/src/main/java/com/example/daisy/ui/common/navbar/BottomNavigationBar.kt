@@ -1,5 +1,6 @@
 package com.example.daisy.ui.common.navbar
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -22,6 +23,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,8 +39,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
@@ -99,7 +104,7 @@ fun BottomNavigationBar(
         Column(
             Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = (-25).dp)
+                .offset(y = (-20).dp)
         ) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -165,7 +170,8 @@ fun NavigationItem(
     navController: NavHostController,
     modifier: Modifier
 ) {
-    val selected = currentDestination?.route.toString().substringAfterLast(".") == item.toString()
+    val selected = currentDestination?.route.toString().substringAfterLast(".") == item.toString() || currentDestination?.route.toString().substringAfterLast(".").contains("Calendar") && item.icon == Icons.Outlined.CalendarToday
+
 
     val animatedColor by animateColorAsState(
         targetValue = if(selected) Purple else Color.White.copy(0.3f),
@@ -213,9 +219,23 @@ fun NavigationItem(
                         .background(Purple)
                         .height(3.dp))
             }
-            Icon(modifier = Modifier.padding(top = 5.dp).size(24.dp), imageVector = item.icon, contentDescription = "", tint = if(item.screen.label != "New") animatedColor else Color.Transparent)
+            else{
+                Spacer(modifier = Modifier.height(3.dp))
+            }
+            Icon(modifier = Modifier
+                .padding(top = 5.dp)
+                .size(24.dp), imageVector = item.icon, contentDescription = "", tint = if(item.screen.label != "New") animatedColor else Color.Transparent)
             Spacer(Modifier.height(5.dp))
-            Text(text = item.screen.label, color = animatedColor, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Normal)
+            Text(
+                text = stringResource(item.screen.bottomNavigationLabelResourceId),
+                color = animatedColor,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
             Spacer(Modifier.height(5.dp))
         }
     }

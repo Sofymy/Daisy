@@ -109,12 +109,12 @@ fun SignInContent(
             AuthChecklistAnimation{
                 Text(text = buildAnnotatedString {
                     withStyle(SpanStyle(brush = Brush.linearGradient(gradient), fontWeight = FontWeight.Black)) {
-                        append("SIGN IN TO-DO")
+                        append(stringResource(R.string.sign_in_to_do))
                     }
                 }, Modifier.padding(start = 20.dp))
-                AuthFormChecklistItem("Valid email", state.signInValidation.isEmailValid)
-                AuthFormChecklistItem("Remember your super-secret password", state.signInValidation.isPasswordNotEmpty)
-                AuthFormChecklistItem("Hit Sign in button", state.signInValidation.isSignInHit)
+                AuthFormChecklistItem(stringResource(R.string.valid_email), state.signInValidation.isEmailValid)
+                AuthFormChecklistItem(stringResource(R.string.remember_your_super_secret_password), state.signInValidation.isPasswordNotEmpty)
+                AuthFormChecklistItem(stringResource(R.string.hit_sign_in_button), state.signInValidation.isSignInHit)
             }
         }
         item {
@@ -269,9 +269,10 @@ fun SignInWithGoogleButton(
         modifier = Modifier.padding(top = 40.dp)
     ) {
         HorizontalDivider(color = Color.White, modifier = Modifier.padding(20.dp), thickness = 2.dp)
-        Text("or", Modifier
-            .background(MediumGrey)
-            .padding(horizontal = 20.dp)
+        Text(
+            text = stringResource(R.string.or), modifier = Modifier
+                .background(MediumGrey)
+                .padding(horizontal = 20.dp)
         )
     }
     SecondaryButton(
